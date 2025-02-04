@@ -84,7 +84,7 @@ const Features = () => {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow"
+              className="flex flex-col md:items-start items-center bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow"
               variants={cardVariants}
               whileHover={{ scale: 1.05, transition: { duration: 0.2 } }} // Add hover effect
             >

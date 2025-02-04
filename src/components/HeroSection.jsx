@@ -51,9 +51,11 @@ const HeroSection = () => {
         {/* Main Heading */}
         <motion.h1
           className="text-3xl lg:text-5xl font-bold text-gray-800 mb-4 leading-tight"
+          style={{ fontWeight: 'bold' }} // Explicitly set font weight as a fallback
           variants={itemVariants}
         >
-          Transform <span className="text-[#19417D] font-bold">Healthcare</span> Delivery with BrandeviaHMS+
+          Transform{' '}
+          <span className="text-[#19417D]">Healthcare</span> Delivery with BrandeviaHMS+
         </motion.h1>
 
         {/* Description */}
