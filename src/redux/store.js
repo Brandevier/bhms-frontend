@@ -1,6 +1,10 @@
-import { createStore } from 'redux';
-import rootReducer from './reducer'; // Import the root reducer
+import { configureStore } from "@reduxjs/toolkit";
+import waitlistReducer from "./waitlistSlice";
 
-const store = createStore(rootReducer);
+export const store = configureStore({
+  reducer: {
+    waitlist: waitlistReducer,
+  },
+});
 
 export default store;

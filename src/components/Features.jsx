@@ -30,6 +30,23 @@ const Features = () => {
     },
   ];
 
+  // Animation variants for the container
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2, // Stagger the animations of children
+      },
+    },
+  };
+
+  // Animation variants for each feature card
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120 } },
+  };
+
   return (
     <div className="bg-white py-16 px-4 lg:px-8">
       <div className="max-w-6xl mx-auto text-center">
@@ -37,8 +54,9 @@ const Features = () => {
         <motion.h2
           className="text-2xl lg:text-4xl font-bold text-gray-800 mb-4"
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          viewport={{ once: true, amount: 0.5 }} // Trigger animation only once
         >
           Key Features
         </motion.h2>
@@ -47,38 +65,45 @@ const Features = () => {
         <motion.p
           className="text-gray-600 text-lg mb-12"
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.5 }}
         >
           BHMS+ is a cutting-edge platform that leverages the latest technology to improve
           healthcare delivery.
         </motion.p>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }} // Trigger animation when 20% of the container is in view
+        >
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
+              className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow"
+              variants={cardVariants}
+              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }} // Add hover effect
             >
               {/* Icon */}
-               <div className="flex">
-               <img
-                src={feature.icon}
-                alt={feature.title}
-                className="w-8 h-8 mb-4"
-              />
-               </div>
+              <div className="flex">
+                <motion.img
+                  src={feature.icon}
+                  alt={feature.title}
+                  className="w-8 h-8 mb-4"
+                  whileHover={{ rotate: 15, transition: { duration: 0.3 } }} // Add icon hover animation
+                />
+              </div>
               {/* Title */}
               <h3 className="text-lg font-bold text-gray-800 mb-2">{feature.title}</h3>
               {/* Description */}
               <p className="text-gray-600 text-sm text-center">{feature.description}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
