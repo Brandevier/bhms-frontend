@@ -7,9 +7,9 @@ const API_URL = "https://hms-backend-v1.onrender.com/api/v1/waitlist"; // Replac
 // Async thunk to add user to waitlist
 export const addToWaitlist = createAsyncThunk(
   "waitlist/addToWaitlist",
-  async ({ email, hospitalName }, { rejectWithValue }) => {
+  async ({ email, hospitalName,phone_number }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_URL, { email, fullname:hospitalName });
+      const response = await axios.post(API_URL, { email, fullname:hospitalName,phone_number });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

@@ -19,15 +19,15 @@ const Footer = () => {
           <div className="flex flex-col items-start md:items-end">
             <p className="text-gray-600 font-medium mb-2">Connect With Us</p>
             <div className="flex space-x-3">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://x.com/brandeviahms?t=zd5h8ni2TdXRynd1NnTafw&s=09" target="_blank" rel="noopener noreferrer">
                 <img src="/assets/x.svg" alt="Twitter" className="h-5" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/company/brandeviahms/" target="_blank" rel="noopener noreferrer">
                 <img src="/assets/linkdin.svg" alt="LinkedIn" className="h-5" />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              {/* <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                 <img src="/assets/facebook.svg" alt="Facebook" className="h-5" />
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

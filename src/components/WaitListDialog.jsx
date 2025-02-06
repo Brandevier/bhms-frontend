@@ -19,9 +19,8 @@ const WaitListDialog = ({ className, text }) => {
       .validateFields()
       .then((values) => {
         console.log("Form values:", values); // Log form values for debugging
-
         // Dispatch the action to add the user to the waitlist
-        dispatch(addToWaitlist({ email: values.email, hospitalName: values.hospitalName })).unwrap().then(() => {
+        dispatch(addToWaitlist({ email: values.email, hospitalName: values.hospitalName, phone_number: values.phoneNumber })).unwrap().then(() => {
           message.success("You have been added to the waitlist!");
           setIsModalOpen(false);
         });
@@ -29,7 +28,6 @@ const WaitListDialog = ({ className, text }) => {
       .catch((info) => {
         message.error(info);
         console.log("Validation failed:", info);
-
       });
   };
 
@@ -49,7 +47,7 @@ const WaitListDialog = ({ className, text }) => {
 
   React.useEffect(() => {
     if (error) {
-      console.log('errror',error)
+      console.log('error', error);
       // Show error message if there's an error during submission
       message.error(error.message);
     }
@@ -135,6 +133,24 @@ const WaitListDialog = ({ className, text }) => {
             ]}
           >
             <Input placeholder="Enter your hospital/institution name" />
+          </Form.Item>
+
+          {/* Phone Number Field */}
+          <Form.Item
+            name="phoneNumber"
+            label="Phone Number"
+            rules={[
+              {
+                required: true,
+                message: "Please enter your phone number!",
+              },
+              {
+                pattern: /^(\+\d{1,3}[- ]?)?\d{10,15}$/,
+                message: "Please enter a valid phone number!",
+              },
+            ]}
+          >
+            <Input placeholder="Enter your phone number" />
           </Form.Item>
         </Form>
       </Modal>
