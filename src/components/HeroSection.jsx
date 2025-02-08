@@ -64,7 +64,7 @@ const HeroSection = () => {
           variants={itemVariants}
         >
           bHMS+ is a modern, cloud-based healthcare platform designed to simplify hospital operations
-          and improve patient outcomes across.
+          and improve patient outcomes.
         </motion.p>
 
         {/* Call-to-Action Button */}
