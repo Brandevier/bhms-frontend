@@ -28,6 +28,41 @@ const Features = () => {
       description: "Predict trends and prevent shortages with data-driven insights.",
       icon: "/assets/check-circle.svg",
     },
+
+
+    // SECOND OPTIONS
+    {
+      title: "Create Electronic Health Records",
+      description: "Instant access to medical history, prescriptions, and test results.",
+      icon: "/assets/check-circle.svg",
+    },
+    {
+      title: "Automated Workflow Optimization",
+      description: "Reduces admin workload, enabling staff to focus on patient care.",
+      icon: "/assets/check-circle.svg",
+    },
+    {
+      title: "Secure Cloud Location",
+      description: "Ensures secure, remote access to patient data for better collaboration.",
+      icon: "/assets/check-circle.svg",
+    },
+    {
+      title: "Telehealth Integration",
+      description: "Supports online appointments, virtual consultations, and remote monitoring.",
+      icon: "/assets/check-circle.svg",
+    },
+
+    {
+      title: "Inventory Management",
+      description: "Tracks supplies in real time, streamlines procurement, and prevents shortages.",
+      icon: "/assets/check-circle.svg",
+    },
+    {
+      title: "E-Pharmacy",
+      description: "Facilitates electronic prescriptions and efficient medication management.",
+      icon: "/assets/check-circle.svg",
+    },
+
   ];
 
   // Animation variants for the container

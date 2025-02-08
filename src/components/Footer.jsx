@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="mb-6 md:mb-0">
             <img src="/assets/logo.svg" alt="bHMS Logo" className="h-8 mb-2" />
             <p className="leading-relaxed max-w-xs">
-              BrandeviaHMS+ is compliant with HIPAA, GDPR, and Ghana’s Health Institutions Act.
+            bHMS+ is a strategic partner helping healthcare providers cut costs, improve patient outcomes, and future-proof operations.
             </p>
           </div>
 
