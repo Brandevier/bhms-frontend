@@ -38,7 +38,7 @@ const EarlyAdopterBanner = () => {
               Join Us
             </motion.button>
             <h1 className="text-3xl lg:text-5xl font-bold leading-tight">
-              Special Discount for Early Adopter
+              Special Discounts for Early Adopters
             </h1>
             <p className="text-lg text-blue-200">
               Join over 100+ Hospitals waiting to transition onto bHMS+ Digital

@@ -64,7 +64,7 @@ const HeroSection = () => {
           variants={itemVariants}
         >
           bHMS+ is a modern, cloud-based healthcare platform designed to simplify hospital operations
-          and improve patient outcomes across Ghana, Nigeria, and the entire Africa.
+          and improve patient outcomes across.
         </motion.p>
 
         {/* Call-to-Action Button */}
