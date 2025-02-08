@@ -2,7 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const Features = () => {
+  
   const features = [
+    {
+      title: "Insurance Claims",
+      description: "Automates claim processing, ensures compliance, and speeds up reimbursements.",
+      icon: "/assets/check-circle.svg",
+    },
     {
       title: "Instant Access to Patient Records",
       description: "View medical history, prescriptions, and test results in seconds.",
@@ -62,6 +68,7 @@ const Features = () => {
       description: "Facilitates electronic prescriptions and efficient medication management.",
       icon: "/assets/check-circle.svg",
     },
+
 
   ];
 
