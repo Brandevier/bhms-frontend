@@ -5,7 +5,7 @@ import Features from '../../components/Features'
 import EarlyAdopterBanner from '../../components/EarlyAdopterBanner'
 import NewsletterSignup from '../../components/NewsletterSignup'
 import Footer from '../../components/Footer' 
-
+import ContactUs from '../../components/contactUs'
 
 
 const Homepage = () => {
@@ -15,6 +15,7 @@ const Homepage = () => {
       <HeroSection />
       <Features />
       <EarlyAdopterBanner />
+      {/* <ContactUs/> */}
       <NewsletterSignup />
       <Footer />
     </>

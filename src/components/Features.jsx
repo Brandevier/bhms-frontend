@@ -15,8 +15,8 @@ const Features = () => {
       icon: "/assets/check-circle.svg",
     },
     {
-      title: "Virtual Consultations Anywhere",
-      description: "Connect with patients in remote areas via secure telehealth.",
+      title: "Custom Departments Creation",
+      description: "Admins can create departments and assign staff as needed.",
       icon: "/assets/check-circle.svg",
     },
     {
@@ -68,8 +68,6 @@ const Features = () => {
       description: "Facilitates electronic prescriptions and efficient medication management.",
       icon: "/assets/check-circle.svg",
     },
-
-
   ];
 
   // Animation variants for the container
