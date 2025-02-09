@@ -26,9 +26,7 @@ const Footer = () => {
               <a href="https://www.linkedin.com/company/brandeviahms/" target="_blank" rel="noopener noreferrer">
                 <img src="/assets/linkdin.svg" alt="LinkedIn" className="h-5" />
               </a>
-              <a href="https://www.linkedin.com/company/brandeviahms/" target="_blank" rel="noopener noreferrer">
-                <img src="/assets/whatsapp.svg" alt="LinkedIn" className="h-5" />
-              </a>
+            
               {/* <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                 <img src="/assets/facebook.svg" alt="Facebook" className="h-5" />
               </a> */}
