@@ -1,0 +1,10 @@
+{
+  "welcome": "Welcome to the application",
+  "login": "Login",
+  "emailVerification": "Email Verification",
+  "smsVerification": "SMS Verification",
+  "staffLogin": "Staff Login",
+  "dashboard": "Dashboard",
+  "features": "Features",
+  "contactUs": "Contact Us"
+}

@@ -1,79 +1,103 @@
 import React from "react";
-import { Card, Form, Input, Button, Typography, Layout } from "antd";
+import { Form, Input, Button, Typography } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
+import BhmsButton from "../../heroComponents/BhmsButton";
 
-const { Title } = Typography;
-const { Content } = Layout;
+
+const { Title, Text } = Typography;
 
 const Login = () => {
   const onFinish = (values) => {
-    console.log("Received values:", values);
-    // Add your login logic here
+    console.log("Success:", values);
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f0f2f5" }}>
-      <Content
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        backgroundColor: "#f8f9fa",
+      }}
+    >
+      {/* Left Side - Image & Labels */}
+      <div
         style={{
+          flex: 1,
+          background: "#F2F7FF",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
+          padding: "20px",
         }}
       >
-        <Card
+        <img
+          src="/assets/login_image.png" // Replace with the actual doctor image
+          alt="Doctor"
+          style={{ width: "60%", borderRadius: "10px" }}
+        />
+
+        <div
           style={{
-            width: 400,
-            textAlign: "center",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            position: "absolute",
+            top: "50%",
+            right: "20%",
+            background: "#fff",
+            padding: "10px 20px",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
           }}
         >
-          {/* Title */}
-          <Title level={3} style={{ marginBottom: 24 }}>
-            Telemedicine at Destination
-          </Title>
+          <br />
+        </div>
+      </div>
 
-          {/* Subtitle */}
-          <Title level={5} style={{ marginBottom: 24 }}>
+      {/* Right Side - Login Form */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "40px",
+          background: "#ffffff",
+        }}
+      >
+        <Button type="link" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
+          LOGIN AS STAFF
+        </Button>
+        <div className="w-full flex flex-col justify-center items-center">
+          <Title level={2} style={{ marginBottom: 10 }}>
             Admin Login
           </Title>
+          <Text type="secondary">Facility Manager login portal</Text>
 
-          {/* Login Form */}
-          <Form name="login" onFinish={onFinish}>
-            {/* Username Field */}
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: "Please input your username!" },
-              ]}
-            >
-              <Input placeholder="Username" size="large" />
+          <Form
+            onFinish={onFinish}
+            layout="vertical"
+            style={{ width: "100%", maxWidth: "400px", marginTop: "20px" }}
+          >
+            <Form.Item name="email" rules={[{ required: true, message: "Enter your email" }]}>
+              <Input placeholder="Email" size="large" />
             </Form.Item>
-
-            {/* Password Field */}
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
-            >
+            <Form.Item name="password" rules={[{ required: true, message: "Enter your password" }]}>
               <Input.Password placeholder="Password" size="large" />
             </Form.Item>
-
-            {/* Submit Button */}
             <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                block
-                style={{ marginTop: 16 }}
-              >
-                Continue
-              </Button>
+              <BhmsButton onClick={() => console.log("Clicked!")}>
+                Submit
+              </BhmsButton>
+
             </Form.Item>
           </Form>
-        </Card>
-      </Content>
-    </Layout>
+
+        </div>
+        <div className=" text-black text-center text-sm shadow-md">
+          {/* &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved. */}
+        </div>
+      </div>
+    </div>
   );
 };
 

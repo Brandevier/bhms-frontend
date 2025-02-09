@@ -45,9 +45,13 @@ const Header = () => {
             transition={{ duration: 0.3, ease: 'easeInOut' }} // Animation settings
             className="absolute md:static top-16 right-0 bg-white shadow-md md:shadow-none w-full md:w-auto p-4 md:p-0 flex flex-col md:flex-row md:space-x-4 md:items-center"
           >
-            <button className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center">
+            <button
+              className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center"
+              onClick={() => window.open("https://wa.me/+233531130159", "_blank")}
+            >
               Contact Us
             </button>
+
             <WaitListDialog />
           </motion.div>
         )}

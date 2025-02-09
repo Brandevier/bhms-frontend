@@ -1,6 +1,6 @@
 import React from 'react';
-import { Row, Col, Form, Input, Button } from 'antd';
-
+import { Row, Col, Form, Input } from 'antd';
+import BhmsButton from '../heroComponents/BhmsButton';
 const { TextArea } = Input;
 
 const ContactUs = () => {
@@ -51,9 +51,9 @@ const ContactUs = () => {
               <TextArea rows={4} placeholder="Your Message" />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+              <BhmsButton type="primary" htmlType="submit">
                 Submit
-              </Button>
+              </BhmsButton>
             </Form.Item>
           </Form>
         </Col>

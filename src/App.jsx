@@ -6,9 +6,9 @@ import AdminRoutes from './routes/AdminRoutes';
 import PublicRoutes from './routes/PublicRoutes';
 import StaffRoutes from './routes/StaffRoutes';
 import Dashboard from './pages/admin/Dashbaord';
-
-
-// Import other pages as needed
+import StaffLogin from './pages/auth/StaffLogin';
+import EmailVerification from './pages/auth/EmailVerification';
+import PageNotFound from './pages/404/PageNotFound';
 
 const App = () => {
   return (
@@ -18,30 +18,22 @@ const App = () => {
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/staff_login" element={<StaffLogin />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
         </Route>
 
         {/* Admin Routes */}
-        <Route element={<AdminRoutes />}> 
-          {/* Dashboard Layout */}
-          <Route path="/admin" element={<Dashboard />}>
-            {/* Nested Admin Routes */}
-            {/* <Route path="dashboard" element={<DashboardStats />} />
-            <Route path="departments" element={<Departments />} />
-            <Route path="chat" element={<MessageInterface />} />
-            <Route path="inventory" element={<Inventory />} />
-            <Route path="department/details" element={<DepartmentDetails />} />
-            <Route path="department/patient/:id" element={<PatientDashboardLayout />} />
-            <Route path="staffs" element={<Staffs />} />
-            <Route path="staff/details" element={<StaffDetails />} /> */}
-            
-            {/* Add more nested admin routes here */}
-          </Route>
+        <Route element={<AdminRoutes />}>
+          {/* <Route path="/admin" element={<Dashboard />} /> */}
         </Route>
 
         {/* Staff Routes */}
         <Route element={<StaffRoutes />}>
           {/* Add staff routes here */}
         </Route>
+
+        {/* 404 Page - This should always be the last route */}
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

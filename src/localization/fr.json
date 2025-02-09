@@ -1,0 +1,10 @@
+{
+  "welcome": "Bienvenue dans l'application",
+  "login": "Connexion",
+  "emailVerification": "Vérification de l'email",
+  "smsVerification": "Vérification par SMS",
+  "staffLogin": "Connexion du personnel",
+  "dashboard": "Tableau de bord",
+  "features": "Fonctionnalités",
+  "contactUs": "Contactez-nous"
+}

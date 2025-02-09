@@ -3,10 +3,13 @@ import { Form, Input, Button, Typography } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
 
-
 const { Title, Text } = Typography;
 
-const StaffLogin = () => {
+
+
+
+
+const EmailVerification = () => {
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -14,7 +17,7 @@ const StaffLogin = () => {
   return (
     <div
       style={{
-        display: "flex",
+        display: "flex", 
         height: "100vh",
         backgroundColor: "#f8f9fa",
       }}
@@ -52,7 +55,7 @@ const StaffLogin = () => {
         </div>
       </div>
 
-      {/* Right Side - Login Form */}
+      {/* Right Side - OTP Verification Form */}
       <div
         style={{
           flex: 1,
@@ -65,35 +68,43 @@ const StaffLogin = () => {
         }}
       >
         <Button type="link" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
-          Admin Login
+          Back
         </Button>
         <div className="w-full flex flex-col justify-center items-center">
           <Title level={2} style={{ marginBottom: 10 }}>
-            Staff Login
+            Email Verification
           </Title>
-          <Text type="secondary">Facility Manager login portal</Text>
+          <Text type="secondary">Enter the OTP sent to your email</Text>
 
           <Form
             onFinish={onFinish}
             layout="vertical"
             style={{ width: "100%", maxWidth: "400px", marginTop: "20px" }}
           >
-            <Form.Item name="username" rules={[{ required: true, message: "Enter your username" }]}>
-              <Input placeholder="Username" size="large" />
+            <Form.Item
+              name="otp"
+              rules={[{ required: true, message: "Please enter the OTP" }]}
+            >
+              <div className="w-full flex justify-center items-center">
+                <Input.OTP length={6} />
+              </div>
             </Form.Item>
-            <Form.Item name="password" rules={[{ required: true, message: "Enter your password" }]}>
-              <Input.Password placeholder="Password" size="large" />
-            </Form.Item>
+
             <Form.Item>
-              <BhmsButton onClick={() => console.log("Clicked!")}>
-                Submit
+              <BhmsButton type="primary" htmlType="submit">
+                Verify
               </BhmsButton>
-
             </Form.Item>
-          </Form>
 
+            <Text type="secondary">
+              Didn't receive the OTP?{" "}
+              <Button type="link" onClick={() => console.log("Navigate to SMS verification")}>
+                Verify with SMS instead
+              </Button>
+            </Text>
+          </Form>
         </div>
-        <div className=" text-black text-center text-sm shadow-md">
+        <div className="text-black text-center text-sm shadow-md">
           {/* &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved. */}
         </div>
       </div>
@@ -101,5 +112,4 @@ const StaffLogin = () => {
   );
 };
 
-export default StaffLogin;
-
+export default EmailVerification;
