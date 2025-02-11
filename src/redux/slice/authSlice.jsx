@@ -13,20 +13,28 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (loginData, { 
 });
 
 // Admin login thunk
-export const loginAdmin = createAsyncThunk('auth/loginAdmin', async (adminData, { rejectWithValue }) => {
+export const loginAdmin = createAsyncThunk('auth/loginAdmin', async ({email,password}, { rejectWithValue }) => {
   try {
-    const response = await axios.post(ADMIN_LOGIN, adminData);
+    const response = await axios.post(ADMIN_LOGIN, {
+      email,
+      password
+      
+    });
     return response.data;
   } catch (error) {
-   
-    return rejectWithValue(error);
+   console.log(error.response.data)
+    return rejectWithValue(error.response.data);
   }
 });
 
 // Admin token verification thunk
-export const verifyAdminToken = createAsyncThunk('auth/verifyAdminToken', async (verifyData, { rejectWithValue }) => {
+export const verifyAdminToken = createAsyncThunk('auth/verifyAdminToken', async ({token}, { rejectWithValue }) => {
+
   try {
-    const response = await axios.post(VERIFY_EMAIL, verifyData);
+    const response = await axios.post(VERIFY_EMAIL, {
+      token,
+      email:localStorage.getItem('email')
+    });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -61,6 +69,7 @@ const initialState = {
   user: null,
   admin: null,
   loading: false,
+  emailSent:false,
   error: null,
   token: localStorage.getItem('user') || null,
   isVerified: false, 
@@ -104,10 +113,12 @@ const authSlice = createSlice({
       })
       .addCase(loginAdmin.fulfilled, (state, action) => {
         state.loading = false;
+        state.emailSent = true;
       })
       .addCase(loginAdmin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.emailSent = false;
       });
 
     // Handle admin token verification
@@ -119,6 +130,7 @@ const authSlice = createSlice({
       .addCase(verifyAdminToken.fulfilled, (state, action) => {
         state.loading = false;
         state.admin = action.payload;
+        state.emailSent = false;
         localStorage.setItem('token', action.payload.token)
         state.isVerified = true || false; // Set isVerified from the response
         localStorage.setItem('admin', JSON.stringify(action.payload)); // Store the payload in localStorage

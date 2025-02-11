@@ -9,6 +9,11 @@ import Dashboard from './pages/admin/Dashbaord';
 import StaffLogin from './pages/auth/StaffLogin';
 import EmailVerification from './pages/auth/EmailVerification';
 import PageNotFound from './pages/404/PageNotFound';
+import StaffList from './pages/admin/StaffList';
+import DepartmentsList from './pages/admin/DepartmentsList';
+import CalendarComponent from './pages/admin/components/CalendarComponent';
+import StaffDetails from './pages/admin/StaffDetails';
+
 
 const App = () => {
   return (
@@ -23,8 +28,14 @@ const App = () => {
         </Route>
 
         {/* Admin Routes */}
-        <Route element={<AdminRoutes />}>
-          {/* <Route path="/admin" element={<Dashboard />} /> */}
+        <Route path="/admin/*" element={<AdminRoutes />}>
+          <Route path="" element={<Dashboard />} />
+          <Route path="staffs" element={<StaffList />} />
+          <Route path="details/:id" element={<StaffDetails />} />
+          <Route path="departments" element={<DepartmentsList />} />
+          <Route path="task" element={<CalendarComponent />} />
+          
+          
         </Route>
 
         {/* Staff Routes */}

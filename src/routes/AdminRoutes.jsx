@@ -1,11 +1,18 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import AppLayout from "../layout/layout"; // Import the layout
 
 const AdminRoutes = () => {
-  const user = useSelector((state) => state.auth.user); // Get user from Redux state
+  const admin = useSelector((state) => state.auth.admin); // Check if admin is logged in
 
-  return user && user.role === 'admin' ? <Outlet /> : <Outlet />;
+  return admin ? (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  ) : (
+    <Navigate to="/login" />
+  );
 };
 
 export default AdminRoutes;

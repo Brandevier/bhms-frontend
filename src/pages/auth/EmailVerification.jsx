@@ -1,23 +1,42 @@
-import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import React,{useEffect} from "react";
+import { Form, Input, Button, Typography, Spin, message } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
-
+import { verifyAdminToken } from "../../redux/slice/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 
-
-
-
-
 const EmailVerification = () => {
+  const dispatch = useDispatch();
+  const { loading, error,emailSent } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate()
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    dispatch(verifyAdminToken({token:values.otp}))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+        message.success("OTP verified successfully!");
+        navigate('/admin')
+      })
+      .catch((err) => {
+        message.error(err.error || "OTP verification failed. Please try again.");
+      });
   };
+
+
+  useEffect(()=>{
+    if(!emailSent){
+      navigate('/login')
+    }
+  },[])
 
   return (
     <div
       style={{
-        display: "flex", 
+        display: "flex",
         height: "100vh",
         backgroundColor: "#f8f9fa",
       }}
@@ -91,10 +110,16 @@ const EmailVerification = () => {
             </Form.Item>
 
             <Form.Item>
-              <BhmsButton type="primary" htmlType="submit">
-                Verify
+              <BhmsButton type="primary" htmlType="submit" loading={loading}>
+                {loading ? <Spin /> : "Verify"}
               </BhmsButton>
             </Form.Item>
+
+            {error && (
+              <div style={{ marginTop: "10px" }}>
+                <Text type="danger">{error.error}</Text>
+              </div>
+            )}
 
             <Text type="secondary">
               Didn't receive the OTP?{" "}

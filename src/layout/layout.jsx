@@ -1,42 +1,28 @@
 import React from "react";
 import { Layout } from "antd";
+import BhmsHeader from "../pages/admin/components/BhmsHeader";
+import BhmsSidebar from "../pages/admin/components/BhmsSidebar";
 
-const { Header, Sider, Content } = Layout;
+const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar - 30% of the screen width */}
-      <Sider
-        width="30%"
-        style={{
-          background: "#fff",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-        }}
-      >
-        <h1 style={{ padding: "16px" }}>Sidebar</h1>
-      </Sider>
+    <Layout style={{ height: "100vh", overflow: "hidden" }}>
+      {/* Sidebar (Fixed) */}
+      <BhmsSidebar />
 
-      {/* Main Content - 70% of the screen width */}
-      <Layout>
-        {/* Top Bar */}
-        <Header
-          style={{
-            background: "#fff",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-            padding: "0 16px",
-          }}
-        >
-          <span>Topbar</span>
-        </Header>
+      {/* Main Layout */}
+      <Layout style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+        {/* Top Bar (Fixed) */}
+        <BhmsHeader />
 
-        {/* Main Area */}
+        {/* Main Content (Scrollable) */}
         <Content
           style={{
-            margin: "16px",
+            flex: 1, // This makes content take up remaining space
+            overflowY: "auto", // Only this area is scrollable
             padding: "16px",
             background: "#fff",
-            overflowY: "auto",
           }}
         >
           {children}

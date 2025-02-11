@@ -1,14 +1,38 @@
-import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import React,{useEffect} from "react";
+import { Form, Input, Button, Typography, Spin, message } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
+import { loginAdmin } from "../../redux/slice/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 const { Title, Text } = Typography;
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const { loading, error,admin } = useSelector((state) => state.auth);
+  const navigate = useNavigate()
+
+  useEffect(()=>{
+    if(admin){
+      navigate('/admin')
+    }
+  },[])
+
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    dispatch(loginAdmin({ email:values.email,password:values.password }))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+        message.success("Login successful!");
+        localStorage.setItem('email',values.email)
+        navigate('/verify-email')
+      })
+      .catch((err) => {
+        message.error(err.error || "Login failed. Please try again.");
+      });
   };
 
   return (
@@ -85,13 +109,17 @@ const Login = () => {
               <Input.Password placeholder="Password" size="large" />
             </Form.Item>
             <Form.Item>
-              <BhmsButton onClick={() => console.log("Clicked!")}>
-                Submit
+              <BhmsButton type="submit" htmlType="submit" loading={loading}>
+                {loading ? <Spin /> : "Submit"}
               </BhmsButton>
-
             </Form.Item>
           </Form>
 
+          {error && (
+            <div style={{ marginTop: "10px" }}>
+              <Text type="danger">{error.error}</Text>
+            </div>
+          )}
         </div>
         <div className=" text-black text-center text-sm shadow-md">
           {/* &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved. */}
