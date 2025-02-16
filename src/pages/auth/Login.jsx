@@ -26,7 +26,7 @@ const Login = () => {
       .unwrap()
       .then((res) => {
         console.log(res);
-        message.success("Login successful!");
+        message.success("OTP sent successful!");
         localStorage.setItem('email',values.email)
         navigate('/verify-email')
       })

@@ -13,6 +13,10 @@ import StaffList from './pages/admin/StaffList';
 import DepartmentsList from './pages/admin/DepartmentsList';
 import CalendarComponent from './pages/admin/components/CalendarComponent';
 import StaffDetails from './pages/admin/StaffDetails';
+import PatientRecords from './pages/departments/opd/patientRecords';
+import PatientLayout from './layout/PatientLayout';
+import Records from './pages/departments/records/Records';
+
 
 
 const App = () => {
@@ -33,6 +37,10 @@ const App = () => {
           <Route path="staffs" element={<StaffList />} />
           <Route path="details/:id" element={<StaffDetails />} />
           <Route path="departments" element={<DepartmentsList />} />
+          <Route path="departments/opd" element={<PatientRecords />} />
+          <Route path="patient/details/:id" element={<PatientLayout />} />
+          <Route path="records/:id" element={<Records />} />
+
           <Route path="task" element={<CalendarComponent />} />
           
           

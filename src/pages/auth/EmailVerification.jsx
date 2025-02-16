@@ -18,7 +18,7 @@ const EmailVerification = () => {
       .unwrap()
       .then((res) => {
         console.log(res);
-        message.success("OTP verified successfully!");
+        message.success("Login successfully!");
         navigate('/admin')
       })
       .catch((err) => {

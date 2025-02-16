@@ -6,6 +6,7 @@ const BhmsButton = ({
   onClick,
   icon,
   width = "auto",
+  // height="auto",
   size = "large",
   color = "#19417D", // Default primary color
   className = "",
@@ -27,6 +28,7 @@ const BhmsButton = ({
         color: outline ? color : "#fff", // Text color matches border for outline
         borderRadius: borderRadius,
         width: block ? "100%" : width,
+        // height: block ? "100%" : height,
       }}
       size={size}
       htmlType={htmlType} // Allows form submission when used inside a form

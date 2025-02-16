@@ -6,7 +6,7 @@ import BhmsInput from "../../../heroComponents/BhmsInput";
 const { TextArea } = Input;
 const { Option } = Mentions;
 
-const EventDialog = ({ visible, onClose, onSave }) => {
+const EventDialog = ({ visible, onClose, onSave,staffs }) => {
     const [form] = Form.useForm();
     const [meetingLink, setMeetingLink] = useState("");
 
@@ -47,14 +47,12 @@ const EventDialog = ({ visible, onClose, onSave }) => {
             <Form form={form} layout="vertical">
                 {/* Event Title */}
                 <BhmsInput
-                    label="title"
+                    label="Title"
                     name="title"
                     placeholder="Event title"
                     required
                     
                 />
-
-
                 {/* Date & Time Pickers */}
                 <Form.Item label="Date & Time">
                     <div style={{ display: "flex", gap: "10px" }}>
@@ -63,7 +61,7 @@ const EventDialog = ({ visible, onClose, onSave }) => {
                             rules={[{ required: true, message: "Please select a date" }]}
                             style={{ flex: 1 }}
                         >
-                            <DatePicker style={{ width: "100%" }} />
+                            <DatePicker style={{ width: "100%", padding:"5px 0px" }} />
                         </Form.Item>
                         <Form.Item
                             name="time"
@@ -78,8 +76,9 @@ const EventDialog = ({ visible, onClose, onSave }) => {
                 {/* Staff Mentions */}
                 <Form.Item name="staff" label="Tag Staff">
                     <Mentions
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", padding:"10px 0px" }}
                         placeholder="Tag staff with @"
+                        
                     >
                         <Option value="john_doe">John Doe</Option>
                         <Option value="emily_smith">Emily Smith</Option>

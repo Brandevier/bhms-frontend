@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, Badge, Button, Row, Col, Typography } from "antd";
 import { LeftOutlined, RightOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "./CalendarComponent.css"; // Import custom styles
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import EventDialog from "./EventDialog";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getAllStaff } from "../../../redux/slice/staff_admin_managment_slice";
 
 
 const { Title } = Typography;
@@ -27,6 +28,8 @@ const appointments = [
 const CalendarComponent = () => {
   const [currentDate, setCurrentDate] = useState(dayjs("2028-07-01"));
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { allStaffs} = useSelector((state) => state.adminStaffManagement);
+  const dispatch = useDispatch()
   // Handle month navigation
   const handlePrevMonth = () => setCurrentDate(currentDate.subtract(1, "month"));
   const handleNextMonth = () => setCurrentDate(currentDate.add(1, "month"));
@@ -35,6 +38,14 @@ const CalendarComponent = () => {
   const dateCellRender = (value) => {
     const dateString = value.format("YYYY-MM-DD");
     const events = appointments.filter((event) => event.date === dateString);
+
+
+    useEffect(()=>{
+      dispatch(getAllStaff())
+    },[])
+
+
+
 
     return (
       <div>
@@ -67,18 +78,20 @@ const CalendarComponent = () => {
       </Row>
 
       {/* Calendar View */}
-      <Calendar 
-        value={currentDate} 
-        dateCellRender={dateCellRender} 
-        fullscreen={true} 
+      <Calendar
+        value={currentDate}
+        dateCellRender={dateCellRender}
+        fullscreen={true}
+        onSelect={(data) => console.log(data)}
       />
-      <EventDialog 
-        visible={isDialogOpen} 
+      <EventDialog
+        visible={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSave={(eventData) => {
           console.log("Event Saved:", eventData);
           setIsDialogOpen(false);
         }}
+        staffs={allStaffs}
       />
 
     </div>
