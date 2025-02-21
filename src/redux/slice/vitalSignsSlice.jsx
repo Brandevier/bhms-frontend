@@ -40,8 +40,9 @@ export const fetchVitalSignsRecordByPatientId = createAsyncThunk(
 export const createVitalSignsRecord = createAsyncThunk(
     'vitalSigns/createVitalSignsRecord',
     async (recordData, { rejectWithValue,getState }) => {
-        const { admin } = getState().auth
-        const institution_id = admin.institution.id
+        const { auth } = getState()
+        const user = auth.admin || auth.user
+        const institution_id = user.institution.id
         try {
             const response = await apiClient.post('/patient/create-vitals', {
                 ...recordData,

@@ -7,6 +7,7 @@ import i18n from './i18n'; // Assuming you will create this file for i18n config
 import './index.css';
 import { store } from './redux/store';
 import App from './App';
+import "react-phone-input-2/lib/style.css";
 
 const root = createRoot(document.getElementById('root'));
 root.render(

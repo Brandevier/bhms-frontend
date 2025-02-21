@@ -103,11 +103,11 @@ const PatientRecordsOPD = () => {
             View
           </BhmsButton>
           <span className="mx-2"></span>
-          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
+          {/* <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
             <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
               Delete
             </BhmsButton>
-          </Popconfirm>
+          </Popconfirm> */}
         </span>
       ),
     },
@@ -126,9 +126,9 @@ const PatientRecordsOPD = () => {
           style={{ width: 300 }}
           allowClear
         />
-        <BhmsButton block={false} icon={<PlusOutlined />} size="medium" onClick={() => setModalVisible(true)}>
+        {/* <BhmsButton block={false} icon={<PlusOutlined />} size="medium" onClick={() => setModalVisible(true)}>
           Register New Patient
-        </BhmsButton>
+        </BhmsButton> */}
       </div>
 
       {/* Tabs Section */}

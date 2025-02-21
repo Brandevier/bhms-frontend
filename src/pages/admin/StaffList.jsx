@@ -135,7 +135,7 @@ const StaffList = () => {
         />
       )}
 
-      <AddStaffDialog visible={visible} onClose={() => setVisible(false)} updateComponent={handleUpdate} roles={roles} />
+      <AddStaffDialog visible={visible} onClose={() => setVisible(false)} updateComponent={handleUpdate} />
     </div>
   );
 };

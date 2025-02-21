@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Row, Col, Calendar, List, Typography, Progress, Table } from "antd";
 // import { Line } from "@ant-design/charts";
-
-
+import { useDispatch } from "react-redux";
+import { getAllRoles } from "../../../redux/slice/staffPermissionSlice";
 
 const { Title, Text } = Typography;
 
 const BhmsAdminDashboardLayout = () => {
+  const dispatch = useDispatch()
+
+
+useEffect(()=>{
+  dispatch(getAllRoles())
+},[])
+
   // Mock Data
   const stats = [
     { title: "Total Invoice", value: "1,287", change: "+5.4%" },

@@ -24,8 +24,7 @@ const PatientNotes = ({ patient_notes, general_handler, patient_id }) => {
                 dispatch(fetchPatientNotes({ patient_id }));
                 general_handler();
                 setIsModalOpen(false);
-            })
-            .catch(() => message.error("Failed to create note"));
+            }).catch(() => message.error("Failed to create note"));
     };
 
     const handleAddComment = (noteId) => {

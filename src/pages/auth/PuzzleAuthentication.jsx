@@ -44,7 +44,7 @@ const PuzzleAuthentication = () => {
             .unwrap()
             .then(() => {
                 message.success("Authentication successful!");
-                navigate('/staff')
+                navigate('/shared/departments')
             })
             .catch((err) => {
                 message.error(err || "Incorrect answer. Please try again.");

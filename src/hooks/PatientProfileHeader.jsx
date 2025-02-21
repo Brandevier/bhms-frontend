@@ -23,8 +23,8 @@ import CreateProcedureModal from "../modal/CreateProcedureModal";
 import { createPrescription } from "../redux/slice/prescriptionSlice";
 import { addProcedure } from "../redux/slice/procedureSlice";
 import AdmitPatientModal from "../modal/AdmitPatientModal";
-
-
+import useDepartmentCheck from "../customHooks/useDepartmentCheck";
+import { addDiagnosis } from "../redux/slice/diagnosisSlice";
 
 
 const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
@@ -105,13 +105,37 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
 
 
   const handleAdmit = (patientData) => {
-
+    console.log(patientData)
     closeModal();
   };
 
 
+  const hasAccess = useDepartmentCheck(["Doctor", "Surgeon"]);
 
-  return (
+
+  const handleDiagnosisSubmit = (data) => {
+    const submitData = {
+      ...data,
+      patient_id: patient_id,
+      department_id: patient_department
+    }
+
+    dispatch(addDiagnosis(submitData)).unwrap().then((res) => {
+      message.success('diagnosis created successfully');
+      handleGeneralSubmit();
+      setDiagnosisModalVisible(false)
+    })
+
+  }
+
+  const latestDiagnosis = patient_record?.patient?.diagnosis?.length
+  ? [...patient_record.patient.diagnosis].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]
+  : null;
+
+
+
+
+  return ( 
     <>
       <Card>
         {/* Patient Details Row */}
@@ -129,21 +153,22 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
               {/* Patient Info */}
               <div>
                 <Title level={3} style={{ margin: 0 }}>
-                  {`${patient_record?.patient?.first_name} ${patient_record?.patient?.last_name}`}
+                  {`${patient_record?.patient?.first_name} ${patient_record?.patient?.middle_name || ''} ${patient_record?.patient?.last_name}`}
                 </Title>
                 <Text type={patient_record?.status === "active" ? "success" : "danger"} style={{ marginBottom: 5 }}>
                   {patient_record?.status?.charAt(0).toUpperCase() + patient_record?.status?.slice(1)}
                 </Text>
                 <Text type="secondary" style={{ display: "block" }}>
-                  Diagnosis: Hypertension & Fever
+                  Diagnosis: {latestDiagnosis?.diagnosis_name.map(d => d.description).join(", ") || "No diagnosis available"}
                 </Text>
+
               </div>
             </div>
           </Col>
 
           {/* Edit Button */}
           <Col>
-            <BhmsButton block={false} size="medium">Transfer Patient</BhmsButton>
+            <BhmsButton block={false} size="medium" disabled={!hasAccess}>Transfer Patient</BhmsButton>
           </Col>
         </Row>
 
@@ -151,12 +176,12 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
         <Row justify="center" style={{ marginTop: 20 }} gutter={[16, 16]}>
           <Col>
             <Tooltip title="Request Lab">
-              <Button shape="circle" icon={<ExperimentOutlined />} onClick={() => setLabModalVisible(true)} />
+              <Button shape="circle" icon={<ExperimentOutlined />} onClick={() => setLabModalVisible(true)} disabled={!hasAccess} />
             </Tooltip>
           </Col>
           <Col>
             <Tooltip title="Add Diagnosis">
-              <Button shape="circle" icon={<FileTextOutlined />} onClick={() => setDiagnosisModalVisible(true)} />
+              <Button shape="circle" icon={<FileTextOutlined />} onClick={() => setDiagnosisModalVisible(true)} disabled={!hasAccess} />
             </Tooltip>
           </Col>
           <Col>
@@ -166,17 +191,17 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
           </Col>
           <Col>
             <Tooltip title="Request Procedure">
-              <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setModalVisible(true)} />
+              <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setModalVisible(true)} disabled={!hasAccess} />
             </Tooltip>
           </Col>
           <Col>
             <Tooltip title="Prescribe Medication">
-              <Button shape="circle" icon={<MedicineBoxOutlined />} onClick={() => setPrescriptionModalVisible(true)} />
+              <Button shape="circle" icon={<MedicineBoxOutlined />} onClick={() => setPrescriptionModalVisible(true)} disabled={!hasAccess} />
             </Tooltip>
           </Col>
           <Col>
             <Tooltip title="Admit Patient">
-              <Button shape="circle" icon={<LoginOutlined />} onClick={()=>setAdmitModalVisible(true)}/>
+              <Button shape="circle" icon={<LoginOutlined />} onClick={() => setAdmitModalVisible(true)} disabled={!hasAccess} />
             </Tooltip>
           </Col>
         </Row>
@@ -192,6 +217,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
       <PatientDiagnosisModal
         visible={diagnosisModalVisible}
         onClose={() => setDiagnosisModalVisible(false)}
+        onSubmit={handleDiagnosisSubmit}
       />
       <RequestLabDialog
         visible={labModalVisible}
@@ -210,7 +236,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
         onClose={() => setModalVisible(false)}
         onSubmit={handleAddProcedure}
       />
-      <AdmitPatientModal visible={admitModalVisible} onClose={()=>setAdmitModalVisible(false)} onSubmit={handleAdmit} />
+      <AdmitPatientModal visible={admitModalVisible} onClose={() => setAdmitModalVisible(false)} onSubmit={handleAdmit} />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Input, Select, Tag } from "antd";
+import { Modal, Button, Form, Input, Select, Tag, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 const { TextArea } = Input;
 import { searchDiagnosis } from "../redux/slice/diagnosisSlice";
@@ -10,7 +10,7 @@ import BhmsButton from "../heroComponents/BhmsButton";
 const PatientDiagnosisModal = ({ visible, onClose, onSubmit }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
-    const { diagnoses, loading } = useSelector((state) => state.diagnosis);
+    const { diagnoses, loading,addDiagnosisStatus } = useSelector((state) => state.diagnosis);
 
     const [selectedDiagnoses, setSelectedDiagnoses] = useState([]);
 
@@ -36,10 +36,11 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit }) => {
         form.validateFields().then(values => {
             const diagnosisData = {
                 ...values,
-                diagnoses: selectedDiagnoses
+                diagnosis_name: selectedDiagnoses
             };
             onSubmit(diagnosisData);
             form.resetFields();
+            console.log(diagnosisData)
             setSelectedDiagnoses([]); // Clear selected diagnoses
         });
     };
@@ -51,7 +52,7 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit }) => {
             onCancel={onClose}
             footer={[
                 <BhmsButton key="cancel" block={false} size="medium" outline onClick={onClose}>Cancel</BhmsButton>,
-                <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit}>Submit</BhmsButton>
+                <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit} disabled={addDiagnosisStatus}>{addDiagnosisStatus?<Spin/> : 'Submit'}</BhmsButton>
             ]}
             destroyOnClose
         >
@@ -79,14 +80,14 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit }) => {
                 </Form.Item>
 
                 {/* Patient Complaint */}
-                <Form.Item name="complain" label="Patient Complain" rules={[{ required: true, message: "Please enter patient complain" }]}>
+                <Form.Item name="patient_complaints" label="Patient Complain" rules={[{ required: true, message: "Please enter patient complain" }]}>
                     <Input placeholder="Enter patient complain" />
                 </Form.Item>
 
               
 
                 {/* Summary (Textarea) */}
-                <Form.Item name="summary" label="Summary" rules={[{ required: true, message: "Please enter summary" }]}>
+                <Form.Item name="doctors_observation" label="Summary" rules={[{ required: true, message: "Please enter summary" }]}>
                     <TextArea rows={3} placeholder="Enter diagnosis summary" />
                 </Form.Item>
             </Form>

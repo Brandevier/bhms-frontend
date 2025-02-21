@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, Select, DatePicker, Row, Col, Spin } from "antd";
-import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import BhmsButton from "../heroComponents/BhmsButton";
 const { Option } = Select;

@@ -88,11 +88,11 @@ const ConsultationDepartment = () => {
             View
           </BhmsButton>
           <span className="mx-2"></span>
-          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
+          {/* <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
             <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
               Delete
             </BhmsButton>
-          </Popconfirm>
+          </Popconfirm> */}
         </span>
       ),
     },

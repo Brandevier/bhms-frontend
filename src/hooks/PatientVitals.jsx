@@ -42,7 +42,7 @@ const PatientVitals = ({ vitals }) => {
       extra={
         latestVitals ? (
           <Text type="secondary">
-            <CalendarOutlined /> {moment(latestVitals.updatedAt).format("MMM DD, YYYY")}
+            <CalendarOutlined /> {moment(latestVitals.updatedAt).format("LLL")}
           </Text>
         ) : null
       }

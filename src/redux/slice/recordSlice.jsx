@@ -55,11 +55,12 @@ export const fetchRecordByPatient = createAsyncThunk(
 export const createRecord = createAsyncThunk(
     'records/createRecord',
     async (recordData, { rejectWithValue,getState }) => {
-        const { admin } = getState().auth
+        const { auth } = getState();
+        const user = auth.admin || auth.user
         try {
             const response = await apiClient.post('/records/institution/patient/create', {
                 ...recordData,
-                institution_id: admin.institution.id,
+                institution_id: user.institution.id,
             });
             return response.data;
         } catch (error) {

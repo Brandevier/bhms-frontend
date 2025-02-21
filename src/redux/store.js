@@ -11,7 +11,7 @@ import reducer from "./waitlistSlice";
 const persistConfig = {
   key: "bhms",
   storage,
-  whitelist: ["auth", "patientNote", "records","departments"], // Add only reducers you want to persist
+  whitelist: ["auth", "patientNote", "records","departments","permissions"], // Add only reducers you want to persist
 };
 
 // 🔹 Root Reducer (Combine all reducers)
