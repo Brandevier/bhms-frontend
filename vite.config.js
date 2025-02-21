@@ -14,4 +14,7 @@ export default defineConfig({
       external: ["react-phone-input-2/lib/style.css"],
     },
   },
+  optimizeDeps: {
+    include: ["moment"],
+  },
 });
