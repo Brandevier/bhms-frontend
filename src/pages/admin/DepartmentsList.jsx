@@ -117,9 +117,11 @@ const handleNavigation = ({departmentType,department_id}) => {
                 <h2>
                     Departments <Badge count={departments?.length} style={{ backgroundColor: "#52c41a" }} />
                 </h2>
+
+                {user ? '' : (
                 <BhmsButton type="primary" icon={<PlusOutlined />} size="medium" block={false} onClick={() => setModalVisible(true)}>
                     Add Department
-                </BhmsButton>
+                </BhmsButton>)}
             </Row>
 
             {/* Show Skeleton While Loading */}
