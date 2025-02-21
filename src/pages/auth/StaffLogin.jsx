@@ -1,14 +1,32 @@
-import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import React, { useState } from "react";
+import { Form, Input, Button, Typography, message, Spin } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
-
+import { loginUser } from "../../redux/slice/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const StaffLogin = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const onFinish = (values) => {
-    console.log("Success:", values);
+    setLoading(true); // Start loading state
+    dispatch(loginUser(values))
+      .unwrap()
+      .then((res) => {
+        message.success("Human verification required.");
+        navigate("/puzzle-authentication"); // Redirect to puzzle step
+      })
+      .catch((err) => {
+        message.error(err.error || "Login failed. Please try again.");
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading state
+      });
   };
 
   return (
@@ -32,24 +50,10 @@ const StaffLogin = () => {
         }}
       >
         <img
-          src="/assets/login_image.png" // Replace with the actual doctor image
+          src="/assets/login_image.png" // Replace with actual image path
           alt="Doctor"
           style={{ width: "60%", borderRadius: "10px" }}
         />
-
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: "20%",
-            background: "#fff",
-            padding: "10px 20px",
-            borderRadius: "10px",
-            boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-          }}
-        >
-          <br />
-        </div>
       </div>
 
       {/* Right Side - Login Form */}
@@ -64,9 +68,10 @@ const StaffLogin = () => {
           background: "#ffffff",
         }}
       >
-        <Button type="link" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
+        <Button type="link" href="/login" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
           Admin Login
         </Button>
+
         <div className="w-full flex flex-col justify-center items-center">
           <Title level={2} style={{ marginBottom: 10 }}>
             Staff Login
@@ -78,23 +83,29 @@ const StaffLogin = () => {
             layout="vertical"
             style={{ width: "100%", maxWidth: "400px", marginTop: "20px" }}
           >
-            <Form.Item name="username" rules={[{ required: true, message: "Enter your username" }]}>
-              <Input placeholder="Username" size="large" />
+            {/* Staff ID */}
+            <Form.Item name="staffID" rules={[{ required: true, message: "Enter your staff ID" }]}>
+              <Input placeholder="Staff ID" size="large" />
             </Form.Item>
+
+            {/* Password */}
             <Form.Item name="password" rules={[{ required: true, message: "Enter your password" }]}>
               <Input.Password placeholder="Password" size="large" />
             </Form.Item>
+
+            {/* Submit Button with Loader */}
             <Form.Item>
-              <BhmsButton onClick={() => console.log("Clicked!")}>
+              <BhmsButton htmlType="submit" disabled={loading}>
+                {loading ? <Spin size="small" style={{ marginRight: 8 }} /> : null}
                 Submit
               </BhmsButton>
-
             </Form.Item>
           </Form>
-
         </div>
-        <div className=" text-black text-center text-sm shadow-md">
-          {/* &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved. */}
+
+        {/* Footer */}
+        <div className="text-black text-center text-sm shadow-md">
+          &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved.
         </div>
       </div>
     </div>
@@ -102,4 +113,3 @@ const StaffLogin = () => {
 };
 
 export default StaffLogin;
-

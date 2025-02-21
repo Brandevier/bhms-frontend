@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { Card, Row, Col, Avatar, Typography, Button, Tooltip, message } from "antd";
-import { EditOutlined, ExperimentOutlined, HeartOutlined, PlusCircleOutlined, FileTextOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  ExperimentOutlined,
+  HeartOutlined,
+  PlusCircleOutlined,
+  FileTextOutlined,
+  MedicineBoxOutlined, // Prescription Icon
+  LoginOutlined
+} from "@ant-design/icons";
 import BhmsButton from "../heroComponents/BhmsButton";
 const { Title, Text } = Typography;
 import VitalSignsModal from "../modal/VitalSignsModal";
@@ -10,51 +18,98 @@ import { createVitalSignsRecord } from "../redux/slice/vitalSignsSlice";
 import { useParams } from 'react-router-dom';
 import RequestLabDialog from "../modal/RequestLabDialog";
 import { requestLab } from "../redux/slice/labSlice";
+import PrescriptionModal from "../modal/PrescriptionModal";
+import CreateProcedureModal from "../modal/CreateProcedureModal";
+import { createPrescription } from "../redux/slice/prescriptionSlice";
+import { addProcedure } from "../redux/slice/procedureSlice";
+import AdmitPatientModal from "../modal/AdmitPatientModal";
 
 
-const PatientProfileHeader = ({ patient_record, handleGeneralSubmit,patient_id,lab,patient_department }) => {
+
+
+const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
   const [vitalModalVisible, setVitalModalVisible] = useState(false);
   const [diagnosisModalVisible, setDiagnosisModalVisible] = useState(false);
-  const [labModalVisible,setLabModalVisible] = useState(false);
+  const [labModalVisible, setLabModalVisible] = useState(false);
+  const [prescriptionModalVisible, setPrescriptionModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [admitModalVisible, setAdmitModalVisible] = useState(false);
 
-  const dispatch = useDispatch()
-  const { status} = useSelector((state)=>state.vitals);
-  const { loading,error } = useSelector((state)=>state.lab)
-  const { id } = useParams()
+
+  const dispatch = useDispatch();
+  const { status } = useSelector((state) => state.vitals);
+  const { loading, error } = useSelector((state) => state.lab);
+  const { id } = useParams();
 
   const handleVitalsSubmit = (data) => {
     const vitalSignsData = {
       ...data,
       patient_id: patient_id,
-     
-    }
+    };
     dispatch(createVitalSignsRecord(vitalSignsData)).unwrap()
       .then((res) => {
-        message.success('vitals created successfully')
-        handleGeneralSubmit()
+        message.success('Vitals recorded successfully');
+        handleGeneralSubmit();
         setVitalModalVisible(false);
-      }).error(()=>message.error('lab requested failed'))
+      })
+      .catch(() => message.error('Failed to record vitals'));
   };
 
   const handleLabSubmit = (data) => {
     const labData = {
       ...data,
       patient_id: patient_id,
-      department_id:patient_department
+      department_id: patient_department
     };
-  
-    dispatch(requestLab(labData))
-      .unwrap()
+
+    dispatch(requestLab(labData)).unwrap()
       .then((res) => {
-        message.success("Lab request completed");
-        handleGeneralSubmit()
+        message.success("Lab request submitted");
+        handleGeneralSubmit();
         setLabModalVisible(false);
       })
       .catch(() => {
         message.error("Lab request failed");
       });
   };
-  
+
+  const handlePrescriptionSubmit = (data) => {
+
+    const prescriptionData = {
+      ...data,
+      patient_id: patient_id,
+      department_id: patient_department
+    };
+    dispatch(createPrescription(prescriptionData)).unwrap().then((res) => {
+      message.success('prescription created successfully')
+      handleGeneralSubmit();
+      setPrescriptionModalVisible(false);
+
+    }).catch((err) => {
+      message.error('Failed to create prescription')
+    });
+  };
+
+  const handleAddProcedure = (newProcedure) => {
+    const procedureData = {
+      ...newProcedure,
+      patient_id: patient_id,
+    };
+
+    dispatch(addProcedure(procedureData)).unwrap().then((res) => {
+      message.success('procedure created successfully')
+      handleGeneralSubmit();
+      setProcedureModalVisible(false);
+    })
+  };
+
+
+  const handleAdmit = (patientData) => {
+
+    closeModal();
+  };
+
+
 
   return (
     <>
@@ -79,7 +134,6 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit,patient_id,l
                 <Text type={patient_record?.status === "active" ? "success" : "danger"} style={{ marginBottom: 5 }}>
                   {patient_record?.status?.charAt(0).toUpperCase() + patient_record?.status?.slice(1)}
                 </Text>
-                {/* Dummy Diagnosis */}
                 <Text type="secondary" style={{ display: "block" }}>
                   Diagnosis: Hypertension & Fever
                 </Text>
@@ -89,7 +143,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit,patient_id,l
 
           {/* Edit Button */}
           <Col>
-            <BhmsButton block={false} size="medium" >Transfer Patient</BhmsButton>
+            <BhmsButton block={false} size="medium">Transfer Patient</BhmsButton>
           </Col>
         </Row>
 
@@ -97,7 +151,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit,patient_id,l
         <Row justify="center" style={{ marginTop: 20 }} gutter={[16, 16]}>
           <Col>
             <Tooltip title="Request Lab">
-              <Button shape="circle" icon={<ExperimentOutlined />} onClick={() => setLabModalVisible(true)}/>
+              <Button shape="circle" icon={<ExperimentOutlined />} onClick={() => setLabModalVisible(true)} />
             </Tooltip>
           </Col>
           <Col>
@@ -112,14 +166,51 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit,patient_id,l
           </Col>
           <Col>
             <Tooltip title="Request Procedure">
-              <Button shape="circle" icon={<PlusCircleOutlined />} />
+              <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setModalVisible(true)} />
+            </Tooltip>
+          </Col>
+          <Col>
+            <Tooltip title="Prescribe Medication">
+              <Button shape="circle" icon={<MedicineBoxOutlined />} onClick={() => setPrescriptionModalVisible(true)} />
+            </Tooltip>
+          </Col>
+          <Col>
+            <Tooltip title="Admit Patient">
+              <Button shape="circle" icon={<LoginOutlined />} onClick={()=>setAdmitModalVisible(true)}/>
             </Tooltip>
           </Col>
         </Row>
       </Card>
-      <VitalSignsModal visible={vitalModalVisible} onClose={() => setVitalModalVisible(false)} status={status} onSubmit={handleVitalsSubmit}/>
-      <PatientDiagnosisModal visible={diagnosisModalVisible} onClose={() => setDiagnosisModalVisible(false)}  />
-      <RequestLabDialog  visible={labModalVisible} onClose={()=>setLabModalVisible(false)} loading={loading} onSubmit={handleLabSubmit} tests={lab}/>
+
+      {/* Modals */}
+      <VitalSignsModal
+        visible={vitalModalVisible}
+        onClose={() => setVitalModalVisible(false)}
+        status={status}
+        onSubmit={handleVitalsSubmit}
+      />
+      <PatientDiagnosisModal
+        visible={diagnosisModalVisible}
+        onClose={() => setDiagnosisModalVisible(false)}
+      />
+      <RequestLabDialog
+        visible={labModalVisible}
+        onClose={() => setLabModalVisible(false)}
+        loading={loading}
+        onSubmit={handleLabSubmit}
+        tests={lab}
+      />
+      <PrescriptionModal
+        visible={prescriptionModalVisible}
+        onClose={() => setPrescriptionModalVisible(false)}
+        onSave={handlePrescriptionSubmit}
+      />
+      <CreateProcedureModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleAddProcedure}
+      />
+      <AdmitPatientModal visible={admitModalVisible} onClose={()=>setAdmitModalVisible(false)} onSubmit={handleAdmit} />
     </>
   );
 };

@@ -1,85 +1,153 @@
-import React, { useState } from "react";
-import { Table, Input, Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
+import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
+import { useDispatch, useSelector } from "react-redux";
+import { createRecord, fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
+import { useParams, useNavigate } from "react-router-dom";
+
 const { Search } = Input;
+const { TabPane } = Tabs;
 
-const patientData = [
-  { key: "1", fullName: "John Doe", gender: "Male", nin: "123456789", folderNumber: "A001", status: "Confirmed" },
-  { key: "2", fullName: "Jane Smith", gender: "Female", nin: "987654321", folderNumber: "A002", status: "Pending" },
-  { key: "3", fullName: "Michael Johnson", gender: "Male", nin: "456123789", folderNumber: "A003", status: "Cancelled" },
-];
-
-const PatientRecords = () => {
+const PatientRecordsOPD = () => {
   const [searchText, setSearchText] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
+  const dispatch = useDispatch();
+  const { records, status, error } = useSelector((state) => state.records);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { id } = useParams(); // Institution ID
+  const navigate = useNavigate();
 
-  // Count patients by status
-  const totalPatients = patientData.length;
-  const confirmedCount = patientData.filter((p) => p.status === "Confirmed").length;
-  const pendingCount = patientData.filter((p) => p.status === "Pending").length;
-  const cancelledCount = patientData.filter((p) => p.status === "Cancelled").length;
+  useEffect(() => {
+    dispatch(fetchRecordsByInstitution());
+  }, [dispatch]);
 
-  // Filter data based on selected tab
-  const filteredData = patientData.filter((patient) => {
-    if (activeTab === "Confirmed") return patient.status === "Confirmed";
-    if (activeTab === "Pending") return patient.status === "Pending";
-    if (activeTab === "Cancelled") return patient.status === "Cancelled";
-    return true; // Show all patients
-  });
+  // Handle Register New Patient
+  const handleRegister = (patientData) => {
+    const data = { ...patientData, department_id: id };
+    dispatch(createRecord(data))
+      .unwrap()
+      .then(() => {
+        message.success("Patient created successfully");
+        dispatch(fetchRecordsByInstitution());
+        setModalVisible(false);
+      })
+      .catch(() => message.error("Failed to create patient"));
+  };
 
+  // Handle Search Filtering
+  const handleSearch = (value) => {
+    setSearchText(value?.toLowerCase() || "");
+  };
+
+  // Filter only active records
+  const activeRecords = records?.filter((record) => record.status === "active");
+
+  // Filter for search text
+  const filteredData = activeRecords?.filter(
+    (item) =>
+      item?.patient?.first_name?.toLowerCase()?.includes(searchText) ||
+      item?.patient?.last_name?.toLowerCase()?.includes(searchText) ||
+      item?.folder_number?.includes(searchText) ||
+      item?.nin_number?.includes(searchText)
+  );
+
+  // Handle Delete
+  const handleDelete = (id) => {
+    dispatch(deleteRecord(id))
+      .unwrap()
+      .then(() => {
+        message.success("Record deleted successfully");
+        dispatch(fetchRecordsByInstitution());
+      })
+      .catch(() => message.error("Failed to delete record"));
+  };
+
+  // Table Columns
   const columns = [
-    { title: "Full Name", dataIndex: "fullName", key: "fullName" },
-    { title: "Gender", dataIndex: "gender", key: "gender" },
-    { title: "NIN Number", dataIndex: "nin", key: "nin" },
-    { title: "Folder Number", dataIndex: "folderNumber", key: "folderNumber" },
     {
-      title: "Action",
-      key: "action",
-      render: (_, record) => <BhmsButton block={false} size="medium" outline={true} type="link">View</BhmsButton>,
+      title: "Full Name",
+      dataIndex: "name",
+      key: "name",
+      render: (_, record) =>
+        `${record?.patient?.first_name || ""} ${record?.patient?.middle_name || ""} ${record?.patient?.last_name || ""}`,
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      key: "gender",
+      render: (_, record) => record?.patient?.gender || "N/A",
+    },
+    {
+      title: "NIN Number",
+      dataIndex: "nin_number",
+      key: "nin_number",
+    },
+    {
+      title: "Folder Number",
+      dataIndex: "folder_number",
+      key: "folder_number",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => <Tag color="green">{status?.toUpperCase()}</Tag>,
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <span>
+          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
+            View
+          </BhmsButton>
+          <span className="mx-2"></span>
+          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
+            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
+              Delete
+            </BhmsButton>
+          </Popconfirm>
+        </span>
+      ),
     },
   ];
 
-  // Tab Styling
-  const tabStyle = (key) => ({
-    padding: "5px 10px",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    transition: "all 0.3s",
-    background: activeTab === key ? "#1E293B" : "#F1F5F9", // Dark blue for active, light for others
-    color: activeTab === key ? "#fff" : "#000",
-    marginRight: "10px",
-  });
-
   return (
-    <div style={{ padding: "10px" }}>
-      {/* Custom Tabs */}
-      <div style={{ display: "flex", marginBottom: "16px", background: "#F8FAFC", padding: "5px", borderRadius: "5px" }}>
-        <div style={tabStyle("all")} onClick={() => setActiveTab("all")}>
-          All ({totalPatients})
-        </div>
-        <div style={tabStyle("Confirmed")} onClick={() => setActiveTab("Confirmed")}>
-          Confirmed ({confirmedCount})
-        </div>
-        <div style={tabStyle("Pending")} onClick={() => setActiveTab("Pending")}>
-          Pending ({pendingCount})
-        </div>
-        <div style={tabStyle("Cancelled")} onClick={() => setActiveTab("Cancelled")}>
-          Cancelled ({cancelledCount})
-        </div>
+    <div style={{ padding: "20px" }}>
+      {error && <Alert message="Error" description={error.message} type="error" showIcon closable />}
+
+      {/* Top Bar: Search & Register */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+        <Search
+          placeholder="Search Name, Folder Number, NIN"
+          value={searchText}
+          onChange={(e) => handleSearch(e?.target?.value)}
+          style={{ width: 300 }}
+          allowClear
+        />
+        <BhmsButton block={false} icon={<PlusOutlined />} size="medium" onClick={() => setModalVisible(true)}>
+          Register New Patient
+        </BhmsButton>
       </div>
 
-      {/* Search Input */}
-      <Search
-        placeholder="Search by Name, NIN, Folder Number"
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ marginBottom: 16, width: 300 }}
-      />
+      {/* Tabs Section */}
+      <Tabs defaultActiveKey="all">
+        {/* All Active Patients */}
+        <TabPane tab={`All (${activeRecords?.length || 0})`} key="all">
+          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
+        </TabPane>
 
-      {/* Patient Table */}
-      <Table columns={columns} dataSource={filteredData} pagination={{ pageSize: 10 }} />
+        {/* Retake Vitals Request (Placeholder, Modify logic as needed) */}
+        <TabPane tab={`Retake Vitals Request (${0})`} key="retake-vitals">
+          <Skeleton active paragraph={{ rows: 5 }} />
+        </TabPane>
+      </Tabs>
+
+      {/* Patient Registration Modal */}
+      <PatientRegistrationModal visible={modalVisible} onClose={() => setModalVisible(false)} onSubmit={handleRegister} status={status} />
     </div>
   );
 };
 
-export default PatientRecords;
+export default PatientRecordsOPD;

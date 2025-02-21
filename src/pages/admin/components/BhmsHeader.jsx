@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { Layout, Dropdown, Avatar, Badge, Modal } from "antd";
 import { SettingOutlined, BellOutlined, SearchOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
+import SettingsModal from "../../../modal/SettingsModal";
 
 const { Header } = Layout;
 
 const BhmsHeader = () => {
   const { admin } = useSelector((state) => state.auth);
-  const [searchVisible, setSearchVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+
+
 
   const userMenu = (
     <div style={{ width: "12rem" }} className="p-4 bg-white shadow-lg rounded-lg">
@@ -35,13 +39,14 @@ const BhmsHeader = () => {
         <h1 className="text-lg font-semibold text-gray-800">{admin.institution.name}</h1>
 
         {/* Search Bar */}
-       
+
 
         {/* Icons & Profile */}
         <div className="flex items-center gap-4">
           <SettingOutlined
             style={{ color: "#475569" }}
             className="text-xl cursor-pointer hover:text-gray-500"
+            onClick={() => setModalVisible(true)}
           />
           <Badge count={3}>
             <BellOutlined
@@ -61,15 +66,7 @@ const BhmsHeader = () => {
         </div>
       </Header>
 
-      {/* Search Modal */}
-      <Modal
-        title="Search System"
-        visible={searchVisible}
-        onCancel={() => setSearchVisible(false)}
-        footer={null}
-      >
-        <p>Search functionality will be implemented here...</p>
-      </Modal>
+      <SettingsModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </>
   );
 };

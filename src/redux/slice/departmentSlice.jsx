@@ -39,13 +39,13 @@ export const getDepartmentsByInstitution = createAsyncThunk(
   "department/getDepartmentsByInstitution",
   async (_, { rejectWithValue,getState }) => {
     const { auth } = getState()
-    const institution_id = auth.admin.institution.id
+    const user = auth.admin || auth.user
 
 
     try {
       const response = await apiClient.get(`/institutions/departments`,{
         params:{
-            "institution_id":institution_id
+            "institution_id":user.institution.id
         }
       });
       return response.data;

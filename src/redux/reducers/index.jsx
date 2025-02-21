@@ -8,7 +8,10 @@ import diagnosisReducers from '../slice/diagnosisSlice'
 import vitalSignsReducers from '../slice/vitalSignsSlice'
 import patientNoteSlice from '../slice/patientNotesSlice'
 import labReducers from '../slice/labSlice'
-
+import prescriptionSlice from '../slice/prescriptionSlice'
+import serviceReducers from '../slice/serviceSlice'
+import procedureReducers from  '../slice/procedureSlice'
+import inventoryReducers from '../slice/inventorySlice'
 
 export {
     authReducer,
@@ -20,6 +23,10 @@ export {
     diagnosisReducers,
     vitalSignsReducers,
     patientNoteSlice,
-    labReducers
+    labReducers,
+    prescriptionSlice,
+    serviceReducers,
+    procedureReducers,
+    inventoryReducers
 }
  

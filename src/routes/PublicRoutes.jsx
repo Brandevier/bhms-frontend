@@ -1,11 +1,11 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const PublicRoutes = () => {
-  const user = useSelector((state) => state.auth.user); // Get user from Redux state
+  const { user, admin } = useSelector((state) => state.auth);
 
-  return user ? <Navigate to="/dashboard" /> : <Outlet />;
+  return user || admin ? <Navigate to="/shared/departments" /> : <Outlet />;
 };
 
 export default PublicRoutes;

@@ -49,7 +49,7 @@ const BhmsSidebar = () => {
             <Link to="/admin" className="text-gray-800">Dashboard</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<AppstoreOutlined style={{ color: "#475569" }} />}>
-            <Link to="/admin/departments" className="text-gray-800">Department</Link>
+            <Link to="/shared/departments" className="text-gray-800">Department</Link>
           </Menu.Item>
           <Menu.Item key="3" icon={<TeamOutlined style={{ color: "#475569" }} />}>
             <Link to="/admin/staffs" className="text-gray-800">Staff Management</Link>
@@ -58,8 +58,8 @@ const BhmsSidebar = () => {
             <Link to="/sms-management" className="text-gray-800">SMS Management</Link>
           </Menu.Item>
           <Menu.Item key="5" icon={<MessageOutlined style={{ color: "#475569" }} />}>
-            <Link to="/messages" className="text-gray-800">Messages</Link>
-            <Badge count={3} className="ml-2" />
+            <Link to="/admin/service" className="text-gray-800">Service</Link>
+            
           </Menu.Item>
           <Menu.Item key="6" icon={<CiOutlined style={{ color: "#475569" }} />}>
             <Link to="/admin/claims" className="text-gray-800">Claims</Link>

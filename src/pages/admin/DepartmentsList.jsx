@@ -6,7 +6,7 @@ import { getDepartmentsByInstitution, createDepartment } from "../../redux/slice
 import { useSelector, useDispatch } from "react-redux";
 import CreateDepartmentDialog from "./components/CreateDepartmentDialog";
 import { useNavigate } from "react-router-dom";
-
+import { filterDepartmentsByRole } from "../../util/permissionsUtil";
 
 
 
@@ -16,11 +16,20 @@ const DepartmentsList = () => {
     const { loading, departments, error } = useSelector((state) => state.departments);
     const [isModalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
+    const { admin,user } = useSelector((state)=>state.auth)
+    const [filteredDepartments, setFilteredDepartments] = useState([]);
 
-
+   
     useEffect(() => {
         dispatch(getDepartmentsByInstitution());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (departments.length > 0) {
+            setFilteredDepartments(filterDepartmentsByRole(admin || user, departments));
+        }
+    }, [departments, admin, user]);
+
 
     const handleCreate = (values) => {
         console.log("New Department Data:", values);
@@ -53,6 +62,8 @@ const getDepartmentImage = (departmentType) => {
             return "/departments/account.jpeg";
         case "HR":
             return "/departments/hr.jpg";
+        case "Store":
+            return "/departments/stores.jpg";
         default:
             return "/departments/ward.jpg"; // Default image for unknown departments
     }
@@ -65,7 +76,7 @@ const handleNavigation = ({departmentType,department_id}) => {
             navigate("/departments/ward");
             break;
         case "Consultation":
-            navigate("/departments/consultation");
+            navigate(`/shared/consultation/${department_id}`);
             break;
         case "Maternity Ward":
             navigate("/departments/maternity");
@@ -74,19 +85,22 @@ const handleNavigation = ({departmentType,department_id}) => {
             navigate("/departments/pharmacy");
             break;
         case "Lab":
-            navigate("/departments/lab");
+            navigate(`/shared/lab/${department_id}`);
             break;
         case "Records":
-            navigate(`/admin/records/${department_id}`);
+            navigate(`/shared/records/${department_id}`);
             break;
         case "OPD":
-            navigate("/admin/departments/opd");
+            navigate(`/shared/opd/${department_id}`);
             break;
         case "Accounts":
             navigate("/departments/accounts");
             break;
         case "HR":
             navigate("/departments/hr");
+            break;
+        case "Store":
+            navigate(`/shared/store/${department_id}`);
             break;
         default:
             navigate("/departments/general"); // Default page
@@ -125,7 +139,7 @@ const handleNavigation = ({departmentType,department_id}) => {
                 <Empty description="No Departments Found" />
             ) : (
                 <Row gutter={[16, 16]}>
-                    {departments?.map((dept, index) => (
+                    {filteredDepartments?.map((dept, index) => (
                         <Col xs={24} sm={12} md={8} lg={8} key={index}>
                             <Card
                                 hoverable
@@ -137,11 +151,7 @@ const handleNavigation = ({departmentType,department_id}) => {
                                         style={{ height: "180px", objectFit: "cover" }}
                                     />
                                 }
-                                // actions={[
-                                    
-                                  
-
-                                // ]}
+                              
                             >
                                 <h2 className="font-bold text-xl">{dept?.name}</h2>
                                 {/* <p>{dept?.description}</p> */}

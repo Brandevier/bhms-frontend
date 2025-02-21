@@ -98,7 +98,7 @@ const Records = () => {
       key: "actions",
       render: (_, record) => (
         <span>
-          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/admin/patient/details/${record?.id}`)}>
+          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
             View
           </BhmsButton>
           <span className="mx-2"></span>

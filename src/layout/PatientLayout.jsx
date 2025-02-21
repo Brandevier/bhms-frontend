@@ -14,6 +14,7 @@ import { fetchPatientNotes } from "../redux/slice/patientNotesSlice";
 import HealthReports from "../hooks/HealthReports";
 import PrescriptionList from "../hooks/PrescriptionList";
 import { fetchLabTest ,fetchPatientLabResults} from "../redux/slice/labSlice";
+import PatientProcedure from "../hooks/PatientProcedure";
 
 
 const PatientLayout = () => {
@@ -24,12 +25,14 @@ const PatientLayout = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    dispatch(fetchRecordByPatient({ record_id: id }));
-    dispatch(getAllStaff());
-    dispatch(fetchLabTest());
-    dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
-
-    dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
+    dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res)=>{
+      dispatch(getAllStaff());
+      dispatch(fetchLabTest());
+      dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
+  
+      dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
+    });
+   
   }, [dispatch, id]);
 
   const generalHandler = () => {
@@ -57,7 +60,7 @@ const PatientLayout = () => {
         {status === "loading" ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
-          <PrescriptionList />
+          <PrescriptionList  prescriptionData={currentRecord?.patient?.prescriptions}/>
         )}
       </div>
 
@@ -102,6 +105,13 @@ const PatientLayout = () => {
         </Col>
       </Row>
       {/* Patient Notes */}
+      {status === "loading" ? (
+            <Skeleton active paragraph={{ rows: 2 }} />
+          ) : (
+            <PatientProcedure procedures={currentRecord?.patient?.procedures} onDelete={()=>console.log('delete')} />
+
+          )} 
+          
       {status === "loading" ? (
             <Skeleton active paragraph={{ rows: 2 }} />
           ) : (

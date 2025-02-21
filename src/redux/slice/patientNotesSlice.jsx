@@ -12,7 +12,7 @@ export const createPatientNote = createAsyncThunk(
     try {
       const response = await apiClient.post('/patient-note/notes/create', {
         ...noteData,
-        staff_id:"4a812774-c609-4a09-819d-1bf0d6c8634f",
+        staff_id:user.id,
         institution_id:user.institution.id
       });
       return response.data;

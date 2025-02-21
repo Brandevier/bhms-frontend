@@ -53,10 +53,11 @@ export const getAllStaff = createAsyncThunk(
     "staff/getAllStaff",
     async (_, { rejectWithValue, getState }) => {
         const { auth } = getState()
+        const user = auth.admin || auth.user
         try {
             const response = await apiClient.get("/auth/all-staffs", {
                 params: {
-                    "institution_id": auth.admin.institution.id
+                    "institution_id": user.institution.id
                 }
 
             });

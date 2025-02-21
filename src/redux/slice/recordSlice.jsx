@@ -15,11 +15,12 @@ const initialState = {
 export const fetchRecordsByInstitution = createAsyncThunk(
     'records/fetchRecordsByInstitution',
     async (_, { rejectWithValue,getState }) => {
-        const { admin } = getState().auth
+        const { admin,user } = getState().auth
+        const institutionId = admin ? admin.institution.id : user.institution.id
         try {
             const response = await apiClient.get(`/records/institution`,{
                 params:{
-                    'institution_id':admin.institution.id,
+                    'institution_id':institutionId,
                 }
             });
             return response.data;
@@ -34,11 +35,12 @@ export const fetchRecordsByInstitution = createAsyncThunk(
 export const fetchRecordByPatient = createAsyncThunk(
     'records/fetchRecordByPatient',
     async ({ record_id }, { rejectWithValue ,getState}) => {
-        const { admin } = getState().auth
+        const { auth } = getState()
+        const user = auth.admin || auth.user
         try {
             const response = await apiClient.get(`/records/institution/patient/get-patient-details`,{
                 params:{
-                    'institution_id':admin.institution.id,
+                    'institution_id':user.institution.id,
                     'record_id':record_id
                 }
             });

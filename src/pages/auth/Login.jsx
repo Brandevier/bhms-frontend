@@ -88,8 +88,8 @@ const Login = () => {
           background: "#ffffff",
         }}
       >
-        <Button type="link" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
-          LOGIN AS STAFF
+        <Button type="link" href="/staff_login" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
+          staff login
         </Button>
         <div className="w-full flex flex-col justify-center items-center">
           <Title level={2} style={{ marginBottom: 10 }}>

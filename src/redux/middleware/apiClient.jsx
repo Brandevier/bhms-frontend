@@ -30,7 +30,7 @@ const retryRequest = async (error) => {
 // Check internet connectivity
 const checkInternetConnectivity = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/ping`, { method: 'HEAD' }); // Replace '/ping' with a health-check endpoint
+    const response = await fetch(`${BASE_URL}/google.com`, { method: 'HEAD' }); // Replace '/ping' with a health-check endpoint
     return response.ok;
   } catch (error) {
     return false;

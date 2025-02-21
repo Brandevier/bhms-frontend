@@ -24,6 +24,7 @@ const PatientRegistrationModal = ({ visible, onClose, onSubmit,status }) => {
   return (
     <Modal
       title="Register New Patient"
+      
       open={visible}
       onCancel={onClose}
       footer={[

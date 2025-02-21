@@ -5,47 +5,19 @@ import moment from "moment";
 
 const { Title } = Typography;
 
-// Sample prescription data (Replace with actual API data)
-const prescriptions = [
-  {
-    id: "1",
-    drug: "Amoxicillin 500mg",
-    dosage: "1 capsule every 8 hours",
-    status: "Dispensed",
-    prescribedBy: "Dr. John Doe",
-    date: "2025-02-16",
-  },
-  {
-    id: "2",
-    drug: "Paracetamol 500mg",
-    dosage: "2 tablets every 6 hours",
-    status: "Pending",
-    prescribedBy: "Dr. Jane Smith",
-    date: "2025-02-15",
-  },
-  {
-    id: "3",
-    drug: "Ibuprofen 200mg",
-    dosage: "1 tablet every 8 hours",
-    status: "Rejected",
-    prescribedBy: "Dr. Michael Brown",
-    date: "2025-02-14",
-  },
-];
-
 // Status color mapping
 const statusColors = {
-  Dispensed: "green",
-  Pending: "orange",
-  Rejected: "red",
+  dispensed: "green",
+  pending: "orange",
+  rejected: "red",
 };
 
-const PrescriptionList = ({ prescriptionData = prescriptions }) => {
+const PrescriptionList = ({ prescriptionData }) => {
   const columns = [
     {
       title: "Drug Name",
-      dataIndex: "drug",
-      key: "drug",
+      dataIndex: "prescriptions",
+      key: "prescriptions",
       render: (text) => <strong>{text}</strong>,
     },
     {
@@ -57,17 +29,18 @@ const PrescriptionList = ({ prescriptionData = prescriptions }) => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => <Tag color={statusColors[status] || "blue"}>{status}</Tag>,
+      render: (status) => <Tag color={statusColors[status.toLowerCase()] || "blue"}>{status}</Tag>,
     },
     {
       title: "Prescribed By",
-      dataIndex: "prescribedBy",
-      key: "prescribedBy",
+      dataIndex: "doctor",
+      key: "prescribed_by",
+      render: (doctor) => `Dr. ${doctor?.lastName}`,
     },
     {
       title: "Date",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (date) => moment(date).format("MMM DD, YYYY"),
     },
     {
@@ -86,7 +59,6 @@ const PrescriptionList = ({ prescriptionData = prescriptions }) => {
   return (
     <div style={{ padding: 20 }}>
       <Title level={4}>Prescriptions</Title>
-      
       <Table
         columns={columns}
         dataSource={prescriptionData}

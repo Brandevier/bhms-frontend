@@ -64,10 +64,26 @@ export const updateStaffProfile = createAsyncThunk(
     }
   }
 );
+
+export const verifyPuzzleAnswer = createAsyncThunk('auth/verifyPuzzleAnswer', async ({ staffID, selectedAnswer }, { getState, rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/verify-logic-answer`, { staffID, selectedAnswer });
+    
+    // If successful, move pendingUser to actual user
+    const { pendingUser } = getState().auth;
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || "Verification failed");
+  }
+});
+
+
+
 // Initial state
 const initialState = {
   user: null,
   admin: null,
+  pendingUser: null,
   loading: false,
   emailSent:false,
   error: null,
@@ -82,28 +98,32 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
+      state.pendingUser= null,
+      state.emailSent=false;
       state.admin = null;
+      state.pendingUser = null;
       localStorage.removeItem('user');
       localStorage.clear()
       state.isVerified = false; // Reset isVerified when logging out
+      
     },
   },
   extraReducers: (builder) => {
     // Handle user login
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-        localStorage.setItem('token', action.payload.token)
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+    .addCase(loginUser.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(loginUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.pendingUser = action.payload; // Store user temporarily
+    })
+    .addCase(loginUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+
 
     // Handle admin login
     builder
@@ -151,6 +171,21 @@ const authSlice = createSlice({
         state.user = { ...state.user, ...action.payload.staff }; // Update the user state
       })
       .addCase(updateStaffProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+      builder.addCase(verifyPuzzleAnswer.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyPuzzleAnswer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user; // Move to actual user state
+        localStorage.setItem('token', action.payload.token)
+        state.pendingUser = null; // Clear pending user
+        state.isVerified = action.payload.verified;
+      })
+      .addCase(verifyPuzzleAnswer.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

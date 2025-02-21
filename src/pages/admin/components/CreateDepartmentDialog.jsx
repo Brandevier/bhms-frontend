@@ -14,6 +14,7 @@ const departmentTypes = [
   "OPD",
   "Accounts",
   "HR",
+  "Store",
 ];
 
 const CreateDepartmentDialog = ({ visible, onClose, onCreate,loading }) => {
