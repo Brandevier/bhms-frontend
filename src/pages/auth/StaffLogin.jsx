@@ -30,73 +30,60 @@ const StaffLogin = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        backgroundColor: "#f8f9fa",
-      }}
-    >
-      {/* Left Side - Image & Labels */}
-      <div
-        style={{
-          flex: 1,
-          background: "#F2F7FF",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: "20px",
-        }}
-      >
+    <div className="flex h-screen bg-gray-50">
+      {/* Left Side - Image & Labels (Hidden on small devices) */}
+      <div className="hidden md:flex flex-1 bg-blue-50 justify-center items-center flex-col p-5">
         <img
           src="/assets/login_image.png" // Replace with actual image path
           alt="Doctor"
-          style={{ width: "60%", borderRadius: "10px" }}
+          className="w-3/5 rounded-lg"
         />
       </div>
 
       {/* Right Side - Login Form */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: "40px",
-          background: "#ffffff",
-        }}
-      >
-        <Button type="link" href="/login" icon={<LeftOutlined />} style={{ alignSelf: "flex-start" }}>
+      <div className="flex-1 flex flex-col justify-between items-center p-10 bg-white">
+        {/* Back Button */}
+        <Button
+          type="link"
+          href="/login"
+          icon={<LeftOutlined />}
+          className="self-start"
+        >
           Admin Login
         </Button>
 
+        {/* Login Form */}
         <div className="w-full flex flex-col justify-center items-center">
-          <Title level={2} style={{ marginBottom: 10 }}>
+          <Title level={2} className="mb-2">
             Staff Login
           </Title>
-          <Text type="secondary">Facility Manager login portal</Text>
+          <Text type="secondary" className="mb-2">Facility Manager login portal</Text>
 
           <Form
             onFinish={onFinish}
             layout="vertical"
-            style={{ width: "100%", maxWidth: "400px", marginTop: "20px" }}
+            className="w-full max-w-md mt-5"
           >
             {/* Staff ID */}
-            <Form.Item name="staffID" rules={[{ required: true, message: "Enter your staff ID" }]}>
+            <Form.Item
+              name="staffID"
+              rules={[{ required: true, message: "Enter your staff ID" }]}
+            >
               <Input placeholder="Staff ID" size="large" />
             </Form.Item>
 
             {/* Password */}
-            <Form.Item name="password" rules={[{ required: true, message: "Enter your password" }]}>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: "Enter your password" }]}
+            >
               <Input.Password placeholder="Password" size="large" />
             </Form.Item>
 
             {/* Submit Button with Loader */}
             <Form.Item>
               <BhmsButton htmlType="submit" disabled={loading}>
-                {loading ? <Spin size="small" style={{ marginRight: 8 }} /> : null}
+                {loading ? <Spin size="small" className="mr-2" /> : null}
                 Submit
               </BhmsButton>
             </Form.Item>
