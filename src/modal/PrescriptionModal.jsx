@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Form, Select, Input, InputNumber, Button } from "antd";
+import { Modal, Form, Select, Input, InputNumber, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { searchPrescription } from "../redux/slice/prescriptionSlice";
 import BhmsButton from "../heroComponents/BhmsButton";
@@ -8,7 +8,7 @@ import BhmsButton from "../heroComponents/BhmsButton";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const PrescriptionModal = ({ visible, onClose, onSave }) => {
+const PrescriptionModal = ({ visible, onClose, onSave,loading }) => {
   const dispatch = useDispatch();
   const { results, status } = useSelector((state) => state.prescription);
   
@@ -58,7 +58,7 @@ const PrescriptionModal = ({ visible, onClose, onSave }) => {
           Cancel
         </BhmsButton>,
         <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit}>
-          Save Prescription
+         {status==="loading" ? <Spin/> : "Save Prescription"} 
         </BhmsButton>,
       ]}
       width={720} // Increase modal size
