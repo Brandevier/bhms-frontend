@@ -38,34 +38,99 @@ const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
       <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="oxygen" label="Oxygen Level">
-              <InputNumber addonAfter="%" style={{ width: "100%" }} />
+            <Form.Item
+              name="oxygen"
+              label="Oxygen Level"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="%"
+                style={{ width: "100%" }}
+                placeholder="Enter oxygen level (numbers only)"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="SpO2" label="SpO2">
-              <InputNumber addonAfter="%" style={{ width: "100%" }} />
+            <Form.Item
+              name="SpO2"
+              label="SpO2"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="%"
+                style={{ width: "100%" }}
+                placeholder="Enter SpO2 (numbers only)"
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="temperature" label="Temperature">
-              <InputNumber addonAfter={<FireOutlined />} style={{ width: "100%" }} />
+            <Form.Item
+              name="temperature"
+              label="Temperature"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter={<FireOutlined />}
+                style={{ width: "100%" }}
+                placeholder="Enter temperature (numbers only)"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="Blood Pressure">
               <Row gutter={8}>
                 <Col span={12}>
-                  <Form.Item name="systole" noStyle>
-                    <Input addonAfter="mmHg" placeholder="Systolic" />
+                  <Form.Item
+                    name="systole"
+                    noStyle
+                    rules={[
+                      {
+                        type: "number",
+                        message: "Please enter a valid number",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      addonAfter="mmHg"
+                      style={{ width: "100%" }}
+                      placeholder="Systolic (numbers only)"
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item name="diastole" noStyle>
-                    <Input addonAfter="mmHg" placeholder="Diastolic" />
+                  <Form.Item
+                    name="diastole"
+                    noStyle
+                    rules={[
+                      {
+                        type: "number",
+                        message: "Please enter a valid number",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      addonAfter="mmHg"
+                      style={{ width: "100%" }}
+                      placeholder="Diastolic (numbers only)"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -75,34 +140,101 @@ const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="heart_rate" label="Heart Rate">
-              <InputNumber addonAfter={<HeartOutlined />} style={{ width: "100%" }} />
+            <Form.Item
+              name="heart_rate"
+              label="Heart Rate"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter={<HeartOutlined />}
+                style={{ width: "100%" }}
+                placeholder="Enter heart rate (numbers only)"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="pulse" label="Pulse">
-              <InputNumber addonAfter={<DashboardOutlined />} style={{ width: "100%" }} />
+            <Form.Item
+              name="pulse"
+              label="Pulse"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter={<DashboardOutlined />}
+                style={{ width: "100%" }}
+                placeholder="Enter pulse (numbers only)"
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="weight" label="Weight">
-              <InputNumber addonAfter="kg" style={{ width: "100%" }} />
+            <Form.Item
+              name="weight"
+              label="Weight"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="kg"
+                style={{ width: "100%" }}
+                placeholder="Enter weight (numbers only)"
+                parser={(value) => value.replace(/[^\d.]/g, '')}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="height" label="Height">
-              <InputNumber addonAfter="cm" style={{ width: "100%" }} />
+            <Form.Item
+              name="height"
+              label="Height"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="cm"
+                style={{ width: "100%" }}
+                placeholder="Enter height (numbers only)"
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="rbs" label="Random Blood Sugar (RBS)">
-              <InputNumber addonAfter="mg/dL" style={{ width: "100%" }} />
+            <Form.Item
+              name="rbs"
+              label="Random Blood Sugar (RBS)"
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="mg/dL"
+                style={{ width: "100%" }}
+                placeholder="Enter RBS (numbers only)"
+                parser={(value) => value.replace(/[^\d.]/g, '')}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>

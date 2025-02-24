@@ -12,6 +12,9 @@ import prescriptionSlice from '../slice/prescriptionSlice'
 import serviceReducers from '../slice/serviceSlice'
 import procedureReducers from  '../slice/procedureSlice'
 import inventoryReducers from '../slice/inventorySlice'
+import shiftReducers from  '../slice/shiftSlice'
+
+
 
 export {
     authReducer,
@@ -27,6 +30,7 @@ export {
     prescriptionSlice,
     serviceReducers,
     procedureReducers,
-    inventoryReducers
+    inventoryReducers,
+    shiftReducers
 }
  

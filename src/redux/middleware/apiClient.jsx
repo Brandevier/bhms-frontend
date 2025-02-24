@@ -60,6 +60,7 @@ window.addEventListener('offline', monitorConnection);
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('THIS IS A TOKEN',token)
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -75,14 +76,29 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response) {
-      const { status } = error.response;
-      if (status === 401) {
+      const { status, data } = error.response;
+
+      // 🔹 Handle invalid token
+      if (status === 403) {
+        const errorMessage = data?.message?.toLowerCase();
+
+        if (errorMessage.includes('invalid token') || errorMessage.includes('not authorized as admin or staff')) {
+          console.error('Invalid token or unauthorized access! Logging out...');
+          toast.error('Session expired! Redirecting to login.');
+
+          // Clear user data and redirect to login
+          window.localStorage.clear();
+          window.location.href = '/login';
+          return Promise.reject(error);
+        }
+
+        toast.error('Forbidden! You do not have permission.');
+      } else if (status === 401) {
         console.error('Unauthorized! Redirecting to login.');
+        toast.error('Session expired! Redirecting to login.');
+        
         window.localStorage.clear();
         window.location.href = '/login';
-        toast.error('Session expired! Redirecting to login.');
-      } else if (status === 403) {
-        toast.error('Forbidden! You do not have permission.');
       } else if (status === 500) {
         toast.error('Server error, please try again later.');
       } else if (status === 404) {
@@ -92,12 +108,15 @@ apiClient.interceptors.response.use(
       }
     } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
       toast.error('Connection issue. Retrying...');
-      return retryRequest(error); // Retry on timeout or network error
+      return retryRequest(error);
     } else {
       toast.error(`Error: ${error.message}`);
     }
+
     return Promise.reject(error);
   }
 );
+
+
 
 export default apiClient;

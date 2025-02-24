@@ -181,7 +181,7 @@ const authSlice = createSlice({
       .addCase(verifyPuzzleAnswer.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user; // Move to actual user state
-        localStorage.setItem('token', action.payload.token)
+        localStorage.setItem('token', action.payload.user.token)
         state.pendingUser = null; // Clear pending user
         state.isVerified = action.payload.verified;
       })

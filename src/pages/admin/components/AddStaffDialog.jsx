@@ -1,15 +1,17 @@
-import React from "react";
-import { Modal, Form, Select, Checkbox, message, Spin } from "antd";
+import React, { useState } from "react";
+import { Modal, Form, Select, Checkbox, message, Spin, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
-import BhmsInput from "../../../heroComponents/BhmsInput";
 import { registerStaff } from "../../../redux/slice/staff_admin_managment_slice";
+import PhoneInput from "react-phone-input-2";
 
 const { Option } = Select;
 
 const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     // Get roles and departments from Redux store
     const { roles, loading: rolesLoading } = useSelector((state) => state.permissions);
@@ -30,7 +32,7 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                     .catch((err) => {
                         message.error(err?.message || "Failed to add staff!");
                     });
-                console.log(values)
+                console.log(values);
             })
             .catch((errorInfo) => {
                 console.log("Validation Failed:", errorInfo);
@@ -53,12 +55,44 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
         >
             <Form form={form} layout="vertical" initialValues={{ password: "pa$$w0rd" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                    <BhmsInput placeholder="Enter first name" required name="firstName" />
-                    <BhmsInput placeholder="Enter middle name" name="middlename" />
-                    <BhmsInput placeholder="Enter last name" required name="lastName" />
-                    <BhmsInput type="email" placeholder="Enter email" name="email" />
-                    <BhmsInput placeholder="Enter phone number" required name="phoneNumber" />
-                    <BhmsInput placeholder="Enter password" required type="password" name="password" />
+                    <Form.Item name="firstName" rules={[{ required: true, message: "First name is required" }]}>
+                        <Input placeholder="Enter first name" />
+                    </Form.Item>
+
+                    <Form.Item name="middlename">
+                        <Input placeholder="Enter middle name" />
+                    </Form.Item>
+
+                    <Form.Item name="lastName" rules={[{ required: true, message: "Last name is required" }]}>
+                        <Input placeholder="Enter last name" />
+                    </Form.Item>
+
+                    <Form.Item name="email" rules={[{ type: "email", message: "Enter a valid email" }]}>
+                        <Input placeholder="Enter email" />
+                    </Form.Item>
+
+                    {/* Phone Input */}
+                    <Form.Item name="phoneNumber" rules={[{ required: true, message: "Phone number is required" }]}>
+                        <PhoneInput
+                            country={"gh"}
+                            enableSearch={true}
+                            inputStyle={{ width: "100%" }}
+                            containerStyle={{ width: "100%" }}
+                            placeholder="Enter phone number"
+                        />
+                    </Form.Item>
+
+                    {/* Password Input with View/Hide Toggle */}
+                    <Form.Item name="password" rules={[{ required: true, message: "Password is required" }]}>
+                        <Input.Password
+                            placeholder="Enter password"
+                            visibilityToggle={{
+                                visible: passwordVisible,
+                                onVisibleChange: setPasswordVisible,
+                            }}
+                            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                        />
+                    </Form.Item>
 
                     {/* Department Dropdown */}
                     <Form.Item name="department_id" label="Department" rules={[{ required: true, message: "Department is required" }]}>

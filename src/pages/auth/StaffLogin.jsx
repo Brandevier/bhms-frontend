@@ -14,8 +14,14 @@ const StaffLogin = () => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = (values) => {
-    setLoading(true); // Start loading state
-    dispatch(loginUser(values))
+    setLoading(true); 
+
+    const trimmedValues = {
+      staffID: values.staffID.trim(),
+      password: values.password.trim(),
+    };
+
+    dispatch(loginUser(trimmedValues))
       .unwrap()
       .then((res) => {
         message.success("Human verification required.");
@@ -28,6 +34,7 @@ const StaffLogin = () => {
         setLoading(false); // Stop loading state
       });
   };
+
 
   return (
     <div className="flex h-screen bg-gray-50">

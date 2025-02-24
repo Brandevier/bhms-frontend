@@ -20,18 +20,25 @@ const Login = () => {
   }, [admin, navigate]);
 
   const onFinish = (values) => {
-    dispatch(loginAdmin({ email: values.email, password: values.password }))
+    // Trim whitespace from email and password before submitting
+    const trimmedValues = {
+      email: values.email.trim(),
+      password: values.password.trim(),
+    };
+  
+    dispatch(loginAdmin(trimmedValues))
       .unwrap()
       .then((res) => {
         console.log(res);
         message.success("OTP sent successfully!");
-        localStorage.setItem("email", values.email);
+        localStorage.setItem("email", trimmedValues.email);
         navigate("/verify-email");
       })
       .catch((err) => {
         message.error(err.error || "Login failed. Please try again.");
       });
   };
+  
 
   return (
     <div className="flex h-screen bg-gray-50">

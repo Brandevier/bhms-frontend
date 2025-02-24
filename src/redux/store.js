@@ -29,7 +29,8 @@ const rootReducer = combineReducers({
   prescription:reducers.prescriptionSlice,
   service:reducers.serviceReducers,
   procedure:reducers.procedureReducers,
-  warehouse:reducers.inventoryReducers
+  warehouse:reducers.inventoryReducers,
+  shifts:reducers.shiftReducers
 });
 
 // 🔹 Persisted Reducer

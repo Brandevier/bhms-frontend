@@ -114,7 +114,7 @@ const Records = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      {error && <Alert message="Error" description={error.message} type="error" showIcon closable />}
+      {/* {error && <Alert message="Error" description={error.message} type="error" showIcon closable />} */}
 
       {/* Top Bar: Search & Register */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
