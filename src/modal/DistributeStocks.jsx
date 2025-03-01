@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Modal, Form, Select, InputNumber, Button, message } from "antd";
+import { Modal, Form, Select, InputNumber, Button, message, Spin } from "antd";
 import { useSelector } from "react-redux";
 import BhmsButton from "../heroComponents/BhmsButton";
 
 
 const { Option } = Select;
 
-const DistributeStocks = ({ visible, onClose, onSubmit }) => {
+const DistributeStocks = ({ visible, onClose, onSubmit,loading }) => {
   const { departments } = useSelector((state) => state.departments);
   const { stockItems } = useSelector((state) => state.warehouse);
 
@@ -33,7 +33,7 @@ const DistributeStocks = ({ visible, onClose, onSubmit }) => {
     form.resetFields();
     setSelectedItem(null);
     setRemainingQuantity(0);
-    onClose();
+   
   };
 
   return (
@@ -62,7 +62,7 @@ const DistributeStocks = ({ visible, onClose, onSubmit }) => {
 
         {/* Select Item */}
         <Form.Item
-          name="item_id"
+          name="batch_id"
           label="Select Item"
           rules={[{ required: true, message: "Please select an item" }]}
         >
@@ -105,8 +105,8 @@ const DistributeStocks = ({ visible, onClose, onSubmit }) => {
 
         {/* Submit Button */}
         <Form.Item>
-          <BhmsButton type="primary" htmlType="submit" block>
-            Distribute
+          <BhmsButton type="primary" htmlType="submit" block disabled={loading}>
+           {loading? <Spin/> : 'Distribute'}
           </BhmsButton>
         </Form.Item>
       </Form>

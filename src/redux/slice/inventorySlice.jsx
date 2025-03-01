@@ -25,7 +25,7 @@ export const fetchStoreStatistics = createAsyncThunk(
 // **2️⃣ Add Bulk Items**
 export const addBulkItems = createAsyncThunk(
     "store/addBulkItems",
-    async (data, { rejectWithValue,getState }) => {
+    async (data, { rejectWithValue, getState }) => {
         const { auth } = getState()
 
         const user = auth.admin || auth.user
@@ -33,9 +33,9 @@ export const addBulkItems = createAsyncThunk(
         try {
             const response = await apiClient.post(`/store/stock-items`, {
                 institution_id,
-                "received_by":user.id,
+                "received_by": user.id,
                 ...data,
-               
+
 
             });
             return response.data;
@@ -45,7 +45,7 @@ export const addBulkItems = createAsyncThunk(
     }
 );
 
-// **3️⃣ Issue Items to Department**
+// **3️⃣ Issue Items to Department by request**
 export const issueItemsToDepartment = createAsyncThunk(
     "store/issueItems",
     async (request_id, { rejectWithValue }) => {
@@ -61,7 +61,11 @@ export const issueItemsToDepartment = createAsyncThunk(
 // **4️⃣ Fetch Expired Items**
 export const fetchExpiredItems = createAsyncThunk(
     "store/fetchExpiredItems",
-    async (institution_id, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+
+        const user = auth.admin || auth.user
+        const institution_id = user.institution.id
         try {
             const response = await apiClient.get(`/store/get-expired-items`, {
                 params: { institution_id },
@@ -73,15 +77,15 @@ export const fetchExpiredItems = createAsyncThunk(
     }
 );
 
-
+// ISSUE ITEMS DIRECTLY
 export const getStockItems = createAsyncThunk(
     "store/get-stock-items",
-    async ({store_id }, { rejectWithValue,getState }) => {
+    async ({ store_id }, { rejectWithValue, getState }) => {
         const { auth } = getState()
         const user = auth.user || auth.admin
         try {
             const response = await apiClient.get(`/store/stock-items`, {
-                params: { institution_id:user.institution.id, store_id },
+                params: { institution_id: user.institution.id, store_id },
             });
             return response.data;
         } catch (error) {
@@ -90,6 +94,87 @@ export const getStockItems = createAsyncThunk(
     }
 );
 
+export const issueItems = createAsyncThunk(
+    "inventory/issueItems",
+    async (data, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.post("/store/issue-items-directly", {
+                ...data,
+                institution_id: user.institution.id,
+                issued_by: user.id
+            });
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { error: "Something went wrong" });
+        }
+    }
+);
+
+// 🔄 Fetch Issued Items from API
+export const fetchIssuedItems = createAsyncThunk(
+    "inventory/fetchIssuedItems",
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.get("/store/issued-items", {
+                params: {
+                    institution_id: user.institution.id
+                }
+            });
+            return response.data.issuedItems;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to fetch issued items");
+        }
+    }
+);
+
+// 🔄 Fetch Issued Items from API
+export const fetchDepartmentItems = createAsyncThunk(
+    "inventory/fetchDepartmentItems",
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.get("/store/department-items", {
+                params: {
+                    institution_id: user.institution.id,
+                    department_id: user.department.id
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to fetch issued items");
+        }
+    }
+);
+
+
+
+export const requestItems = createAsyncThunk(
+    "inventory/requestItems",
+    async (data, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.post("/store/request-items", {
+                ...data,
+                institution_id: user.institution.id,
+                department_id: user.department.id,
+                requested_by:user.id
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to fetch issued items");
+        }
+    }
+);
+
+
+
 // **Store Management Slice**
 const storeSlice = createSlice({
     name: "store",
@@ -97,7 +182,11 @@ const storeSlice = createSlice({
         statistics: null,
         expiredItems: [],
         stockItems: [],
+        items: [],
         loading: false,
+        addStockLoading: false,
+        requestItemLoading:false,
+        issueItemLoading: false,
         error: null,
     },
     reducers: {}, // No additional reducers needed
@@ -119,14 +208,14 @@ const storeSlice = createSlice({
 
             // Add Bulk Items
             .addCase(addBulkItems.pending, (state) => {
-                state.loading = true;
+                state.addStockLoading = true;
                 state.error = null;
             })
             .addCase(addBulkItems.fulfilled, (state, action) => {
-                state.loading = false;
+                state.addStockLoading = false;
             })
             .addCase(addBulkItems.rejected, (state, action) => {
-                state.loading = false;
+                state.addStockLoading = false;
                 state.error = action.payload;
             })
 
@@ -165,7 +254,50 @@ const storeSlice = createSlice({
             }).addCase(getStockItems.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            }).addCase(issueItems.pending, (state) => {
+                state.issueItemLoading = true;
+                state.error = null;
             })
+            .addCase(issueItems.fulfilled, (state, action) => {
+                state.issueItemLoading = false;
+
+            })
+            .addCase(issueItems.rejected, (state, action) => {
+                state.issueItemLoading = false;
+                state.error = action.payload.error;
+            }).addCase(fetchIssuedItems.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchIssuedItems.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+            })
+            .addCase(fetchIssuedItems.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            }).addCase(fetchDepartmentItems.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchDepartmentItems.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+            })
+            .addCase(fetchDepartmentItems.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            }).addCase(requestItems.pending, (state) => {
+                state.requestItemLoading = true;
+                state.error = null;
+            })
+            .addCase(requestItems.fulfilled, (state, action) => {
+                state.requestItemLoading = false;
+            })
+            .addCase(requestItems.rejected, (state, action) => {
+                state.requestItemLoading = false;
+                state.error = action.payload;
+            });
     },
 });
 

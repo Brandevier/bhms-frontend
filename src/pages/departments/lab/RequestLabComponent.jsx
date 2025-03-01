@@ -7,32 +7,42 @@ import BhmsButton from '../../../heroComponents/BhmsButton';
 
 const RequestLabComponent = () => {
     const dispatch = useDispatch();
-    const { labResults, loading } = useSelector((state) => state.lab);
+    const { labResults, loading, currentPage, totalPages, totalItems } = useSelector((state) => state.lab);
     const [searchText, setSearchText] = useState('');
     const [loadingRow, setLoadingRow] = useState(null); // Track loading per row
+    const [currentPageState, setCurrentPageState] = useState(1); // Local state for current page
 
     useEffect(() => {
-        dispatch(fetchLabResultsByStatus({ status: 'requested' }));
-    }, [dispatch]);
+        // Fetch lab results for the current page
+        dispatch(fetchLabResultsByStatus({ status: 'requested', page: currentPageState }));
+    }, [dispatch, currentPageState]);
 
+    // Handle pagination change
+    const handlePageChange = (page) => {
+        setCurrentPageState(page); // Update the current page
+    };
+
+    // Filter data based on search text
     const filteredData = labResults.filter((item) =>
         item.patient?.first_name.toLowerCase().includes(searchText.toLowerCase()) ||
         item.patient?.middle_name?.toLowerCase().includes(searchText.toLowerCase()) ||
         item.patient?.last_name.toLowerCase().includes(searchText.toLowerCase())
     );
 
+    // Approve lab request
     const approveLabRequest = (test) => {
         setLoadingRow(test.id); // Set loading state for this row
         dispatch(acceptLabRequest({ labResultId: test.id }))
             .unwrap()
             .then(() => {
                 message.success('Lab results approved successfully');
-                dispatch(fetchLabResultsByStatus({ status: 'requested' }));
+                dispatch(fetchLabResultsByStatus({ status: 'requested', page: currentPageState })); // Refetch current page
             })
             .catch(() => message.error('Failed to approve'))
             .finally(() => setLoadingRow(null)); // Reset loading after request completes
     };
 
+    // Table columns
     const columns = [
         {
             title: 'Full Name',
@@ -102,7 +112,13 @@ const RequestLabComponent = () => {
                 columns={columns}
                 dataSource={filteredData}
                 loading={loading}
-                pagination={{ pageSize: 10 }}
+                pagination={{
+                    current: currentPageState, // Current page
+                    total: totalItems, // Total number of items
+                    pageSize: 10, // Items per page
+                    onChange: handlePageChange, // Handle page change
+                    showSizeChanger: false, // Disable page size changer
+                }}
                 rowKey={(record) => record.id}
             />
         </div>

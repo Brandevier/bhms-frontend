@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm } from "antd";
+import { Table, Tag, Input, message, Skeleton, Alert, Popconfirm } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
@@ -8,7 +8,6 @@ import { createRecord, fetchRecordsByInstitution, deleteRecord } from "../../../
 import { useParams, useNavigate } from "react-router-dom";
 
 const { Search } = Input;
-const { TabPane } = Tabs;
 
 const Records = () => {
   const [searchText, setSearchText] = useState("");
@@ -130,42 +129,12 @@ const Records = () => {
         </BhmsButton>
       </div>
 
-      {/* Tabs Section */}
-      <Tabs defaultActiveKey="patients">
-        {/* Active Patients */}
-        <TabPane tab={`Patients (${records?.length || 0})`} key="patients">
-          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
-        </TabPane>
-
-        {/* Discharged Patients */}
-        <TabPane
-          tab={`Discharged Patients (${records?.filter((r) => r?.status === "discharged")?.length || 0})`}
-          key="discharged"
-        >
-          {status === "loading" ? (
-            <Skeleton active paragraph={{ rows: 5 }} />
-          ) : (
-            <Table dataSource={records?.filter((r) => r?.status === "discharged")} columns={columns} rowKey="id" />
-          )}
-        </TabPane>
-
-        {/* Transferred Patients */}
-        <TabPane
-          tab={`Transferred Patients (${records?.filter((r) => r?.status === "transferred")?.length || 0})`}
-          key="transferred"
-        >
-          {status === "loading" ? (
-            <Skeleton active paragraph={{ rows: 5 }} />
-          ) : (
-            <Table dataSource={records?.filter((r) => r?.status === "transferred")} columns={columns} rowKey="id" />
-          )}
-        </TabPane>
-
-        {/* Incoming Appointments */}
-        <TabPane tab={`Incoming Appointments (${0})`} key="appointments">
-          <Skeleton active paragraph={{ rows: 5 }} />
-        </TabPane>
-      </Tabs>
+      {/* Table Section */}
+      {status === "loading" ? (
+        <Skeleton active paragraph={{ rows: 5 }} />
+      ) : (
+        <Table dataSource={filteredData} columns={columns} rowKey="id" />
+      )}
 
       {/* Patient Registration Modal */}
       <PatientRegistrationModal visible={modalVisible} onClose={() => setModalVisible(false)} onSubmit={handleRegister} status={status} />

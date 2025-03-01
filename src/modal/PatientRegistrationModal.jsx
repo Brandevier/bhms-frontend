@@ -4,7 +4,7 @@ import PhoneInput from "react-phone-input-2";
 import BhmsButton from "../heroComponents/BhmsButton";
 const { Option } = Select;
 
-const PatientRegistrationModal = ({ visible, onClose, onSubmit,status }) => {
+const PatientRegistrationModal = ({ visible, onClose, onSubmit, status }) => {
   const [form] = Form.useForm();
   const [phone, setPhone] = useState("");
 
@@ -23,15 +23,15 @@ const PatientRegistrationModal = ({ visible, onClose, onSubmit,status }) => {
   return (
     <Modal
       title="Register New Patient"
-      
+
       open={visible}
       onCancel={onClose}
       footer={[
         <BhmsButton block={false} outline={true} size="medium" key="cancel" onClick={onClose}>
           Cancel
         </BhmsButton>,
-        <BhmsButton key="submit" block={false}  size="medium" onClick={handleSubmit}>
-        {status == 'loading' ? <Spin/> : 'Register'}
+        <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit}>
+          {status == 'loading' ? <Spin /> : 'Register'}
         </BhmsButton>,
       ]}
     >
@@ -90,8 +90,6 @@ const PatientRegistrationModal = ({ visible, onClose, onSubmit,status }) => {
               <Select placeholder="Select country">
                 <Option value="ghana">Ghana</Option>
                 <Option value="nigeria">Nigeria</Option>
-                <Option value="usa">United States</Option>
-                <Option value="uk">United Kingdom</Option>
               </Select>
             </Form.Item>
           </Col>

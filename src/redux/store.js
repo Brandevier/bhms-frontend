@@ -3,7 +3,6 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import logger from "redux-logger";
 import * as reducers from "./reducers/index";
-import reducer from "./waitlistSlice";
 
 
 
@@ -11,7 +10,7 @@ import reducer from "./waitlistSlice";
 const persistConfig = {
   key: "bhms",
   storage,
-  whitelist: ["auth", "patientNote", "records","departments","permissions"], // Add only reducers you want to persist
+  whitelist: ["auth", "patientNote", "records","departments","permissions","notification"], // Add only reducers you want to persist
 };
 
 // 🔹 Root Reducer (Combine all reducers)
@@ -30,7 +29,8 @@ const rootReducer = combineReducers({
   service:reducers.serviceReducers,
   procedure:reducers.procedureReducers,
   warehouse:reducers.inventoryReducers,
-  shifts:reducers.shiftReducers
+  shifts:reducers.shiftReducers,
+  notification:reducers.notificationSlice
 });
 
 // 🔹 Persisted Reducer

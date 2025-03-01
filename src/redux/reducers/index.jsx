@@ -13,7 +13,7 @@ import serviceReducers from '../slice/serviceSlice'
 import procedureReducers from  '../slice/procedureSlice'
 import inventoryReducers from '../slice/inventorySlice'
 import shiftReducers from  '../slice/shiftSlice'
-
+import notificationSlice from  '../slice/notificationSlice'
 
 
 export {
@@ -31,6 +31,7 @@ export {
     serviceReducers,
     procedureReducers,
     inventoryReducers,
-    shiftReducers
+    shiftReducers,
+    notificationSlice
 }
  

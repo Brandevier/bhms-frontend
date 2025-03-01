@@ -7,6 +7,7 @@ const initialState = {
     currentRecord: null, // Object to store the currently selected record
     status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null, // Store any error messages
+    statistics: null
 };
 
 // Define async thunks for API calls
@@ -95,6 +96,25 @@ export const deleteRecord = createAsyncThunk(
     }
 );
 
+export const getStats = createAsyncThunk(
+    'records/stats',
+    async(_,{rejectWithValue,getState})=>{
+        const {auth} = getState()
+        const  institution_id  = auth.user.institution.id
+
+        try {
+            const response = await apiClient.get('records/institution/records/statistics',{
+                params:{
+                    institution_id
+                }
+            })
+            return response.data.statistics
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+)
+
 // Create the slice
 const recordSlice = createSlice({
     name: 'records',
@@ -171,6 +191,14 @@ const recordSlice = createSlice({
                 state.records = state.records.filter(record => record.id !== action.payload);
             })
             .addCase(deleteRecord.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            }).addCase(getStats.pending,(state,action)=>{
+                state.status = 'loading';
+            }).addCase(getStats.fulfilled,(state,action)=>{
+                state.status = 'succeeded',
+                state.statistics = action.payload
+            }).addCase(getStats.rejected,(state,action)=>{
                 state.status = 'failed';
                 state.error = action.payload;
             });

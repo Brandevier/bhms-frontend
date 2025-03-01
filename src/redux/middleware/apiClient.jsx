@@ -103,9 +103,7 @@ apiClient.interceptors.response.use(
         toast.error('Server error, please try again later.');
       } else if (status === 404) {
         toast.error('Not Found');
-      } else {
-        toast.error('Something went wrong. Please check your connection.');
-      }
+      } 
     } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
       toast.error('Connection issue. Retrying...');
       return retryRequest(error);

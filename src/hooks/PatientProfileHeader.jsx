@@ -38,7 +38,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
 
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.vitals);
-  const { loading, error } = useSelector((state) => state.lab);
+  const { createLabLoading, error } = useSelector((state) => state.lab);
   const { id } = useParams();
 
   const handleVitalsSubmit = (data) => {
@@ -222,7 +222,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
       <RequestLabDialog
         visible={labModalVisible}
         onClose={() => setLabModalVisible(false)}
-        loading={loading}
+        loading={createLabLoading}
         onSubmit={handleLabSubmit}
         tests={lab}
       />

@@ -1,27 +1,31 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import {
   DashboardOutlined,
-  AppstoreOutlined,
   UserOutlined,
   MedicineBoxOutlined,
   SolutionOutlined,
-  ShoppingCartOutlined,
-  TeamOutlined,
   FileTextOutlined,
   BankOutlined,
   FileSearchOutlined,
   CalendarOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
+  TeamOutlined,
+  AppstoreOutlined,
+  FileSyncOutlined,
+  FileDoneOutlined,
+  ExclamationCircleOutlined,
+  StopOutlined,
+  UserSwitchOutlined,
+  ShopOutlined,
+  BarChartOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
 const { Sider } = Layout;
 
 const StaffSideBar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Start collapsed by default
   const { user } = useSelector((state) => state.auth);
 
   // Define department-specific menu items
@@ -29,10 +33,13 @@ const StaffSideBar = () => {
     "Ward": [
       { key: "ward-1", label: "Patients", icon: <UserOutlined />, path: "/ward/patients" },
       { key: "ward-2", label: "Admissions", icon: <FileTextOutlined />, path: "/ward/admissions" },
+      { key: "records-3", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/store" },
+
     ],
     "Consultation": [
-      { key: "consult-1", label: "Appointments", icon: <CalendarOutlined />, path: "/consultation/appointments" },
+      { key: "consult-1", label: "Discharge Patients", icon: <CalendarOutlined />, path: "/consultation/appointments" },
       { key: "consult-2", label: "Patients", icon: <UserOutlined />, path: "/consultation/patients" },
+      { key: "records-3", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/store" },
     ],
     "Maternity Ward": [
       { key: "maternity-1", label: "Pregnancy Records", icon: <FileSearchOutlined />, path: "/maternity/records" },
@@ -47,8 +54,11 @@ const StaffSideBar = () => {
       { key: "lab-2", label: "Results", icon: <FileSearchOutlined />, path: "/lab/results" },
     ],
     "Records": [
-      { key: "records-1", label: "Patient Records", icon: <FileSearchOutlined />, path: "/records/patients" },
-      { key: "records-2", label: "Medical History", icon: <FileTextOutlined />, path: "/records/history" },
+      { key: "records-2", label: "Discharge Patients", icon: <UserSwitchOutlined />, path: "/shared/records/history" },
+      { key: "records-3", label: "Transferred Requests", icon: <FileTextOutlined />, path: "/shared/records/history" },
+      { key: "records-5", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
+      { key: "records-6", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
+      { key: "records-4", label: "Reports & Statistics", icon: <BarChartOutlined />, path: `/shared/records/${user.department.id}/statistics` },
     ],
     "OPD": [
       { key: "opd-1", label: "Check-ins", icon: <UserOutlined />, path: "/opd/checkins" },
@@ -63,19 +73,24 @@ const StaffSideBar = () => {
       { key: "hr-2", label: "Payroll", icon: <FileTextOutlined />, path: "/hr/payroll" },
     ],
     "Store": [
-      { key: "store-1", label: "Inventory", icon: <ShoppingCartOutlined />, path: "/store/inventory" },
-      { key: "store-2", label: "Supplies", icon: <AppstoreOutlined />, path: "/store/supplies" },
+      { key: "store-2", label: "Stock Items", icon: <AppstoreOutlined />, path: `/shared/store/${user.department.id}/stock/items` }, // Inventory Icon
+      { key: "store-3", label: "Pending Request", icon: <FileSyncOutlined />, path: "/store/supplies" }, // Syncing Icon for pending requests
+      { key: "store-6", label: "Issued Items", icon: <FileDoneOutlined />, path: `/shared/store/${user.department.id}/issued-items` }, // Done/Completed Icon for issued items
+      { key: "store-4", label: "Out of Stock", icon: <ExclamationCircleOutlined />, path: "/store/supplies" }, // Alert Icon for out-of-stock items
+      { key: "store-5", label: "Expired Items", icon: <StopOutlined />, path: `/shared/store/${user.department.id}/expired-items` }, // Stop Icon for expired items
     ],
   };
 
   // Get user department menu items or show a default message
-  const userDepartment = user?.department?.name || "Unknown";
+  const userDepartment = user?.department?.departmentType || "Unknown";
   const departmentMenuItems = departmentMenus[userDepartment] || [];
 
   return (
     <Sider
       collapsible
       collapsed={collapsed}
+      onMouseEnter={() => setCollapsed(false)} // Expand on hover
+      onMouseLeave={() => setCollapsed(true)}  // Collapse when mouse leaves
       trigger={null}
       style={{
         background: "white",
@@ -117,15 +132,6 @@ const StaffSideBar = () => {
             </Menu.Item>
           )}
         </Menu>
-      </div>
-
-      {/* Toggle Button at Bottom */}
-      <div
-        style={{ background: "white", borderTop: "1px solid #E5E7EB" }}
-        className="flex justify-center items-center py-4 cursor-pointer hover:bg-gray-100"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? <MenuUnfoldOutlined className="text-gray-800 text-xl" /> : <MenuFoldOutlined className="text-gray-800 text-xl" />}
       </div>
     </Sider>
   );

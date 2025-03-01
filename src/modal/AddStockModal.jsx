@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, DatePicker, Row, Col } from "antd";
+import React from "react";
+import { Modal, Form, Input, DatePicker, Row, Col, Select, Spin } from "antd";
 import BhmsButton from "../heroComponents/BhmsButton";
 
-const AddStockModal = ({ visible, onClose, onSubmit }) => {
+const { Option } = Select;
+
+const AddStockModal = ({ visible, onClose, onSubmit,loading }) => {
   const handleFormSubmit = (values) => {
     const formattedValues = {
       ...values,
       purchase_date: values.purchase_date?.format("YYYY-MM-DD"),
-      expire_date: values.expire_date?.format("YYYY-MM-DD"),
-      issued_date: values.issued_date?.format("YYYY-MM-DD"),
-      unitCost: values.unitCost || 0, // Ensure default value of 0
+      expiry_date: values.expiry_date?.format("YYYY-MM-DD"),
+      unit_cost: values.unit_cost || 0, // Ensure default value of 0
     };
 
     onSubmit(formattedValues);
-    onClose();
+   
   };
 
   return (
@@ -52,7 +53,6 @@ const AddStockModal = ({ visible, onClose, onSubmit }) => {
         </Row>
 
         <Row gutter={16}>
-          
           <Col span={12}>
             <Form.Item name="expiry_date" label="Expire Date" rules={[{ required: true, message: "Please select expire date" }]}>
               <DatePicker style={{ width: "100%" }} />
@@ -65,8 +65,21 @@ const AddStockModal = ({ visible, onClose, onSubmit }) => {
           </Col>
         </Row>
 
+        {/* Category Dropdown */}
         <Row gutter={16}>
-          
+          <Col span={12}>
+            <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please select a category" }]}>
+              <Select placeholder="Select category">
+                <Option value="medical_equipment">Medical Equipment</Option>
+                <Option value="consumables">Consumables</Option>
+                <Option value="pharmaceuticals">Pharmaceuticals</Option>
+                <Option value="laboratory_supplies">Laboratory Supplies</Option>
+                <Option value="office_supplies">Office Supplies</Option>
+                <Option value="cleaning_supplies">Cleaning Supplies</Option>
+                <Option value="patient_care">Patient Care</Option>
+              </Select>
+            </Form.Item>
+          </Col>
           <Col span={12}>
             <Form.Item name="description" label="Remarks">
               <Input.TextArea />
@@ -78,8 +91,8 @@ const AddStockModal = ({ visible, onClose, onSubmit }) => {
           <BhmsButton block={false} size="medium" outline onClick={onClose} className="mx-2">
             Cancel
           </BhmsButton>
-          <BhmsButton block={false} size="medium" htmlType="submit">
-            Submit
+          <BhmsButton block={false} size="medium" htmlType="submit" disabled={loading}>
+            {loading? <Spin/> : 'Submit'}
           </BhmsButton>
         </Form.Item>
       </Form>
