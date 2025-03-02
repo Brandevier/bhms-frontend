@@ -3,9 +3,10 @@ import { Modal, Form, Select, InputNumber, Button, message, Spin } from "antd";
 import { useSelector } from "react-redux";
 import BhmsButton from "../heroComponents/BhmsButton";
 
+
 const { Option } = Select;
 
-const DistributeStocks = ({ visible, onClose, onSubmit, loading }) => {
+const DistributeStocks = ({ visible, onClose, onSubmit,loading }) => {
   const { departments } = useSelector((state) => state.departments);
   const { stockItems } = useSelector((state) => state.warehouse);
 
@@ -32,6 +33,7 @@ const DistributeStocks = ({ visible, onClose, onSubmit, loading }) => {
     form.resetFields();
     setSelectedItem(null);
     setRemainingQuantity(0);
+   
   };
 
   return (
@@ -43,20 +45,18 @@ const DistributeStocks = ({ visible, onClose, onSubmit, loading }) => {
       destroyOnClose
     >
       <Form layout="vertical" form={form} onFinish={handleFinish}>
-        {/* Select Department (Only Store Departments) */}
+        {/* Select Department */}
         <Form.Item
           name="department_id"
           label="Select Department"
           rules={[{ required: true, message: "Please select a department" }]}
         >
           <Select placeholder="Select Department">
-            {departments
-              .filter((dept) => dept.departmentType === "store") // ✅ Only store departments
-              .map((dept) => (
-                <Option key={dept.id} value={dept.id}>
-                  {dept.name}
-                </Option>
-              ))}
+            {departments.map((dept) => (
+              <Option key={dept.id} value={dept.id}>
+                {dept.name}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
 
@@ -106,7 +106,7 @@ const DistributeStocks = ({ visible, onClose, onSubmit, loading }) => {
         {/* Submit Button */}
         <Form.Item>
           <BhmsButton type="primary" htmlType="submit" block disabled={loading}>
-            {loading ? <Spin /> : "Distribute"}
+           {loading? <Spin/> : 'Distribute'}
           </BhmsButton>
         </Form.Item>
       </Form>
