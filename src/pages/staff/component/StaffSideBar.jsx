@@ -76,7 +76,7 @@ const StaffSideBar = () => {
       { key: "store-2", label: "Stock Items", icon: <AppstoreOutlined />, path: `/shared/store/${user.department.id}/stock/items` }, // Inventory Icon
       { key: "store-3", label: "Pending Request", icon: <FileSyncOutlined />, path: `/shared/store/${user.department.id}/pending-requests`}, // Syncing Icon for pending requests
       { key: "store-6", label: "Issued Items", icon: <FileDoneOutlined />, path: `/shared/store/${user.department.id}/issued-items` }, // Done/Completed Icon for issued items
-      { key: "store-4", label: "Out of Stock", icon: <ExclamationCircleOutlined />, path: "/store/supplies" }, // Alert Icon for out-of-stock items
+      // { key: "store-4", label: "Out of Stock", icon: <ExclamationCircleOutlined />, path: "/store/supplies" }, // Alert Icon for out-of-stock items
       { key: "store-5", label: "Expired Items", icon: <StopOutlined />, path: `/shared/store/${user.department.id}/expired-items` }, // Stop Icon for expired items
     ],
   };
