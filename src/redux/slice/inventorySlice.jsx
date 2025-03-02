@@ -164,7 +164,7 @@ export const requestItems = createAsyncThunk(
                 ...data,
                 institution_id: user.institution.id,
                 department_id: user.department.id,
-                requested_by:user.id
+                requested_by: user.id
             });
             return response.data;
         } catch (error) {
@@ -172,6 +172,87 @@ export const requestItems = createAsyncThunk(
         }
     }
 );
+
+
+// 🔄 Fetch requested Items from API
+export const fetchRequestedItems = createAsyncThunk(
+    "inventory/fetchRequestedItems",
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.get("/store/requested-items", {
+                params: {
+                    institution_id: user.institution.id,
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to fetch requested items");
+        }
+    }
+);
+
+// 🔄 Fetch requested Items from API
+export const fetchRequestedItemsByDepartment = createAsyncThunk(
+    "inventory/fetchRequestedItemsByDepartment",
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.get("/store/requested-items", {
+                params: {
+                    institution_id: user.institution.id,
+                    department_id: user.department.id
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to fetch requested items");
+        }
+    }
+);
+export const approveDepartmentItemRequest = createAsyncThunk(
+    "inventory/approveDepartmentItemRequest",
+    async (data, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.post("/store/requested-items/approve", {
+                ...data,
+                institution_id: user.institution.id,
+
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to approve item request");
+        }
+    }
+);
+
+
+
+
+export const rejectDepartmentItemRequest = createAsyncThunk(
+    "inventory/rejectDepartmentItemRequest",
+    async (data, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
+        try {
+            const response = await apiClient.put("/store/requested-items/reject", {
+                ...data,
+                institution_id: user.institution.id,
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.error || "Failed to reject item request");
+        }
+    }
+);
+
+
+
+
 
 
 
@@ -185,8 +266,9 @@ const storeSlice = createSlice({
         items: [],
         loading: false,
         addStockLoading: false,
-        requestItemLoading:false,
+        requestItemLoading: false,
         issueItemLoading: false,
+        rejectDepartmentItemLoading:false,
         error: null,
     },
     reducers: {}, // No additional reducers needed
@@ -297,7 +379,32 @@ const storeSlice = createSlice({
             .addCase(requestItems.rejected, (state, action) => {
                 state.requestItemLoading = false;
                 state.error = action.payload;
-            });
+            })
+            .addCase(fetchRequestedItems.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchRequestedItems.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload;
+            })
+            .addCase(fetchRequestedItems.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(rejectDepartmentItemRequest.pending, (state) => {
+                state.rejectDepartmentItemLoading = true;
+                state.error = null;
+            })
+            .addCase(rejectDepartmentItemRequest.fulfilled, (state, action) => {
+                state.rejectDepartmentItemLoading = false;
+            })
+            .addCase(rejectDepartmentItemRequest.rejected, (state, action) => {
+                state.rejectDepartmentItemLoading = false;
+                state.error = action.payload;
+            })
+
+            ;
     },
 });
 
