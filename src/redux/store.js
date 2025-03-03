@@ -30,7 +30,8 @@ const rootReducer = combineReducers({
   procedure:reducers.procedureReducers,
   warehouse:reducers.inventoryReducers,
   shifts:reducers.shiftReducers,
-  notification:reducers.notificationSlice
+  notification:reducers.notificationSlice,
+  noteComment:reducers.patientNoteCommentSlice
 });
 
 // 🔹 Persisted Reducer

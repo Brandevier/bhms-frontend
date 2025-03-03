@@ -34,6 +34,7 @@ import {
   DepartmentStore,
   PendingRequests,
 } from "./routesConfig";
+import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -73,6 +74,7 @@ const App = () => {
         <Route path="/shared/*" element={<SharedRoutes />}>
           <Route path="departments" element={<DepartmentsList />} />
           <Route path="departments/store" element={<DepartmentStore />} />
+          <Route path="departments/:id/stats" element={<DepartmentalStats />} />
           <Route path="opd/:id" element={<PatientRecords />} />
           <Route path="consultation/:id" element={<ConsultationDepartment />} />
           <Route path="patient/details/:id" element={<PatientLayout />} />

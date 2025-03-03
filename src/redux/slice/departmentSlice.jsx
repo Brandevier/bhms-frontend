@@ -132,11 +132,19 @@ export const getAllPatientsFromDepartment = createAsyncThunk(
 // Get department summary with diagnosis details
 export const getDepartmentSummaryWithDiagnosisDetails = createAsyncThunk(
   "department/getDepartmentSummaryWithDiagnosisDetails",
-  async ({ institution_id, department_id }, { rejectWithValue }) => {
+  async (_, { rejectWithValue,getState }) => {
+
+    const { auth } = getState()
+
+    const user = auth.user;
+
     try {
-      const response = await apiClient.get(
-        `/api/departments/${department_id}/summary?institution_id=${institution_id}`
-      );
+      const response = await apiClient.get('/department/get-summary',{
+        params:{
+          institution_id:user.institution.id,
+          department_id:user.department.id
+        }
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -148,6 +156,7 @@ export const getDepartmentSummaryWithDiagnosisDetails = createAsyncThunk(
 const initialState = {
   departments: [],
   department: null,
+  stats : null,
   staff: [],
   patients: [],
   loading: false,
@@ -283,7 +292,7 @@ const departmentSlice = createSlice({
       })
       .addCase(getDepartmentSummaryWithDiagnosisDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.department = action.payload;
+        state.stats = action.payload;
       })
       .addCase(getDepartmentSummaryWithDiagnosisDetails.rejected, (state, action) => {
         state.loading = false;

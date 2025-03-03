@@ -5,12 +5,15 @@ import apiClient from '../middleware/apiClient';
 // Add a new comment
 export const addComment = createAsyncThunk(
   'comments/addComment',
-  async ({ patient_note_id, comment, staff_id }, { rejectWithValue }) => {
+  async (data, { rejectWithValue,getState }) => {
+    const { auth } = getState()
+
+    const user = auth.user
+
     try {
-      const response = await apiClient.post('/api/comments', {
-        patient_note_id,
-        comment,
-        staff_id,
+      const response = await apiClient.post('/note/comments', {
+        ...data,
+        staff_id:user.id
       });
       return response.data;
     } catch (error) {
@@ -35,7 +38,7 @@ export const deleteComment = createAsyncThunk(
 // Initial State
 const initialState = {
   comments: [], // Array to store comments
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  loading: false, // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Store error messages
 };
 
@@ -50,29 +53,29 @@ const commentSlice = createSlice({
     builder
       // Add Comment
       .addCase(addComment.pending, (state) => {
-        state.status = 'loading';
+        state.loading = true;
       })
       .addCase(addComment.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.loading = false;
         state.comments.push(action.payload.comment); // Add the new comment to the state
       })
       .addCase(addComment.rejected, (state, action) => {
-        state.status = 'failed';
+        state.loading = false;
         state.error = action.payload.error; // Set the error message
       })
 
       // Delete Comment
       .addCase(deleteComment.pending, (state) => {
-        state.status = 'loading';
+        state.loading = true;
       })
       .addCase(deleteComment.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.loading = false;
         state.comments = state.comments.filter(
           (comment) => comment.id !== action.payload // Remove the deleted comment from the state
         );
       })
       .addCase(deleteComment.rejected, (state, action) => {
-        state.status = 'failed';
+        state.loading = false;
         state.error = action.payload.error; // Set the error message
       });
   },

@@ -39,7 +39,10 @@ const StaffSideBar = () => {
     "Consultation": [
       { key: "consult-1", label: "Discharge Patients", icon: <CalendarOutlined />, path: "/consultation/appointments" },
       { key: "consult-2", label: "Patients", icon: <UserOutlined />, path: "/consultation/patients" },
+      { key: "records-5", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
       { key: "records-3", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/store" },
+      { key: "records-4", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
+
     ],
     "Maternity Ward": [
       { key: "maternity-1", label: "Pregnancy Records", icon: <FileSearchOutlined />, path: "/maternity/records" },
@@ -74,7 +77,7 @@ const StaffSideBar = () => {
     ],
     "Store": [
       { key: "store-2", label: "Stock Items", icon: <AppstoreOutlined />, path: `/shared/store/${user.department.id}/stock/items` }, // Inventory Icon
-      { key: "store-3", label: "Pending Request", icon: <FileSyncOutlined />, path: `/shared/store/${user.department.id}/pending-requests`}, // Syncing Icon for pending requests
+      { key: "store-3", label: "Pending Request", icon: <FileSyncOutlined />, path: `/shared/store/${user.department.id}/pending-requests` }, // Syncing Icon for pending requests
       { key: "store-6", label: "Issued Items", icon: <FileDoneOutlined />, path: `/shared/store/${user.department.id}/issued-items` }, // Done/Completed Icon for issued items
       // { key: "store-4", label: "Out of Stock", icon: <ExclamationCircleOutlined />, path: "/store/supplies" }, // Alert Icon for out-of-stock items
       { key: "store-5", label: "Expired Items", icon: <StopOutlined />, path: `/shared/store/${user.department.id}/expired-items` }, // Stop Icon for expired items
