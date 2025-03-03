@@ -15,6 +15,10 @@ import inventoryReducers from '../slice/inventorySlice'
 import shiftReducers from  '../slice/shiftSlice'
 import notificationSlice from  '../slice/notificationSlice'
 import patientNoteCommentSlice from '../slice/commentSlice'
+import admissionSlice from '../slice/admissionSlice'
+
+
+
 
 export {
     authReducer,
@@ -33,6 +37,7 @@ export {
     inventoryReducers,
     shiftReducers,
     notificationSlice,
-    patientNoteCommentSlice
+    patientNoteCommentSlice,
+    admissionSlice
 }
  

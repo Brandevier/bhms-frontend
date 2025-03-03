@@ -25,6 +25,8 @@ import { addProcedure } from "../redux/slice/procedureSlice";
 import AdmitPatientModal from "../modal/AdmitPatientModal";
 import useDepartmentCheck from "../customHooks/useDepartmentCheck";
 import { addDiagnosis } from "../redux/slice/diagnosisSlice";
+import { admitPatient } from "../redux/slice/admissionSlice";
+
 
 
 const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
@@ -105,8 +107,15 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
 
 
   const handleAdmit = (patientData) => {
-    console.log(patientData)
-    closeModal();
+    const data = {
+      ...patientData,
+      record_id:patient_record.id
+    }
+   dispatch(admitPatient(data)).unwrap().then((res)=>{
+    message.success('Patient admitted successfully')
+    setAdmitModalVisible(false)
+   })
+  console.log(data)
   };
 
 
@@ -117,10 +126,12 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
     const submitData = {
       ...data,
       patient_id: patient_id,
-      department_id: patient_department
+      department_id: patient_department,
+     
     }
 
     dispatch(addDiagnosis(submitData)).unwrap().then((res) => {
+      
       message.success('diagnosis created successfully');
       handleGeneralSubmit();
       setDiagnosisModalVisible(false)

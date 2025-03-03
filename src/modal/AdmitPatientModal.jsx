@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Form, Select, Input, Button, Tag } from "antd";
+import { Modal, Form, Select, Input, Button, Tag, Spin } from "antd";
 import BhmsButton from "../heroComponents/BhmsButton";
 import { useSelector } from "react-redux";
 
@@ -10,6 +10,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
   const { departments } = useSelector((state) => state.departments);
   const [form] = Form.useForm();
   const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const { loading } = useSelector((state)=>state.admission)
 
   // Get only departments that are "Ward"
   const wardDepartments = departments?.filter((dept) => dept.departmentType === "Ward");
@@ -28,7 +29,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
   const handleFinish = (values) => {
     onSubmit(values); // Pass admitted patient data to the parent component
     form.resetFields();
-    onClose();
+    
   };
 
   return (
@@ -41,14 +42,14 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
           Cancel
         </BhmsButton>,
         <BhmsButton key="submit" type="primary" block={false} size="medium" onClick={() => form.submit()}>
-          Admit
+         {loading ? <Spin/> :'Admit'}
         </BhmsButton>,
       ]}
       width={500} // Adjust width if needed
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         {/* Select Department */}
-        <Form.Item label="Select Ward" name="department" rules={[{ required: true, message: "Please select a ward" }]}>
+        <Form.Item label="Select Ward" name="department_id" rules={[{ required: true, message: "Please select a ward" }]}>
           <Select placeholder="Choose ward" onChange={handleDepartmentChange}>
             {wardDepartments.map((dept) => (
               <Option key={dept.id} value={dept.id}>
@@ -60,7 +61,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
 
         {/* Select Bed Number */}
         {selectedDepartment && (
-          <Form.Item label="Bed Number" name="bed_number" rules={[{ required: true, message: "Please select a bed" }]}>
+          <Form.Item label="Bed Number" name="bed_id" rules={[{ required: true, message: "Please select a bed" }]}>
             <Select placeholder="Choose bed number">
               {selectedBeds.map((bed) => (
                 <Option key={bed.id} value={bed.id} disabled={bed.is_occupied}>
@@ -73,7 +74,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
         )}
 
         {/* Description */}
-        <Form.Item label="Description" name="description">
+        <Form.Item label="Description" name="note">
           <TextArea rows={3} placeholder="Enter additional notes..." />
         </Form.Item>
       </Form>
