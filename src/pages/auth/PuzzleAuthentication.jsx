@@ -18,7 +18,7 @@ const PuzzleAuthentication = () => {
     // Redirect to login if pendingUser is null
     useEffect(() => {
         if (!pendingUser) {
-            navigate("/login");
+            navigate("/hms/login");
         }
     }, [pendingUser, navigate]);
 

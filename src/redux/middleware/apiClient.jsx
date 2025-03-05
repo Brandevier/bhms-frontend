@@ -88,7 +88,7 @@ apiClient.interceptors.response.use(
 
           // Clear user data and redirect to login
           window.localStorage.clear();
-          window.location.href = '/login';
+          window.location.href = '/hms/login';
           return Promise.reject(error);
         }
 
@@ -98,7 +98,7 @@ apiClient.interceptors.response.use(
         toast.error('Session expired! Redirecting to login.');
         
         window.localStorage.clear();
-        window.location.href = '/login';
+        window.location.href = '/hms/login';
       } else if (status === 500) {
         toast.error('Server error, please try again later.');
       } else if (status === 404) {

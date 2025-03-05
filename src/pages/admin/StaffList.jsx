@@ -31,7 +31,7 @@ const StaffList = () => {
 
   const handleRowClick = (record) => {
     console.log("Row Clicked:", record);
-    navigate(`/admin/details/${record.id}`)
+    // navigate(`/admin/details/${record.id}`)
 };
 
 

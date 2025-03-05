@@ -28,9 +28,9 @@ const PatientLayout = () => {
     dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res)=>{
       dispatch(getAllStaff());
       dispatch(fetchLabTest());
-      dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
+      // dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
   
-      dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
+      // dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
     });
    
   }, [dispatch, id]);
@@ -96,7 +96,7 @@ const PatientLayout = () => {
 
         {/* Right Column - Reports & Appointments */}
         <Col span={8}>
-          <HealthReports status={status} patient_data={labResults} />
+          <HealthReports status={status} patient_data={currentRecord?.patient?.labResults} />
           {status === "loading" ? (
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
@@ -116,7 +116,7 @@ const PatientLayout = () => {
             <Skeleton active paragraph={{ rows: 2 }} />
           ) : (
             <PatientNotes
-              patient_notes={notes}
+              patient_notes={currentRecord?.patient?.patient_notes}
               patient_id={currentRecord?.patient?.id}
               general_handler={generalHandler}
             />

@@ -64,10 +64,10 @@ const App = () => {
         {/* Public Routes */}
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/staff_login" element={<StaffLogin />} />
-          <Route path="/puzzle-authentication" element={<PuzzleAuthentication />} />
-          <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/hms/login" element={<Login />} />
+          <Route path="/hms/staff_login" element={<StaffLogin />} />
+          <Route path="/hms/puzzle-authentication" element={<PuzzleAuthentication />} />
+          <Route path="/hms/verify-email" element={<EmailVerification />} />
         </Route>
 
         {/* Shared Routes - Accessible by both Admin & Staff */}

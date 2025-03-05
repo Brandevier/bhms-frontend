@@ -29,7 +29,7 @@ const EmailVerification = () => {
 
   useEffect(()=>{
     if(!emailSent){
-      navigate('/login')
+      navigate('/hms/login')
     }
   },[])
 

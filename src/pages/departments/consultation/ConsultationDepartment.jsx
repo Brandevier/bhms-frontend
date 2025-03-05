@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Table, Tag, Input, message, Skeleton, Alert } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
 import { useParams, useNavigate } from "react-router-dom";
 
 const { Search } = Input;
-const { TabPane } = Tabs;
 
 const ConsultationDepartment = () => {
   const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
   const { records, status, error } = useSelector((state) => state.records);
-  const { id } = useParams(); // Institution ID
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,17 +34,6 @@ const ConsultationDepartment = () => {
       item?.folder_number?.includes(searchText) ||
       item?.nin_number?.includes(searchText)
   );
-
-  // Handle Delete
-  const handleDelete = (id) => {
-    dispatch(deleteRecord(id))
-      .unwrap()
-      .then(() => {
-        message.success("Record deleted successfully");
-        dispatch(fetchRecordsByInstitution());
-      })
-      .catch(() => message.error("Failed to delete record"));
-  };
 
   // Table Columns
   const columns = [
@@ -87,12 +74,6 @@ const ConsultationDepartment = () => {
           <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
             View
           </BhmsButton>
-          <span className="mx-2"></span>
-          {/* <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
-            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
-              Delete
-            </BhmsButton>
-          </Popconfirm> */}
         </span>
       ),
     },
@@ -102,7 +83,7 @@ const ConsultationDepartment = () => {
     <div style={{ padding: "20px" }}>
       {error && <Alert message="Error" description={error.message} type="error" showIcon closable />}
 
-      {/* Top Bar: Search */}
+      {/* Search Bar */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
         <Search
           placeholder="Search Name, Folder Number, NIN"
@@ -113,28 +94,8 @@ const ConsultationDepartment = () => {
         />
       </div>
 
-      {/* Tabs Section */}
-      <Tabs defaultActiveKey="opd">
-        {/* Patients from OPD */}
-        <TabPane tab={`Patients from OPD (${activeRecords?.length || 0})`} key="opd">
-          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
-        </TabPane>
-
-        {/* Statistics - Placeholder */}
-        <TabPane tab="Statistics" key="statistics">
-          <p>Statistics will be displayed here.</p>
-        </TabPane>
-
-        {/* Request Items - Placeholder */}
-        <TabPane tab="Request Items" key="request-items">
-          <p>Request items section.</p>
-        </TabPane>
-
-        {/* Shift - Placeholder */}
-        <TabPane tab="Shift" key="shift">
-          <p>Shift details will be displayed here.</p>
-        </TabPane>
-      </Tabs>
+      {/* Table */}
+      {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
     </div>
   );
 };

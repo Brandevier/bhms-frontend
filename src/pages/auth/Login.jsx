@@ -32,7 +32,7 @@ const Login = () => {
         console.log(res);
         message.success("OTP sent successfully!");
         localStorage.setItem("email", trimmedValues.email);
-        navigate("/verify-email");
+        navigate("/hms/verify-email");
       })
       .catch((err) => {
         message.error(err.error || "Login failed. Please try again.");
@@ -60,7 +60,7 @@ const Login = () => {
         {/* Back Button */}
         <Button
           type="link"
-          href="/staff_login"
+          href="/hms/staff_login"
           icon={<LeftOutlined />}
           className="self-start"
         >

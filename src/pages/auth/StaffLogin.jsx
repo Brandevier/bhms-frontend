@@ -25,7 +25,7 @@ const StaffLogin = () => {
       .unwrap()
       .then((res) => {
         message.success("Human verification required.");
-        navigate("/puzzle-authentication"); // Redirect to puzzle step
+        navigate("/hms/puzzle-authentication"); // Redirect to puzzle step
       })
       .catch((err) => {
         message.error(err.error || "Login failed. Please try again.");
@@ -52,7 +52,7 @@ const StaffLogin = () => {
         {/* Back Button */}
         <Button
           type="link"
-          href="/login"
+          href="/hms/login"
           icon={<LeftOutlined />}
           className="self-start"
         >

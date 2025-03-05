@@ -11,7 +11,7 @@ const SharedRoutes = () => {
       <Outlet />
     </AppLayout>
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/hms/login" />
   );
 };
 
