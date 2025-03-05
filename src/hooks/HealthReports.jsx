@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, List, Skeleton, Tooltip } from "antd";
+import { Card, List, Skeleton, Tooltip, Empty } from "antd";
 import { FileTextOutlined, DownloadOutlined, ClockCircleOutlined, SyncOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import BhmsButton from "../heroComponents/BhmsButton";
 
@@ -24,7 +24,7 @@ const HealthReports = ({ patient_data, status }) => {
   return (
     <Card title="Lab Results">
       {labResults.length === 0 ? (
-        <p style={{ textAlign: "center", color: "#888" }}>No lab results available</p>
+        <Empty description="No lab results available" />
       ) : (
         <List
           dataSource={labResults}

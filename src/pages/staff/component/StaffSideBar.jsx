@@ -38,7 +38,7 @@ const StaffSideBar = () => {
     ],
     "Consultation": [
       // { key: "consult-1", label: "Discharge Patients", icon: <CalendarOutlined />, path: `/shared/consultation/${user.department.id}` },
-      { key: "consult-2", label: "OPD Patients", icon: <UserOutlined />, path: "/shared/consultation/${user.department.id}" },
+      { key: "consult-2", label: "OPD Patients", icon: <UserOutlined />, path: `/shared/consultation/${user.department.id}` },
       { key: "records-5", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
       { key: "records-3", label: "Staff on Duty", icon: <CalendarOutlined />, path: "/shared/departments/store" },
       { key: "records-4", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },

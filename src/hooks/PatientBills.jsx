@@ -1,20 +1,18 @@
-import React from "react";
-import { Card, Table, Empty, Tooltip } from "antd";
+import React, { useState } from "react";
+import { Card, Table, Empty, Tooltip, Modal, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import BhmsAvatar from "../heroComponents/BhmsAvatar";
 
-
 const PatientBills = ({ bills }) => {
-  // Dummy Data if No Bills are Provided
-  const dummyBills = [
-    { key: "1", service: "Routine Check-Up", amount: "$50" },
-    { key: "2", service: "Blood Test", amount: "$30" },
-    { key: "3", service: "X-Ray", amount: "$80" },
-    { key: "4", service: "MRI Scan", amount: "$200" }
-  ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Use provided bills or fallback to dummy data
-  const dataSource = bills && bills.length > 0 ? bills : dummyBills;
+  // Ensure bills have proper keys
+  const dataSource = bills?.map((bill, index) => ({
+    key: bill.key || index.toString(),
+    service: bill.service,
+    amount: bill.amount
+  })) || [];
+
   // Table Columns
   const columns = [
     { title: "Service", dataIndex: "service", key: "service" },
@@ -22,31 +20,43 @@ const PatientBills = ({ bills }) => {
   ];
 
   return (
-    <Card
-      title={
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span>Bills</span>
-          <Tooltip title="Add Nurse's Note">
-            <BhmsAvatar
-              outline
-              icon={<PlusOutlined />}
-              onClick={() => setIsModalOpen(true)}
-            />
-          </Tooltip>
-        </div>
-      }
+    <>
+      <Card
+        title={
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>Bills</span>
+            <Tooltip title="Add Nurse's Note">
+              <BhmsAvatar
+                outline
+                icon={<PlusOutlined />}
+                
+              />
+            </Tooltip>
+          </div>
+        }
+        bordered={true}
+        style={{ marginTop: 20 }}
+      >
+        {dataSource.length > 0 ? (
+          <Table dataSource={dataSource} columns={columns} pagination={false} />
+        ) : (
+          <Empty description="No Bills Available" />
+        )}
+      </Card>
 
-      bordered={true} style={{ marginTop: 20 }} >
-      {dataSource.length > 0 ? (
-        <Table
-          dataSource={dataSource}
-          columns={columns}
-          pagination={false}
-        />
-      ) : (
-        <Empty description="No Bills Available" />
-      )}
-    </Card>
+      {/* Modal for adding nurse's note */}
+      <Modal
+        title="Add Nurse's Note"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsModalOpen(false)}>Cancel</Button>,
+          <Button key="submit" type="primary">Submit</Button>
+        ]}
+      >
+        <p>Note input goes here...</p>
+      </Modal>
+    </>
   );
 };
 

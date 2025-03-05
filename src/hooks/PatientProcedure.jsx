@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Avatar, Typography, Tooltip, Badge, Button, Space, message } from "antd";
+import { Card, Avatar, Typography, Tooltip, Badge, Button, Space, message, Empty } from "antd";
 import { UserOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 
@@ -15,17 +15,24 @@ const statusColors = {
 
 const PatientProcedure = ({ procedures, onDelete }) => {
   if (!procedures || procedures.length === 0) {
-    return <Text type="secondary">No procedures available</Text>;
+    return (
+      <Card title="Patient Procedure" style={{ borderRadius: 10, boxShadow: "0 2px 10px rgba(0,0,0,0.1)", marginBottom: 20 }}>
+        <Empty description="No procedures available" />
+      </Card>
+    );
   }
 
   // Get the latest procedure by sorting based on createdAt
   const latestProcedure = procedures.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
 
   return (
-    <Card style={{ borderRadius: 10, boxShadow: "0 2px 10px rgba(0,0,0,0.1)", marginBottom: 20 }}>
+    <Card 
+      title="Patient Procedure"
+      style={{ borderRadius: 10, boxShadow: "0 2px 10px rgba(0,0,0,0.1)", marginBottom: 20 }}
+    >
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Title level={5} style={{ margin: 0 }}>Patient Procedure</Title>
+        <Title level={5} style={{ margin: 0 }}>Latest Procedure</Title>
         <Tooltip title="Delete Procedure">
           <Button
             type="text"

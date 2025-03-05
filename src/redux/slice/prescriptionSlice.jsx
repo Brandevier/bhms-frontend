@@ -28,14 +28,14 @@ export const searchPrescription = createAsyncThunk(
 
 export const createPrescription = createAsyncThunk(
   "prescriptions/create",
-  async (prescriptionData, { rejectWithValue,getState }) => {
+  async (prescriptionData, { rejectWithValue, getState }) => {
     const { auth } = getState()
-    const {user} = auth
+    const { user } = auth
     try {
       const response = await apiClient.post(`/prescriptions/create`, {
         ...prescriptionData,
-        institution_id:user.institution.id,
-        prescribed_by:user.id
+        institution_id: user.institution.id,
+        prescribed_by: user.id
       });
       return response.data;
     } catch (error) {
@@ -130,7 +130,7 @@ export const fetchPrescriptionsByInstitutionAndPatient = createAsyncThunk(
   "prescriptions/fetchByInstitutionAndPatient",
   async ({ institutionId, patientId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/patient/prescriptions/",{
+      const response = await apiClient.get("/patient/prescriptions/", {
         params: {
           institutionId,
           patientId
@@ -142,6 +142,24 @@ export const fetchPrescriptionsByInstitutionAndPatient = createAsyncThunk(
     }
   }
 );
+
+// Delete Prescription
+
+export const deletePrescription = createAsyncThunk(
+  "prescriptions/delete",
+  async (prescriptionId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.delete(`/prescriptions/${prescriptionId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to delete prescription");
+    }
+  }
+
+)
+
+
+
 
 
 // 🔹 Prescription Slice
@@ -167,7 +185,7 @@ const prescriptionSlice = createSlice({
       .addCase(searchPrescription.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      }) .addCase(createPrescription.pending, (state) => {
+      }).addCase(createPrescription.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
@@ -299,6 +317,19 @@ const prescriptionSlice = createSlice({
         state.prescriptions = action.payload;
       })
       .addCase(fetchPrescriptionsByInstitutionAndPatient.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      }).addCase(deletePrescription.pending, (state, action) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(deletePrescription.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.prescriptions = state.prescriptions.filter(
+          (p) => p.id !== action.payload.id
+        );
+      })
+      .addCase(deletePrescription.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

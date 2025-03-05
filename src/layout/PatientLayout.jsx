@@ -15,6 +15,7 @@ import HealthReports from "../hooks/HealthReports";
 import PrescriptionList from "../hooks/PrescriptionList";
 import { fetchLabTest ,fetchPatientLabResults} from "../redux/slice/labSlice";
 import PatientProcedure from "../hooks/PatientProcedure";
+import PatientDiagnosis from "../hooks/PatientDiagnosisComponent";
 
 
 const PatientLayout = () => {
@@ -60,7 +61,15 @@ const PatientLayout = () => {
         {status === "loading" ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
-          <PrescriptionList  prescriptionData={currentRecord?.patient?.prescriptions}/>
+          <PrescriptionList  prescriptionData={currentRecord?.patient?.prescriptions} onDelete={generalHandler}/>
+        )}
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        {status === "loading" ? (
+          <Skeleton active paragraph={{ rows: 3 }} />
+        ) : (
+          <PatientDiagnosis diagnosis={currentRecord?.patient?.diagnosis} onSubmit={generalHandler}/>
         )}
       </div>
 

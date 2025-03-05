@@ -81,7 +81,7 @@ export const deleteDiagnosis = createAsyncThunk(
     "diagnosis/deleteDiagnosis",
     async (id, { rejectWithValue }) => {
         try {
-            await axios.delete(`${BASE_URL}/delete/${id}`);
+            await apiClient.delete(`/diagnosis/patient-diagnosis/${id}`);
             return id;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to delete diagnosis");
