@@ -64,8 +64,8 @@ const StaffSideBar = () => {
       { key: "records-4", label: "Reports & Statistics", icon: <BarChartOutlined />, path: `/shared/records/${user.department.id}/statistics` },
     ],
     "OPD": [
-      { key: "opd-1", label: "Check-ins", icon: <UserOutlined />, path: `shared/opd/${user.department.id}`},
-      { key: "opd-2", label: "Reports & Statistics", icon: <BarChartOutlined />, path: `/shared/records/${user.department.id}/statistics` },
+      { key: "opd-1", label: "Check-ins", icon: <UserOutlined />, path: `/shared/opd/${user.department.id}`},
+      { key: "opd-2", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
       // { key: "opd-2", label: "Triage", icon: <AppstoreOutlined />, path: "/shared//opd/triage" },
     ],
     "Accounts": [
