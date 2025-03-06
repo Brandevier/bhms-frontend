@@ -25,7 +25,7 @@ import IssuedItems from "./pages/departments/store/IssuedItems";
 import ExpiredItems from "./pages/departments/store/ExpiredItems";
 import DepartmentStore from "./pages/departments/store/DepartmentStore";
 import PendingRequests from "./pages/departments/store/PendingRequests";
-
+import HMSStaffShiftSchedule from "./hooks/HMSStaffShiftSchedule";
 // Export all imports
 export {
   Homepage,
@@ -55,4 +55,5 @@ export {
   ExpiredItems,
   DepartmentStore,
   PendingRequests,
+  HMSStaffShiftSchedule
 };
