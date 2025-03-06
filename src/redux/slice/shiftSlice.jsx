@@ -1,212 +1,106 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import apiClient from '../middleware/apiClient';
-// Async Thunks for API calls
-
-// Create a new shift
-export const createShift = createAsyncThunk(
-    'shift/createShift',
-    async (shiftData, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.post('/api/shifts', shiftData);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import apiClient from "../middleware/apiClient";
+// Fetch all shifts (can be filtered by institution or department)
+export const getShifts = createAsyncThunk(
+  "shifts/getShifts",
+  async ({ institution_id, department_id }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get("/shifts", { params: { institution_id, department_id } });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to fetch shifts");
     }
+  }
 );
 
-// Fetch shifts by staff ID
-export const fetchShiftsByStaff = createAsyncThunk(
-    'shift/fetchShiftsByStaff',
-    async (staffId, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.get(`/api/shifts?staff_id=${staffId}`);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+// Add a single shift
+export const addShift = createAsyncThunk(
+  "shifts/addShift",
+  async (shiftData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post("/shifts", shiftData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to add shift");
     }
+  }
+);
+
+// Add bulk shifts
+export const addBulkShifts = createAsyncThunk(
+  "shifts/addBulkShifts",
+  async (bulkShiftData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post("/shifts/bulk", bulkShiftData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to add bulk shifts");
+    }
+  }
 );
 
 // Update a shift
 export const updateShift = createAsyncThunk(
-    'shift/updateShift',
-    async ({ id, shiftData }, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.put(`/api/shifts/${id}`, shiftData);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+  "shifts/updateShift",
+  async ({ shift_id, updatedShift }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.put(`/shifts/${shift_id}`, updatedShift);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to update shift");
     }
+  }
 );
 
-// Delete a shift
-export const deleteShift = createAsyncThunk(
-    'shift/deleteShift',
-    async (id, { rejectWithValue }) => {
-        try {
-            await apiClient.delete(`/api/shifts/${id}`);
-            return id;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Send shift table email
-export const sendShiftTableEmail = createAsyncThunk(
-    'shift/sendShiftTableEmail',
-    async ({ staffId, email }, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.post('/api/shifts/send-email', { staff_id: staffId, email });
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Fetch staff by shift day
-export const fetchStaffByShiftDay = createAsyncThunk(
-    'shift/fetchStaffByShiftDay',
-    async ({ institution_id, department_id }, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.get(`/api/shifts/staff-by-day?institution_id=${institution_id}&department_id=${department_id}`);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Fetch staff by specific shift day
-export const fetchStaffBySpecificShiftDay = createAsyncThunk(
-    'shift/fetchStaffBySpecificShiftDay',
-    async (day, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.get(`/api/shifts/staff-by-specific-day?day=${day}`);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Initial state
-const initialState = {
+const shiftSlice = createSlice({
+  name: "shifts",
+  initialState: {
     shifts: [],
-    staffOnDuty: [],
     loading: false,
     error: null,
-};
-
-// Slice
-const shiftSlice = createSlice({
-    name: 'shift',
-    initialState,
-    reducers: {
-        clearError: (state) => {
-            state.error = null;
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            // Create Shift
-            .addCase(createShift.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(createShift.fulfilled, (state, action) => {
-                state.loading = false;
-                state.shifts.push(action.payload.data);
-            })
-            .addCase(createShift.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Fetch Shifts by Staff
-            .addCase(fetchShiftsByStaff.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchShiftsByStaff.fulfilled, (state, action) => {
-                state.loading = false;
-                state.shifts = action.payload.data;
-            })
-            .addCase(fetchShiftsByStaff.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Update Shift
-            .addCase(updateShift.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(updateShift.fulfilled, (state, action) => {
-                state.loading = false;
-                const index = state.shifts.findIndex(shift => shift.id === action.payload.data.id);
-                if (index !== -1) {
-                    state.shifts[index] = action.payload.data;
-                }
-            })
-            .addCase(updateShift.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Delete Shift
-            .addCase(deleteShift.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(deleteShift.fulfilled, (state, action) => {
-                state.loading = false;
-                state.shifts = state.shifts.filter(shift => shift.id !== action.payload);
-            })
-            .addCase(deleteShift.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Send Shift Table Email
-            .addCase(sendShiftTableEmail.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(sendShiftTableEmail.fulfilled, (state) => {
-                state.loading = false;
-            })
-            .addCase(sendShiftTableEmail.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Fetch Staff by Shift Day
-            .addCase(fetchStaffByShiftDay.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchStaffByShiftDay.fulfilled, (state, action) => {
-                state.loading = false;
-                state.staffOnDuty = action.payload.data;
-            })
-            .addCase(fetchStaffByShiftDay.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            })
-
-            // Fetch Staff by Specific Shift Day
-            .addCase(fetchStaffBySpecificShiftDay.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchStaffBySpecificShiftDay.fulfilled, (state, action) => {
-                state.loading = false;
-                state.staffOnDuty = action.payload.data;
-            })
-            .addCase(fetchStaffBySpecificShiftDay.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload.message;
-            });
-    },
+  },
+  reducers: {}, // No normal reducers needed, since everything is async
+  extraReducers: (builder) => {
+    builder.addCase(getShifts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      }).addCase(getShifts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shifts = action.payload;
+      }).addCase(getShifts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }).addCase(addShift.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addShift.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shifts.push(action.payload.shift);
+      }).addCase(addShift.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }).addCase(addBulkShifts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addBulkShifts.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(addBulkShifts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }).addCase(updateShift.pending, (state) => {
+        state.loading = true;
+      }).addCase(updateShift.fulfilled, (state, action) => {
+        state.loading = false;
+        state.shifts = state.shifts.map((shift) =>
+          shift.id === action.payload.shift.id ? action.payload.shift : shift
+        );
+      })
+      .addCase(updateShift.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
-
-export const { clearError } = shiftSlice.actions;
 
 export default shiftSlice.reducer;

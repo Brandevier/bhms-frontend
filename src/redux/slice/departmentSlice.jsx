@@ -58,11 +58,18 @@ export const getDepartmentsByInstitution = createAsyncThunk(
 // Get a single department
 export const getDepartment = createAsyncThunk(
   "department/getDepartment",
-  async ({ institution_id, department_id }, { rejectWithValue }) => {
+  async (_, { rejectWithValue,getState }) => {
+    const { auth } = getState()
+
+    const user = auth.user || auth.admin
+
     try {
-      const response = await apiClient.get(
-        `/api/departments/single?institution_id=${institution_id}&department_id=${department_id}`
-      );
+      const response = await apiClient.get(`/institution/department/`,{
+        params:{
+          institution_id : user.institution.id,
+          department_id : user.department.id
+        }
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

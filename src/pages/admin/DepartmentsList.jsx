@@ -144,7 +144,7 @@ const handleNavigation = ({departmentType,department_id}) => {
                     {filteredDepartments?.map((dept, index) => (
                         <Col xs={24} sm={12} md={8} lg={8} key={index}>
                             <Card
-                                hoverable
+                                // hoverable
                                 style={{ height: "100%", display: "flex", flexDirection: "column" }} 
                                 cover={
                                     <img
