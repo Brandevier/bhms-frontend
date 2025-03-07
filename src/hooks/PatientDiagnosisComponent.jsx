@@ -42,11 +42,11 @@ const PatientDiagnosis = ({ diagnosis,onSubmit }) => {
     <Card style={{ margin: 20, borderRadius: 10 }}>
       <Title level={4}>Patient Diagnosis</Title>
 
-      {diagnosis.length === 0 ? (
+      {diagnosis?.length === 0 ? (
         <Empty description="No diagnosis records available" />
       ) : (
         <List
-          dataSource={diagnosis.slice(0, visibleCount)} // Show limited diagnoses
+          dataSource={diagnosis?.slice(0, visibleCount)} // Show limited diagnoses
           renderItem={(item) => (
             <Card style={{ marginBottom: 10 }} key={item.id}>
               <Space direction="vertical" style={{ width: "100%" }}>
@@ -101,7 +101,7 @@ const PatientDiagnosis = ({ diagnosis,onSubmit }) => {
       )}
 
       {/* Show "View More" Button if there are more diagnoses */}
-      {diagnosis.length > 1 && visibleCount < diagnosis.length && (
+      {diagnosis?.length > 1 && visibleCount < diagnosis?.length && (
         <Button type="link" icon={<EyeOutlined />} onClick={handleViewMore}>
           View More
         </Button>

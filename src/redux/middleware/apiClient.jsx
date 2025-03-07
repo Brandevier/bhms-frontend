@@ -2,35 +2,39 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { BASE_URL } from '../../api/endpoints';
 
-
 const apiClient = axios.create({
   baseURL: BASE_URL,
   timeout: 30000, // Set a default timeout (optional)
 });
 
-// Maximum number of retry attempts
 const MAX_RETRIES = 3;
+let isRetrying = false; // Prevent multiple retry notifications
 
 // Retry mechanism with exponential backoff
 const retryRequest = async (error) => {
   const config = error.config;
-  if (!config || !config.retryCount) {
-    config.retryCount = 0; // Initialize retry count
+
+  if (!config || config.retryCount >= MAX_RETRIES) {
+    return Promise.reject(error);
   }
-  if (config.retryCount < MAX_RETRIES) {
-    config.retryCount += 1;
-    const delay = 1000 * Math.pow(2, config.retryCount); // Exponential backoff
-    await new Promise((resolve) => setTimeout(resolve, delay));
+
+  config.retryCount = (config.retryCount || 0) + 1;
+  const delay = 1000 * Math.pow(2, config.retryCount);
+
+  if (!isRetrying) {
+    isRetrying = true;
     toast(`Retrying request... Attempt ${config.retryCount}`, { icon: '🔄' });
-    return apiClient(config); // Retry the request
+    setTimeout(() => (isRetrying = false), 3000); // Prevents multiple toasts
   }
-  return Promise.reject(error); // Reject after max retries
+
+  await new Promise((resolve) => setTimeout(resolve, delay));
+  return apiClient(config); // Retry the request
 };
 
 // Check internet connectivity
 const checkInternetConnectivity = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/google.com`, { method: 'HEAD' }); // Replace '/ping' with a health-check endpoint
+    const response = await fetch(`${BASE_URL}/health-check`, { method: 'HEAD' }); // Use a proper health-check endpoint
     return response.ok;
   } catch (error) {
     return false;
@@ -39,7 +43,6 @@ const checkInternetConnectivity = async () => {
 
 // Monitor connection status with debouncing
 let debounceTimeout;
-
 const monitorConnection = async () => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(async () => {
@@ -49,7 +52,7 @@ const monitorConnection = async () => {
     } else {
       toast.error('You are offline. Check your connection.', { icon: '⚠️' });
     }
-  }, 500); // Debounce delay
+  }, 1000); // Debounce delay
 };
 
 // Add event listeners for online/offline
@@ -60,53 +63,48 @@ window.addEventListener('offline', monitorConnection);
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    console.log('THIS IS A TOKEN',token)
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Add a response interceptor for global error handling and retry mechanism
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response) {
-      const { status, data } = error.response;
+    const { response, config } = error;
+
+    if (response) {
+      const { status, data } = response;
+      const errorMessage = data?.message?.toLowerCase() || '';
 
       // 🔹 Handle invalid token
-      if (status === 403) {
-        const errorMessage = data?.message?.toLowerCase();
-
-        if (errorMessage.includes('invalid token') || errorMessage.includes('not authorized as admin or staff')) {
-          console.error('Invalid token or unauthorized access! Logging out...');
-          toast.error('Session expired! Redirecting to login.');
-
-          // Clear user data and redirect to login
-          window.localStorage.clear();
-          window.location.href = '/hms/login';
-          return Promise.reject(error);
-        }
-
-        toast.error('Forbidden! You do not have permission.');
-      } else if (status === 401) {
-        console.error('Unauthorized! Redirecting to login.');
+      if (status === 403 && (errorMessage.includes('invalid token') || errorMessage.includes('not authorized'))) {
         toast.error('Session expired! Redirecting to login.');
-        
         window.localStorage.clear();
         window.location.href = '/hms/login';
-      } else if (status === 500) {
+        return Promise.reject(error);
+      }
+
+      if (status === 401) {
+        toast.error('Session expired! Redirecting to login.');
+        window.localStorage.clear();
+        window.location.href = '/hms/login'; 
+        return Promise.reject(error);
+      }
+
+      if (status === 500) {
         toast.error('Server error, please try again later.');
       } else if (status === 404) {
-        toast.error('Not Found');
-      } 
+        toast.error('Requested resource not found.');
+      }
     } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
-      toast.error('Connection issue. Retrying...');
-      return retryRequest(error);
+      if (!config.url.includes('/auth')) { // Avoid retrying auth endpoints
+        return retryRequest(error);
+      }
     } else {
       toast.error(`Error: ${error.message}`);
     }
@@ -114,7 +112,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-
 
 export default apiClient;
