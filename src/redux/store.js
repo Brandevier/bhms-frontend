@@ -32,7 +32,9 @@ const rootReducer = combineReducers({
   shifts:reducers.shiftReducers,
   notification:reducers.notificationSlice,
   noteComment:reducers.patientNoteCommentSlice,
-  admission : reducers.admissionSlice
+  admission : reducers.admissionSlice,
+  transfer:reducers.transferSlice,
+  institutionAccounts:reducers.InstitutionPaymentSlice
 
 });
 

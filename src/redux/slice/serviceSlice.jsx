@@ -7,12 +7,12 @@ import apiClient from '../middleware/apiClient';
 export const fetchServices = createAsyncThunk(
   'service/fetchServices',
   async (_, { rejectWithValue,getState }) => {
-    const { admin,user } = getState().auth;
-    const institution_id = admin.institution.id || user.institution.id
+    const { auth } = getState();
+    const user = auth.user || auth.admin
     try {
       const response = await apiClient.get(`/service/institution`,{
         params:{
-            institution_id
+            institution_id:user.institution.id
         }
       });
       return response.data;
@@ -69,9 +69,18 @@ export const fetchPatientInvoices = createAsyncThunk(
 // Create a patient invoice
 export const createPatientInvoice = createAsyncThunk(
   'service/createPatientInvoice',
-  async (invoiceData, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post('/invoices', invoiceData);
+  async (invoiceData, { rejectWithValue,getState }) => {
+
+    const { auth } = getState()
+    const user = auth.admin || auth.user
+
+    try { 
+      const response = await apiClient.post('/invoices', {
+        ...invoiceData,
+        institution_id:user.institution.id,
+        department_id:user.department.id,
+        staff_id:user.id
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

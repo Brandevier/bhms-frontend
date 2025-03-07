@@ -107,9 +107,6 @@ const handleNavigation = ({departmentType,department_id}) => {
             break;
     }
 };
-
-
-
     return (
         <div style={{ padding: "20px"}}>
             {/* Header Section */}

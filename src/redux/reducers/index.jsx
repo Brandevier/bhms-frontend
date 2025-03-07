@@ -16,8 +16,8 @@ import shiftReducers from  '../slice/shiftSlice'
 import notificationSlice from  '../slice/notificationSlice'
 import patientNoteCommentSlice from '../slice/commentSlice'
 import admissionSlice from '../slice/admissionSlice'
-
-
+import transferSlice from '../slice/transferSlice'
+import InstitutionPaymentSlice from '../slice/institutionPayments'
 
 
 export {
@@ -38,6 +38,8 @@ export {
     shiftReducers,
     notificationSlice,
     patientNoteCommentSlice,
-    admissionSlice
+    admissionSlice,
+    transferSlice,
+    InstitutionPaymentSlice
 }
  

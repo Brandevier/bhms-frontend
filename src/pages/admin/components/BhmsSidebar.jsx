@@ -55,7 +55,7 @@ const BhmsSidebar = () => {
             <Link to="/admin/staffs" className="text-gray-800">Staff Management</Link>
           </Menu.Item>
           <Menu.Item key="4" icon={<InboxOutlined style={{ color: "#475569" }} />}>
-            <Link to="/sms-management" className="text-gray-800">SMS Management</Link>
+            <Link to="/admin/sms-management" className="text-gray-800">SMS Management</Link>
           </Menu.Item>
           <Menu.Item key="5" icon={<MessageOutlined style={{ color: "#475569" }} />}>
             <Link to="/admin/service" className="text-gray-800">Service</Link>
@@ -65,11 +65,9 @@ const BhmsSidebar = () => {
             <Link to="/admin/claims" className="text-gray-800">Claims</Link>
           </Menu.Item>
           <Menu.Item key="7" icon={<InboxOutlined style={{ color: "#475569" }} />}>
-            <Link to="/patient-report" className="text-gray-800">Patient Report</Link>
+            <Link to="/admin/patient-report" className="text-gray-800">Patient Report</Link>
           </Menu.Item>
-          <Menu.Item key="8" icon={<InboxOutlined style={{ color: "#475569" }} />}>
-            <Link to="/inventory" className="text-gray-800">Inventory</Link>
-          </Menu.Item>
+         
           <Menu.Item key="9" icon={<CalendarOutlined style={{ color: "#475569" }} />}>
             <Link to="/admin/task" className="text-gray-800">My Calendar</Link>
           </Menu.Item>

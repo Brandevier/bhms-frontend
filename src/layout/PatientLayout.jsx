@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Row, Col, Skeleton } from "antd";
+import { Row, Col, Skeleton, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecordByPatient } from "../redux/slice/recordSlice";
 import { useParams } from "react-router-dom";
@@ -16,7 +16,7 @@ import PrescriptionList from "../hooks/PrescriptionList";
 import { fetchLabTest ,fetchPatientLabResults} from "../redux/slice/labSlice";
 import PatientProcedure from "../hooks/PatientProcedure";
 import PatientDiagnosis from "../hooks/PatientDiagnosisComponent";
-
+import { fetchServices,createPatientInvoice } from "../redux/slice/serviceSlice";
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
@@ -24,11 +24,12 @@ const PatientLayout = () => {
   const { tests,labResults } = useSelector((state)=>state.lab)
   const { notes } = useSelector((state) => state.patientNote);
   const { id } = useParams();
-
+  const { services } = useSelector((state)=>state.service)
   useEffect(() => {
     dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res)=>{
       dispatch(getAllStaff());
       dispatch(fetchLabTest());
+      dispatch(fetchServices());
       // dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
   
       // dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
@@ -40,6 +41,18 @@ const PatientLayout = () => {
     dispatch(fetchRecordByPatient({ record_id: id }));
     dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
   };
+
+  const handlePatientBills = (data)=>{
+      const submitData = {
+        ...data,
+        patient_id: currentRecord?.patient?.id
+      }
+
+      dispatch(createPatientInvoice(submitData)).unwrap().then((res)=>{
+        message.success('Patient bills updated successfully')
+        generalHandler()
+      })
+  }
 
   return (
     <div style={{ padding: 20 }}>
@@ -109,7 +122,7 @@ const PatientLayout = () => {
           {status === "loading" ? (
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
-            <PatientBills bills={currentRecord?.patient?.service_bills} />
+            <PatientBills bills={currentRecord?.patient?.serviceBills} services={services} onSubmit={handlePatientBills}/>
           )}
         </Col>
       </Row>
