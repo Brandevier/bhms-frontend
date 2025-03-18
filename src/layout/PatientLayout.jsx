@@ -13,45 +13,47 @@ import { getAllStaff } from "../redux/slice/staff_admin_managment_slice";
 import { fetchPatientNotes } from "../redux/slice/patientNotesSlice";
 import HealthReports from "../hooks/HealthReports";
 import PrescriptionList from "../hooks/PrescriptionList";
-import { fetchLabTest ,fetchPatientLabResults} from "../redux/slice/labSlice";
+import { fetchLabTest, fetchPatientLabResults } from "../redux/slice/labSlice";
 import PatientProcedure from "../hooks/PatientProcedure";
 import PatientDiagnosis from "../hooks/PatientDiagnosisComponent";
-import { fetchServices,createPatientInvoice } from "../redux/slice/serviceSlice";
+import { fetchServices, createPatientInvoice } from "../redux/slice/serviceSlice";
+import PatientHistory from "../pages/departments/maternity/components/PatientHistory";
+import Partograph from "../pages/departments/maternity/components/Partograph";
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
   const { currentRecord, status } = useSelector((state) => state.records);
-  const { tests,labResults } = useSelector((state)=>state.lab)
+  const { tests, labResults } = useSelector((state) => state.lab)
   const { notes } = useSelector((state) => state.patientNote);
   const { id } = useParams();
-  const { services } = useSelector((state)=>state.service)
+  const { services } = useSelector((state) => state.service)
   useEffect(() => {
-    dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res)=>{
+    dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res) => {
       dispatch(getAllStaff());
       dispatch(fetchLabTest());
       dispatch(fetchServices());
       // dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
-  
+
       // dispatch(fetchPatientNotes({ patient_id: currentRecord?.patient?.id }));
     });
-   
+
   }, [dispatch, id]);
 
   const generalHandler = () => {
     dispatch(fetchRecordByPatient({ record_id: id }));
-    dispatch(fetchPatientLabResults({patient_id: currentRecord?.patient?.id}));
+    dispatch(fetchPatientLabResults({ patient_id: currentRecord?.patient?.id }));
   };
 
-  const handlePatientBills = (data)=>{
-      const submitData = {
-        ...data,
-        patient_id: currentRecord?.patient?.id
-      }
+  const handlePatientBills = (data) => {
+    const submitData = {
+      ...data,
+      patient_id: currentRecord?.patient?.id
+    }
 
-      dispatch(createPatientInvoice(submitData)).unwrap().then((res)=>{
-        message.success('Patient bills updated successfully')
-        generalHandler()
-      })
+    dispatch(createPatientInvoice(submitData)).unwrap().then((res) => {
+      message.success('Patient bills updated successfully')
+      generalHandler()
+    })
   }
 
   return (
@@ -74,7 +76,7 @@ const PatientLayout = () => {
         {status === "loading" ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
-          <PrescriptionList  prescriptionData={currentRecord?.patient?.prescriptions} onDelete={generalHandler}/>
+          <PrescriptionList prescriptionData={currentRecord?.patient?.prescriptions} onDelete={generalHandler} />
         )}
       </div>
 
@@ -82,7 +84,7 @@ const PatientLayout = () => {
         {status === "loading" ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
-          <PatientDiagnosis diagnosis={currentRecord?.patient?.diagnosis} onSubmit={generalHandler}/>
+          <PatientDiagnosis diagnosis={currentRecord?.patient?.diagnosis} onSubmit={generalHandler} />
         )}
       </div>
 
@@ -113,7 +115,7 @@ const PatientLayout = () => {
               <PatientVitalsChart vitalsData={currentRecord?.patient?.vitalSignsRecords} />
             )}
           </Row>
-          
+
         </Col>
 
         {/* Right Column - Reports & Appointments */}
@@ -122,27 +124,43 @@ const PatientLayout = () => {
           {status === "loading" ? (
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
-            <PatientBills bills={currentRecord?.patient?.serviceBills} services={services} onSubmit={handlePatientBills}/>
+            <PatientBills bills={currentRecord?.patient?.serviceBills} services={services} onSubmit={handlePatientBills} />
           )}
         </Col>
       </Row>
       {/* Patient Notes */}
       {status === "loading" ? (
-            <Skeleton active paragraph={{ rows: 2 }} />
-          ) : (
-            <PatientProcedure procedures={currentRecord?.patient?.procedures} onDelete={()=>console.log('delete')} />
+        <Skeleton active paragraph={{ rows: 2 }} />
+      ) : (
+        <PatientProcedure procedures={currentRecord?.patient?.procedures} onDelete={() => console.log('delete')} />
 
-          )} 
-          
+      )}
+
       {status === "loading" ? (
-            <Skeleton active paragraph={{ rows: 2 }} />
-          ) : (
-            <PatientNotes
-              patient_notes={currentRecord?.patient?.patient_notes}
-              patient_id={currentRecord?.patient?.id}
-              general_handler={generalHandler}
-            />
-          )}
+        <Skeleton active paragraph={{ rows: 2 }} />
+      ) : (
+        <PatientNotes
+          patient_notes={currentRecord?.patient?.patient_notes}
+          patient_id={currentRecord?.patient?.id}
+          general_handler={generalHandler}
+        />
+      )}
+
+      {status === "loading" ? (
+        <Skeleton active paragraph={{ rows: 2 }} />
+      ) : (
+        <PatientHistory
+          patientData={currentRecord?.patient}
+          generalSubmit={generalHandler}
+        />
+      )}
+
+      {status === "loading" ? (
+        <Skeleton active paragraph={{ rows: 2 }} />
+      ) : (
+        <Partograph
+        />
+      )}
     </div>
   );
 };

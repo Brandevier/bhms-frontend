@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, Select, InputNumber,Spin } from "antd";
+import { Modal, Form, Input, Select, InputNumber, Spin } from "antd";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 const { TextArea } = Input;
 const { Option } = Select;
@@ -7,7 +7,10 @@ const { Option } = Select;
 const departmentTypes = [
   "Ward",
   "Consultation",
-  "Maternity Ward",
+  'Labour Ward',
+  'Antenatal & Postnatal Ward',
+  'Postpartum Ward',
+  'Neonatal Unit', 
   "Pharmacy",
   "Lab",
   "Records",
@@ -17,7 +20,7 @@ const departmentTypes = [
   "Store",
 ];
 
-const CreateDepartmentDialog = ({ visible, onClose, onCreate,loading }) => {
+const CreateDepartmentDialog = ({ visible, onClose, onCreate, loading }) => {
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState(null);
 
@@ -43,7 +46,7 @@ const CreateDepartmentDialog = ({ visible, onClose, onCreate,loading }) => {
           Cancel
         </BhmsButton>,
         <BhmsButton key="submit" block={false} size="medium" type="primary" onClick={handleSubmit}>
-         {loading ? <Spin/> : 'Create Department'}
+          {loading ? <Spin /> : 'Create Department'}
         </BhmsButton>,
       ]}
     >

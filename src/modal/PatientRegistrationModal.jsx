@@ -23,7 +23,7 @@ const PatientRegistrationModal = ({ visible, onClose, onSubmit, status }) => {
   return (
     <Modal
       title="Register New Patient"
-
+      width={700}
       open={visible}
       onCancel={onClose}
       footer={[

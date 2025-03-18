@@ -76,6 +76,7 @@ const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
         </Row>
 
         <Row gutter={16}>
+          
           <Col span={12}>
             <Form.Item
               name="temperature"
@@ -133,9 +134,84 @@ const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
                     />
                   </Form.Item>
                 </Col>
+
               </Row>
             </Form.Item>
           </Col>
+
+          {/* GLUCOSE LEVEL */}
+          <Col span={24}>
+  <Row gutter={16}>
+    {/* RESPIRATORY RATE */}
+    <Col span={12}>
+      <Form.Item
+        label="Respiratory Rate (RR)"
+        name="respiratory_rate"
+        rules={[
+          {
+            type: "number",
+            message: "Please enter a valid number",
+          },
+        ]}
+      >
+        <InputNumber
+          addonAfter="breaths/min"
+          style={{ width: "100%" }}
+          placeholder="Enter Respiratory Rate"
+        />
+      </Form.Item>
+    </Col>
+
+    {/* GLUCOSE LEVEL */}
+    <Col span={12}>
+      <Form.Item label="Glucose Level">
+        <Row gutter={8}>
+          <Col span={12}>
+            <Form.Item
+              name="fbs"
+              noStyle
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="mg/dL"
+                style={{ width: "100%" }}
+                placeholder="Fasting Blood Sugar (FBS)"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="ppbs"
+              noStyle
+              rules={[
+                {
+                  type: "number",
+                  message: "Please enter a valid number",
+                },
+              ]}
+            >
+              <InputNumber
+                addonAfter="mg/dL"
+                style={{ width: "100%" }}
+                placeholder="Postprandial Blood Sugar (PPBS)"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form.Item>
+    </Col>
+  </Row>
+</Col>
+
+
+          
+
+
         </Row>
 
         <Row gutter={16}>

@@ -18,7 +18,9 @@ import {
   StopOutlined,
   UserSwitchOutlined,
   ShopOutlined,
-  BarChartOutlined
+  BarChartOutlined,
+  UserAddOutlined,
+  ProfileOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -44,10 +46,14 @@ const StaffSideBar = () => {
       { key: "records-4", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
 
     ],
-    "Maternity Ward": [
-      { key: "maternity-1", label: "Pregnancy Records", icon: <FileSearchOutlined />, path: "/maternity/records" },
-      { key: "maternity-2", label: "Birth Reports", icon: <SolutionOutlined />, path: "/maternity/reports" },
+    "Antenatal & Postnatal Ward": [
+      { key: "ANC-0", label: "Maternity Registration", icon: <UserAddOutlined />, path: `/shared/maternity/registration/${user.department.id}` },
+      { key: "ANC-1", label: "Pregnancy Records", icon: <FileTextOutlined />, path: "/maternity/pregnancy-records" },
+      { key: "ANC-2", label: "Birth Reports", icon: <ProfileOutlined />, path: "/maternity/birth-reports" },
+      { key: "ANC-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
+
     ],
+
     "Pharmacy": [
       { key: "pharmacy-1", label: "Medicines", icon: <MedicineBoxOutlined />, path: "/pharmacy/medicines" },
       { key: "pharmacy-2", label: "Prescriptions", icon: <FileTextOutlined />, path: "/pharmacy/prescriptions" },
@@ -64,7 +70,7 @@ const StaffSideBar = () => {
       { key: "records-4", label: "Reports & Statistics", icon: <BarChartOutlined />, path: `/shared/records/${user.department.id}/statistics` },
     ],
     "OPD": [
-      { key: "opd-1", label: "Check-ins", icon: <UserOutlined />, path: `/shared/opd/${user.department.id}`},
+      { key: "opd-1", label: "Check-ins", icon: <UserOutlined />, path: `/shared/opd/${user.department.id}` },
       { key: "opd-2", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
       // { key: "opd-2", label: "Triage", icon: <AppstoreOutlined />, path: "/shared//opd/triage" },
     ],

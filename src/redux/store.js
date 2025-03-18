@@ -34,7 +34,12 @@ const rootReducer = combineReducers({
   noteComment:reducers.patientNoteCommentSlice,
   admission : reducers.admissionSlice,
   transfer:reducers.transferSlice,
-  institutionAccounts:reducers.InstitutionPaymentSlice
+  institutionAccounts:reducers.InstitutionPaymentSlice,
+  patientObstetricHistory:reducers.obstetricHistorySlice,
+  medicalHistory: reducers.medicalHistorySlice,
+  immunization:reducers.ImmunizationSlice,
+  consultation: reducers.consultationSlice,
+  chat: reducers.chatSlice
 
 });
 

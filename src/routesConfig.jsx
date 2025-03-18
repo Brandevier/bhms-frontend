@@ -26,6 +26,10 @@ import ExpiredItems from "./pages/departments/store/ExpiredItems";
 import DepartmentStore from "./pages/departments/store/DepartmentStore";
 import PendingRequests from "./pages/departments/store/PendingRequests";
 import HMSStaffShiftSchedule from "./hooks/HMSStaffShiftSchedule";
+import MaternityRegistration from "./pages/departments/maternity/A&C/MaternityRegistration";
+import PatientReport from "./hooks/PatientReport";
+import ChatUI from "./pages/chat/ChatUI";
+
 // Export all imports
 export {
   Homepage,
@@ -55,5 +59,8 @@ export {
   ExpiredItems,
   DepartmentStore,
   PendingRequests,
-  HMSStaffShiftSchedule
+  HMSStaffShiftSchedule,
+  MaternityRegistration,
+  PatientReport,
+  ChatUI
 };

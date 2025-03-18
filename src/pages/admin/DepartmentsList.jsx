@@ -64,6 +64,9 @@ const getDepartmentImage = (departmentType) => {
             return "/departments/hr.jpg";
         case "Store":
             return "/departments/stores.jpg";
+        case "Antenatal & Postnatal Ward":
+            return "/departments/ANC.jpg";
+
         default:
             return "/departments/ward.jpg"; // Default image for unknown departments
     }

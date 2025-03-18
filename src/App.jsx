@@ -33,7 +33,10 @@ import {
   ExpiredItems,
   DepartmentStore,
   PendingRequests,
-  HMSStaffShiftSchedule
+  HMSStaffShiftSchedule,
+  MaternityRegistration,
+  PatientReport,
+  ChatUI
 } from "./routesConfig";
 import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 
@@ -88,12 +91,18 @@ const App = () => {
           <Route path="store/:id/expired-items" element={<ExpiredItems />} />
           <Route path="store/:id/pending-requests" element={<PendingRequests />} />
           <Route path="lab/:id" element={<Lab />} />
+          <Route path="maternity/registration/:id" element={<MaternityRegistration />} />
+
+          {/* CHATUI   */}
+          <Route path="chat" element={<ChatUI />} />
+
         </Route>
 
         {/* Admin-Only Routes */}
         <Route path="/admin/*" element={<AdminRoutes />}>
           <Route path="" element={<Dashboard />} />
           <Route path="staffs" element={<StaffList />} />
+          <Route path="patient-report" element={<PatientReport />} />
           <Route path="service" element={<Service />} />
           <Route path="details/:id" element={<StaffDetails />} />
           <Route path="task" element={<CalendarComponent />} />

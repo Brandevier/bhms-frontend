@@ -1,6 +1,6 @@
 import React from 'react'
 
-const InstitutionAccounts = () => {
+const Labour = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const InstitutionAccounts = () => {
   )
 }
 
-export default InstitutionAccounts
+export default Labour

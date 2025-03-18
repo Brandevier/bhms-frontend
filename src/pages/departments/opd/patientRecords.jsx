@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm } from "antd";
+import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm, Spin } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
 import { useDispatch, useSelector } from "react-redux";
 import { createRecord, fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
 import { useParams, useNavigate } from "react-router-dom";
+import { requestConsultation } from "../../../redux/slice/consultationSlice";
+
 
 const { Search } = Input;
 const { TabPane } = Tabs;
@@ -17,6 +19,7 @@ const PatientRecordsOPD = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { id } = useParams(); // Institution ID
   const navigate = useNavigate();
+  const { loading } = useSelector((state)=>state.consultation)
 
   useEffect(() => {
     dispatch(fetchRecordsByInstitution());
@@ -63,6 +66,21 @@ const PatientRecordsOPD = () => {
       .catch(() => message.error("Failed to delete record"));
   };
 
+  // handle request consultation
+
+  const handleConsultation = (record_id) => {
+    dispatch(requestConsultation(record_id))
+      .unwrap()
+      .then(() => {
+        message.success("Consultation requested successfully");
+        dispatch(fetchRecordsByInstitution());
+        navigate(`/shared/patient/details/${record_id}`)
+      })
+      .catch(() => message.error("Failed to request consultation"));
+
+  }
+
+
   // Table Columns
   const columns = [
     {
@@ -99,15 +117,13 @@ const PatientRecordsOPD = () => {
       key: "actions",
       render: (_, record) => (
         <span>
-          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
+          <BhmsButton block={false} size="medium" outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
             View
           </BhmsButton>
           <span className="mx-2"></span>
-          {/* <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
-            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
-              Delete
-            </BhmsButton>
-          </Popconfirm> */}
+          <BhmsButton disabled={loading} block={false} size="medium" outline onClick={() => handleConsultation(record?.id)}>
+           {loading ? <Spin/> : 'Request Consultation'} 
+          </BhmsButton>
         </span>
       ),
     },

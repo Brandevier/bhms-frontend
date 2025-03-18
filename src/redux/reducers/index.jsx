@@ -18,6 +18,12 @@ import patientNoteCommentSlice from '../slice/commentSlice'
 import admissionSlice from '../slice/admissionSlice'
 import transferSlice from '../slice/transferSlice'
 import InstitutionPaymentSlice from '../slice/institutionPayments'
+import obstetricHistorySlice from '../slice/obstetricHistorySlice'
+import medicalHistorySlice from '../slice/medicalHistorySlice'
+import ImmunizationSlice from '../slice/ImmunizationHistorySlice'
+import consultationSlice from '../slice/consultationSlice'
+import chatSlice from '../slice/chatSlice'
+
 
 
 export {
@@ -40,6 +46,11 @@ export {
     patientNoteCommentSlice,
     admissionSlice,
     transferSlice,
-    InstitutionPaymentSlice
+    InstitutionPaymentSlice,
+    obstetricHistorySlice,
+    medicalHistorySlice,
+    ImmunizationSlice,
+    consultationSlice,
+    chatSlice
 }
  

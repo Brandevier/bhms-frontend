@@ -36,6 +36,8 @@ const PatientNotes = ({ patient_notes, general_handler, patient_id }) => {
             comment: commentTexts[noteId],
         };
 
+        console.log(commentData)
+
         dispatch(addComment(commentData))
             .unwrap()
             .then(() => {

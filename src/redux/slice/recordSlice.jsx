@@ -7,7 +7,8 @@ const initialState = {
     currentRecord: null, // Object to store the currently selected record
     status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null, // Store any error messages
-    statistics: null
+    statistics: null,
+    patientReports: []
 };
 
 // Define async thunks for API calls
@@ -15,34 +16,40 @@ const initialState = {
 // Fetch all records for an institution
 export const fetchRecordsByInstitution = createAsyncThunk(
     'records/fetchRecordsByInstitution',
-    async (_, { rejectWithValue,getState }) => {
-        const { admin,user } = getState().auth
-        const institutionId = admin ? admin.institution.id : user.institution.id
+    async ({ page = 1, limit = 10 } = {}, { rejectWithValue, getState }) => {
         try {
-            const response = await apiClient.get(`/records/institution`,{
-                params:{
-                    'institution_id':institutionId,
-                }
+            const state = getState();
+            const { admin, user } = state.auth;
+
+            // Ensure institution exists before accessing ID
+            const institutionId = admin?.institution?.id || user?.institution?.id;
+            if (!institutionId) throw new Error("Institution ID is missing");
+
+            const response = await apiClient.get(`/records/institution`, {
+                params: { institution_id: institutionId, page, limit, is_antenatal_patient: true }
             });
+
             return response.data;
         } catch (error) {
-            console.log(error.response)
-            return rejectWithValue(error.response.data);
+            console.error("Fetch Error:", error);
+            return rejectWithValue(error.response?.data || { message: error.message });
         }
     }
 );
 
+
+
 // Fetch a single record by patient ID and institution ID
 export const fetchRecordByPatient = createAsyncThunk(
     'records/fetchRecordByPatient',
-    async ({ record_id }, { rejectWithValue ,getState}) => {
+    async ({ record_id }, { rejectWithValue, getState }) => {
         const { auth } = getState()
         const user = auth.admin || auth.user
         try {
-            const response = await apiClient.get(`/records/institution/patient/get-patient-details`,{
-                params:{
-                    'institution_id':user.institution.id,
-                    'record_id':record_id
+            const response = await apiClient.get(`/records/institution/patient/get-patient-details`, {
+                params: {
+                    'institution_id': user.institution.id,
+                    'record_id': record_id
                 }
             });
             return response.data;
@@ -55,20 +62,24 @@ export const fetchRecordByPatient = createAsyncThunk(
 // Create a new record
 export const createRecord = createAsyncThunk(
     'records/createRecord',
-    async (recordData, { rejectWithValue,getState }) => {
+    async ({ recordData, is_antenatal_patient = false }, { rejectWithValue, getState }) => {
         const { auth } = getState();
-        const user = auth.admin || auth.user
+        const user = auth.admin || auth.user;
+
         try {
             const response = await apiClient.post('/records/institution/patient/create', {
                 ...recordData,
                 institution_id: user.institution.id,
+                is_antenatal_patient, // Default is false unless explicitly set to true
             });
+
             return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || { error: 'Something went wrong' });
         }
     }
 );
+
 
 // Update a record
 export const updateRecord = createAsyncThunk(
@@ -98,13 +109,13 @@ export const deleteRecord = createAsyncThunk(
 
 export const getStats = createAsyncThunk(
     'records/stats',
-    async(_,{rejectWithValue,getState})=>{
-        const {auth} = getState()
-        const  institution_id  = auth.user.institution.id
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const institution_id = auth.user.institution.id
 
         try {
-            const response = await apiClient.get('records/institution/records/statistics',{
-                params:{
+            const response = await apiClient.get('records/institution/records/statistics', {
+                params: {
                     institution_id
                 }
             })
@@ -113,6 +124,26 @@ export const getStats = createAsyncThunk(
             return rejectWithValue(error.response.data);
         }
     }
+)
+
+// GET PATIENT REPORT
+export const getPatientReports = createAsyncThunk(
+    'records/getPatientReports',
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.admin
+        try {
+            const response = await apiClient.get(`/records/patientReport`, {
+                params: {
+                    institution_id: user.institution.id
+                }
+            });
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+
 )
 
 // Create the slice
@@ -159,7 +190,7 @@ const recordSlice = createSlice({
             })
             .addCase(createRecord.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.records.push(action.payload);
+                state.records = action.payload;
             })
             .addCase(createRecord.rejected, (state, action) => {
                 state.status = 'failed';
@@ -193,15 +224,26 @@ const recordSlice = createSlice({
             .addCase(deleteRecord.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
-            }).addCase(getStats.pending,(state,action)=>{
+            }).addCase(getStats.pending, (state, action) => {
                 state.status = 'loading';
-            }).addCase(getStats.fulfilled,(state,action)=>{
+            }).addCase(getStats.fulfilled, (state, action) => {
                 state.status = 'succeeded',
-                state.statistics = action.payload
-            }).addCase(getStats.rejected,(state,action)=>{
+                    state.statistics = action.payload
+            }).addCase(getStats.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
-            });
+            }).addCase(getPatientReports.pending, (state, action) => {
+                state.status = 'loading';
+            }).addCase(getPatientReports.fulfilled, (state, action) => {
+                state.status = 'succeeded',
+                    state.patientReports = action.payload
+            }).addCase(getPatientReports.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+
+            })
+
+            ;
     },
 });
 
