@@ -23,7 +23,7 @@ import medicalHistorySlice from '../slice/medicalHistorySlice'
 import ImmunizationSlice from '../slice/ImmunizationHistorySlice'
 import consultationSlice from '../slice/consultationSlice'
 import chatSlice from '../slice/chatSlice'
-
+import billSlice from  '../slice/PatientBillSlices'
 
 
 export {
@@ -51,6 +51,7 @@ export {
     medicalHistorySlice,
     ImmunizationSlice,
     consultationSlice,
-    chatSlice
+    chatSlice,
+    billSlice
 }
  

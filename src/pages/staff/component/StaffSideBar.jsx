@@ -20,7 +20,8 @@ import {
   ShopOutlined,
   BarChartOutlined,
   UserAddOutlined,
-  ProfileOutlined
+  ProfileOutlined,
+  WechatOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -41,9 +42,11 @@ const StaffSideBar = () => {
     "Consultation": [
       // { key: "consult-1", label: "Discharge Patients", icon: <CalendarOutlined />, path: `/shared/consultation/${user.department.id}` },
       { key: "consult-2", label: "OPD Patients", icon: <UserOutlined />, path: `/shared/consultation/${user.department.id}` },
-      { key: "records-5", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
-      { key: "records-3", label: "Staff on Duty", icon: <CalendarOutlined />, path: `/shared/departments/${user.department.id}/shift-schedule` },
-      { key: "records-4", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
+      { key: "consult-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
+      { key: "consult-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
+      { key: "consult-5", label: "Staff on Duty", icon: <CalendarOutlined />, path: `/shared/departments/${user.department.id}/shift-schedule` },
+      { key: "consult-6", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
+
 
     ],
     "Antenatal & Postnatal Ward": [
@@ -57,6 +60,9 @@ const StaffSideBar = () => {
     "Pharmacy": [
       { key: "pharmacy-1", label: "Medicines", icon: <MedicineBoxOutlined />, path: "/pharmacy/medicines" },
       { key: "pharmacy-2", label: "Prescriptions", icon: <FileTextOutlined />, path: "/pharmacy/prescriptions" },
+      { key: "pharmacy-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
+      { key: "pharmacy-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
+
     ],
     "Lab": [
       { key: "lab-1", label: "Test Requests", icon: <FileTextOutlined />, path: "/lab/requests" },

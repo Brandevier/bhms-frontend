@@ -56,10 +56,18 @@ export const deleteService = createAsyncThunk(
 // Fetch patient invoices
 export const fetchPatientInvoices = createAsyncThunk(
   'service/fetchPatientInvoices',
-  async ({ patient_id, institution_id }, { rejectWithValue }) => {
+  async ({ patient_id }, { rejectWithValue ,getState}) => {
+    const { auth } = getState();
+
+    const user = auth.admin || auth.user
     try {
-      const response = await apiClient.get(`/invoices/patient`);
-      return response.data;
+      const response = await apiClient.get(`/invoices/patient`,{
+        params:{
+          institution_id:user.institution.id,
+          patient_id
+        }
+      });
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

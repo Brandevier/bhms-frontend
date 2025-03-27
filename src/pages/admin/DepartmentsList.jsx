@@ -84,9 +84,6 @@ const handleNavigation = ({departmentType,department_id}) => {
         case "Maternity Ward":
             navigate("/departments/maternity");
             break;
-        case "Pharmacy":
-            navigate("/departments/pharmacy");
-            break;
         case "Lab":
             navigate(`/shared/lab/${department_id}`);
             break;
@@ -105,6 +102,10 @@ const handleNavigation = ({departmentType,department_id}) => {
         case "Store":
             navigate(`/shared/store/${department_id}`);
             break;
+        case "Pharmacy":
+            navigate(`/shared/departments/pharmacy`);
+            break;
+
         default:
             navigate("/departments/general"); // Default page
             break;

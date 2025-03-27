@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../middleware/apiClient";
 
 // ✅ Admit a Patient
-export const admitPatient = createAsyncThunk("admissions/admit", async (admissionData, { rejectWithValue,getState }) => {
+export const admitPatient = createAsyncThunk("admissions/admit", async (admissionData, { rejectWithValue, getState }) => {
     const { auth } = getState()
 
     const user = auth.user
@@ -11,8 +11,8 @@ export const admitPatient = createAsyncThunk("admissions/admit", async (admissio
     try {
         const response = await apiClient.post(`/admission/create-new-admission`, {
             ...admissionData,
-            staff_id:user.id,
-            institution_id:user.institution.id
+            staff_id: user.id,
+            institution_id: user.institution.id
         });
         return response.data;
     } catch (error) {
@@ -31,9 +31,17 @@ export const dischargePatient = createAsyncThunk("admissions/discharge", async (
 });
 
 // ✅ Get All Admissions in a Department
-export const fetchAdmissions = createAsyncThunk("admissions/fetchAll", async ({ department_id, institution_id }, { rejectWithValue }) => {
+export const fetchAdmissions = createAsyncThunk("admissions/fetchAll", async ({ department_id }, { rejectWithValue, getState }) => {
+
+    const { auth } = getState()
+
+    const user = auth.user || auth.admin
+
+
+
+
     try {
-        const response = await apiClient.get(`/all`, { params: { department_id, institution_id } });
+        const response = await apiClient.get(`/admission/all`, { params: { department_id, institution_id: user.institution.id } });
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data);

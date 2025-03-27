@@ -12,13 +12,20 @@ const { Search } = Input;
 const Records = () => {
   const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
-  const { records, status, error } = useSelector((state) => state.records);
+  const { records, loading, totalPages, status } = useSelector((state) => state.records);
   const [modalVisible, setModalVisible] = useState(false);
   const { id } = useParams(); // Institution ID
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const limit = 10; // Items per page
+  const [searchTerm, setSearchTerm] = useState('');
+  const { consultationLoading } = useSelector((state) => ({
+    consultationLoading: state.consultation?.loading ?? loading
+  }));
+
 
   useEffect(() => {
-    dispatch(fetchRecordsByInstitution());
+    dispatch(fetchRecordsByInstitution({ page, limit }));
   }, [dispatch]);
 
   // Handle Register New Patient
@@ -39,13 +46,26 @@ const Records = () => {
     setSearchText(value?.toLowerCase() || "");
   };
 
-  const filteredData = records?.filter(
-    (item) =>
-      item?.patient?.first_name?.toLowerCase()?.includes(searchText) ||
-      item?.patient?.last_name?.toLowerCase()?.includes(searchText) ||
-      item?.folder_number?.includes(searchText) ||
-      item?.nin_number?.includes(searchText)
-  );
+  // Filter patients based on search term
+  const filteredData = records?.patients?.filter((record) =>
+    record.patient.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.patient.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.folder_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.serial_number?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  const handleConsultation = (record_id) => {
+    dispatch(requestConsultation(record_id))
+      .unwrap()
+      .then(() => {
+        message.success("Consultation requested successfully");
+        dispatch(fetchRecordsByInstitution());
+        // navigate(`/shared/patient/details/${record_id}`)
+      })
+      .catch(() => message.error("Failed to request consultation"));
+
+  }
+
 
   // Handle Delete
   const handleDelete = (id) => {
@@ -96,17 +116,14 @@ const Records = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <span>
-          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
-            View
-          </BhmsButton>
-          <span className="mx-2"></span>
+        <div className='flex'>
+          <BhmsButton outline block={false} size='medium' onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>View</BhmsButton>
           <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
-            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red">
+            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red" className="mx-2">
               Delete
             </BhmsButton>
           </Popconfirm>
-        </span>
+        </div>
       ),
     },
   ];

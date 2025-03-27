@@ -29,6 +29,10 @@ import HMSStaffShiftSchedule from "./hooks/HMSStaffShiftSchedule";
 import MaternityRegistration from "./pages/departments/maternity/A&C/MaternityRegistration";
 import PatientReport from "./hooks/PatientReport";
 import ChatUI from "./pages/chat/ChatUI";
+import Pharmacy from "./pages/departments/pharmacy/Pharmacy";
+import InstitutionAccounts from "./pages/departments/accounts/Accounts";
+import PatientBillHistory from "./pages/departments/accounts/PatientBillHistory";
+
 
 // Export all imports
 export {
@@ -62,5 +66,8 @@ export {
   HMSStaffShiftSchedule,
   MaternityRegistration,
   PatientReport,
-  ChatUI
+  ChatUI,
+  Pharmacy,
+  InstitutionAccounts,
+  PatientBillHistory
 };

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDepartments, fetchRecentChats, sendMessage } from "../../redux/slice/chatSlice";
 import { Layout, List, Input, Button, Upload, Typography, Avatar, Spin, Tooltip } from "antd";
-import { SendOutlined, PaperClipOutlined,UsergroupAddOutlined } from "@ant-design/icons";
+import { SendOutlined, PaperClipOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import moment from "moment";
+import AllPatientModal from "../../modal/AllPatientModal";
 
 const { Sider, Content } = Layout;
 const { Text } = Typography;
@@ -12,6 +13,7 @@ const ChatUI = () => {
   const dispatch = useDispatch();
   const { chats, departments = [], loading, chatLoading } = useSelector((state) => state.chat);
   const { auth } = useSelector((state) => state);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const currentUser = auth?.user || auth?.admin; // Handle both user and admin
   const isAdmin = !!auth?.admin; // Check if the logged-in user is an admin
@@ -21,7 +23,7 @@ const ChatUI = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-  }, [dispatch]);
+  }, [dispatch, chats]);
 
   useEffect(() => {
     if (selectedDepartment) {
@@ -37,33 +39,32 @@ const ChatUI = () => {
       text: chatInput, 
     };
     
-    dispatch(sendMessage(data)).unwrap().then((res)=>{
-        dispatch(fetchDepartments());
+    dispatch(sendMessage(data)).unwrap().then((res) => {
+      dispatch(fetchRecentChats());
     });
     setChatInput("");
-    
   };
 
   // Group messages by date
   const groupMessagesByDate = (messages = []) => {
     return messages.reduce((acc, message) => {
-        if (!message) return acc; // Ignore undefined messages
+      if (!message) return acc; // Ignore undefined messages
 
-        const date = moment(message.createdAt).format("YYYY-MM-DD");
-        if (!acc[date]) acc[date] = [];
-        acc[date].push(message); // Push the message as is
-        return acc;
+      const date = moment(message.createdAt).format("YYYY-MM-DD");
+      if (!acc[date]) acc[date] = [];
+      acc[date].push(message); // Push the message as is
+      return acc;
     }, {});
-};
+  };
 
-// Reverse the order of messages inside each date group
-const groupedMessages = groupMessagesByDate(chats);
-Object.keys(groupedMessages).forEach(date => {
-    groupedMessages[date].reverse(); // Reverse the messages array for each date
-});
+  const groupedMessages = groupMessagesByDate(chats);
 
-console.log(groupedMessages);
-
+  // Reverse the order of date groups and messages within each group
+  const sortedDates = Object.keys(groupedMessages).sort((a, b) => moment(a).diff(moment(b)));
+  const reversedGroupedMessages = sortedDates.reduce((acc, date) => {
+    acc[date] = groupedMessages[date].reverse();
+    return acc;
+  }, {});
 
   return (
     <Layout style={{ height: "90vh", border: "1px solid #E5E7EB", borderRadius: 8 }}>
@@ -116,7 +117,7 @@ console.log(groupedMessages);
               {chatLoading ? (
                 <Spin size="large" style={{ display: "block", textAlign: "center", marginTop: 50 }} />
               ) : (
-                Object.entries(groupedMessages).map(([date, messages]) => (
+                Object.entries(reversedGroupedMessages).map(([date, messages]) => (
                   <div key={date}>
                     {/* Date Header */}
                     <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 8 }}>
@@ -128,11 +129,11 @@ console.log(groupedMessages);
                       renderItem={(msg) => {
                         if (!msg) return null; // Avoid undefined messages
 
-                        const isSender = msg.senderId === currentUser?.id || msg.SenderAdmin?.id === currentUser?.id;
+                        const isSender = msg.Sender?.id === currentUser?.id || msg.SenderAdmin?.id === currentUser?.id;
                         const fromAdmin = !!msg.SenderAdmin?.id;
                         const senderName = 
                           msg.SenderAdmin?.username || 
-                          msg.Sender?.name ||  
+                          `${msg.Sender?.firstName} ${msg.Sender?.lastName}` ||  
                           "Unknown";
 
                         return (
@@ -174,7 +175,7 @@ console.log(groupedMessages);
               <Upload showUploadList={false} beforeUpload={() => false}>
                 <Button icon={<PaperClipOutlined />} style={{ marginRight: 8 }} />
               </Upload>
-              <Button icon={<UsergroupAddOutlined />} style={{ marginRight: 8 }} />
+              <Button icon={<UsergroupAddOutlined />} style={{ marginRight: 8 }} onClick={() => setIsModalVisible(true)}/>
               <Input
                 placeholder="Type a message..."
                 value={chatInput}
@@ -202,6 +203,7 @@ console.log(groupedMessages);
           </div>
         )}
       </Layout>
+      <AllPatientModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} />
     </Layout>
   );
 };

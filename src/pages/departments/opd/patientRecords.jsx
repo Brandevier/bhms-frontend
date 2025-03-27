@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm, Spin } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,10 +18,20 @@ const PatientRecordsOPD = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { id } = useParams(); // Institution ID
   const navigate = useNavigate();
-  const { loading } = useSelector((state)=>state.consultation)
+  const { consultationLoading } = useSelector((state) => ({
+    consultationLoading: state.consultation?.loading ?? loading
+  }));
+  const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const limit = 10; // Items per page
+  const [loadingRow, setLoadingRow] = useState(null);
+
+
+
+
 
   useEffect(() => {
-    dispatch(fetchRecordsByInstitution());
+    dispatch(fetchRecordsByInstitution({ page, limit }));
   }, [dispatch]);
 
   // Handle Register New Patient
@@ -44,16 +53,14 @@ const PatientRecordsOPD = () => {
   };
 
   // Filter only active records
-  const activeRecords = records?.filter((record) => record.status === "active");
 
   // Filter for search text
-  const filteredData = activeRecords?.filter(
-    (item) =>
-      item?.patient?.first_name?.toLowerCase()?.includes(searchText) ||
-      item?.patient?.last_name?.toLowerCase()?.includes(searchText) ||
-      item?.folder_number?.includes(searchText) ||
-      item?.nin_number?.includes(searchText)
-  );
+  const filteredRecords = records?.patients?.filter((record) =>
+    record.patient.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.patient.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.folder_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    record.serial_number?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   // Handle Delete
   const handleDelete = (id) => {
@@ -69,16 +76,21 @@ const PatientRecordsOPD = () => {
   // handle request consultation
 
   const handleConsultation = (record_id) => {
+    setLoadingRow(record_id); // Set the loading row
+
     dispatch(requestConsultation(record_id))
       .unwrap()
       .then(() => {
         message.success("Consultation requested successfully");
         dispatch(fetchRecordsByInstitution());
-        navigate(`/shared/patient/details/${record_id}`)
+        navigate(`/shared/patient/details/${record_id}`);
       })
-      .catch(() => message.error("Failed to request consultation"));
+      .catch(() => message.error("Failed to request consultation"))
+      .finally(() => {
+        setLoadingRow(null); // Reset loading state after completion
+      });
+  };
 
-  }
 
 
   // Table Columns
@@ -121,9 +133,15 @@ const PatientRecordsOPD = () => {
             View
           </BhmsButton>
           <span className="mx-2"></span>
-          <BhmsButton disabled={loading} block={false} size="medium" outline onClick={() => handleConsultation(record?.id)}>
-           {loading ? <Spin/> : 'Request Consultation'} 
+          <BhmsButton
+            disabled={loadingRow === record?.id}
+            block={false}
+            size="medium"
+            onClick={() => handleConsultation(record?.id)}
+          >
+            {loadingRow === record?.id ? <Spin /> : "Request Consultation"}
           </BhmsButton>
+
         </span>
       ),
     },
@@ -150,14 +168,12 @@ const PatientRecordsOPD = () => {
       {/* Tabs Section */}
       <Tabs defaultActiveKey="all">
         {/* All Active Patients */}
-        <TabPane tab={`All (${activeRecords?.length || 0})`} key="all">
-          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
+        <TabPane tab={`All`} key="all">
+          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredRecords} columns={columns} rowKey="id" />}
         </TabPane>
 
         {/* Retake Vitals Request (Placeholder, Modify logic as needed) */}
-        <TabPane tab={`Retake Vitals Request (${0})`} key="retake-vitals">
-          <Skeleton active paragraph={{ rows: 5 }} />
-        </TabPane>
+
       </Tabs>
 
       {/* Patient Registration Modal */}

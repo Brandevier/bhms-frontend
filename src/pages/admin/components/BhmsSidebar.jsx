@@ -9,7 +9,8 @@ import {
   InboxOutlined,
   CiOutlined,
   CalendarOutlined,
-  WechatOutlined, // Added chat icon
+  WechatOutlined,
+  BilibiliOutlined, // Added chat icon
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -67,6 +68,10 @@ const BhmsSidebar = () => {
         </Menu.Item>
         <Menu.Item key="8" icon={<WechatOutlined style={{ color: "#475569" }} />}>
           <Link to="/shared/chat" className="text-gray-800">Chat</Link> {/* 🔹 Added Chat Link */}
+        </Menu.Item>
+
+        <Menu.Item key="8" icon={<BilibiliOutlined style={{ color: "#475569" }} />}>
+          <Link to="/shared/departments/accounts" className="text-gray-800">Bills</Link> {/* 🔹 Added Chat Link */}
         </Menu.Item>
         <Menu.Item key="9" icon={<CalendarOutlined style={{ color: "#475569" }} />}>
           <Link to="/admin/task" className="text-gray-800">My Calendar</Link>

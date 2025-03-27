@@ -39,7 +39,8 @@ const rootReducer = combineReducers({
   medicalHistory: reducers.medicalHistorySlice,
   immunization:reducers.ImmunizationSlice,
   consultation: reducers.consultationSlice,
-  chat: reducers.chatSlice
+  chat: reducers.chatSlice,
+  bills:reducers.billSlice
 
 });
 

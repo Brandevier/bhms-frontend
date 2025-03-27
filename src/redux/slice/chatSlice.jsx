@@ -20,15 +20,20 @@ export const fetchDepartments = createAsyncThunk(
     }
 );
 
-// 🟢 Get Recent Chats for a User or Department
 export const fetchRecentChats = createAsyncThunk(
     "chat/fetchRecentChats",
-    async ({ departmentId }, { rejectWithValue,getState }) => {
-        const { auth } = getState()
-        const user = auth.admin
+    async ({ departmentId }, { rejectWithValue, getState }) => {
+        const { auth } = getState();
+        const user = auth.admin || auth.user; // Check if logged-in user is admin or staff
+        const isAdmin = !!auth.admin; // If auth.admin exists, it's an admin; otherwise, it's a user
+
+        if (!user) {
+            return rejectWithValue("User not found");
+        }
+
         try {
             const response = await apiClient.get(`/chats/recent-chats`, {
-                params: { userId:user.id, departmentId,isAdmin:true },
+                params: { userId: user.id, departmentId, isAdmin },
             });
             return response.data;
         } catch (error) {
@@ -36,6 +41,7 @@ export const fetchRecentChats = createAsyncThunk(
         }
     }
 );
+
 
 // 🟢 Send a Message
 export const sendMessage = createAsyncThunk(

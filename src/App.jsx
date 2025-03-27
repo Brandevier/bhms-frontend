@@ -36,7 +36,10 @@ import {
   HMSStaffShiftSchedule,
   MaternityRegistration,
   PatientReport,
-  ChatUI
+  ChatUI,
+  Pharmacy,
+  InstitutionAccounts,
+  PatientBillHistory
 } from "./routesConfig";
 import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 
@@ -78,6 +81,9 @@ const App = () => {
         <Route path="/shared/*" element={<SharedRoutes />}>
           <Route path="departments" element={<DepartmentsList />} />
           <Route path="departments/store" element={<DepartmentStore />} />
+          <Route path="departments/accounts" element={<InstitutionAccounts />} />
+          <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
+          <Route path="departments/pharmacy" element={<Pharmacy />} />
           <Route path="departments/:id/shift-schedule" element={<HMSStaffShiftSchedule />} />
           <Route path="departments/:id/stats" element={<DepartmentalStats />} />
           <Route path="opd/:id" element={<PatientRecords />} />

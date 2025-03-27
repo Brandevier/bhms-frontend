@@ -49,7 +49,7 @@ export const approvePrescription = createAsyncThunk(
   "prescriptions/approve",
   async ({ prescriptionId, patientId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/prescriptions/approve`, {
+      const response = await apiClient.put(`/prescriptions/approve`, {
         prescriptionId,
         patientId,
       });
@@ -115,9 +115,18 @@ export const issueRefill = createAsyncThunk(
 // 🔹 Async Thunk for Fetching Prescriptions by Institution
 export const fetchPrescriptionsByInstitution = createAsyncThunk(
   "prescriptions/fetchByInstitution",
-  async (institutionId, { rejectWithValue }) => {
+  async (_, { rejectWithValue,getState }) => {
+
+    const { auth } = getState()
+    const user = auth.user || auth.admin
+
+
     try {
-      const response = await apiClient.get(`/prescriptions/institution/`);
+      const response = await apiClient.get(`/prescriptions/institution/`,{
+        params:{
+          institutionId:user.institution.id
+        }
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch prescriptions");

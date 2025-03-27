@@ -9,13 +9,13 @@ import apiClient from '../middleware/apiClient';
 // Async actions
 export const requestConsultation = createAsyncThunk(
     'consultation/requestConsultation',
-    async (record_id, { rejectWithValue,getState }) => {
-        const {auth} = getState();
+    async (record_id, { rejectWithValue, getState }) => {
+        const { auth } = getState();
         const user = auth.user
         try {
             const response = await apiClient.post(`/consultation/request`, {
                 record_id,
-                institution_id:user.institution.id
+                institution_id: user.institution.id
             });
             return response.data;
         } catch (error) {
@@ -28,7 +28,7 @@ export const approveConsultation = createAsyncThunk(
     'consultation/approveConsultation',
     async (id, { rejectWithValue }) => {
         try {
-            const response = await apiClient.patch(`/approve/${id}`);
+            const response = await apiClient.put(`/consultation/approve/${id}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -38,15 +38,35 @@ export const approveConsultation = createAsyncThunk(
 
 export const getConsultationResults = createAsyncThunk(
     'consultation/getConsultationResults',
-    async (id, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
         try {
-            const response = await apiClient.get(`/${id}`);
-            return response.data;
+            const response = await apiClient.get(`/consultation/get-all-consultation`, {
+                params: {
+                    institution_id: user.institution.id
+                }
+            });
+            return response.data.consultation;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
     }
 );
+
+
+export const rejectConsultation = createAsyncThunk(
+    'consultation/rejectConsultation',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.delete(`/consultation/reject/${id}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+)
+
 
 // Slice
 const consultationSlice = createSlice({
@@ -90,15 +110,23 @@ const consultationSlice = createSlice({
             })
             .addCase(getConsultationResults.fulfilled, (state, action) => {
                 state.loading = false;
-                const existing = state.consultations.find(c => c.id === action.payload.consultation.id);
-                if (!existing) {
-                    state.consultations.push(action.payload.consultation);
-                }
+                state.consultations = action.payload;
             })
             .addCase(getConsultationResults.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+            .addCase(rejectConsultation.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(rejectConsultation.fulfilled, (state, action) => {
+                state.loading = false;
+               
+            })
+            .addCase(rejectConsultation.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     }
 });
 

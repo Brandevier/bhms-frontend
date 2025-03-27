@@ -6,8 +6,8 @@ import ShiftModal from "../modal/ShiftModal";
 
 
 const shiftColors = {
-  morning: "blue",
   afternoon: "gold",
+  morning: "blue",
   night: "purple",
   off: "red",
 };

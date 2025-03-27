@@ -1,101 +1,132 @@
-import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Skeleton, Alert } from "antd";
-import { EditOutlined } from "@ant-design/icons";
-import BhmsButton from "../../../heroComponents/BhmsButton";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Table, Space, Tag } from 'antd';
+import { getConsultationResults, approveConsultation, rejectConsultation } from '../../../redux/slice/consultationSlice';
+import BhmsButton from '../../../heroComponents/BhmsButton';
+import {useNavigate} from 'react-router-dom'
 
-const { Search } = Input;
+
 
 const ConsultationDepartment = () => {
-  const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
-  const { records, status, error } = useSelector((state) => state.records);
-  const navigate = useNavigate();
+  const { consultations, loading } = useSelector((state) => state.consultation);
+  const [loadingState, setLoadingState] = useState({}); // Track button loading state
+  const navigate = useNavigate()
+
 
   useEffect(() => {
-    dispatch(fetchRecordsByInstitution());
+    dispatch(getConsultationResults());
   }, [dispatch]);
 
-  // Handle Search Filtering
-  const handleSearch = (value) => {
-    setSearchText(value?.toLowerCase() || "");
+  // Handle approval
+  const handleApprove = async (id) => {
+    setLoadingState((prev) => ({ ...prev, [id]: true }));
+    try {
+      await dispatch(approveConsultation(id)).unwrap(); // Wait for action to complete
+      dispatch(getConsultationResults()); // Refresh the list
+    } finally {
+      setLoadingState((prev) => ({ ...prev, [id]: false }));
+    }
   };
 
-  // Filter only active OPD patients
-  const activeRecords = records?.filter((record) => record.status === "active" && record.visit_type === "outpatient");
+  // Handle rejection
+  const handleReject = async (id) => {
+    setLoadingState((prev) => ({ ...prev, [id]: true }));
+    try {
+      await dispatch(rejectConsultation(id)).unwrap(); // Wait for action to complete
+      dispatch(getConsultationResults()); // Refresh the list
+    } finally {
+      setLoadingState((prev) => ({ ...prev, [id]: false }));
+    }
+  };
 
-  // Filter for search text
-  const filteredData = activeRecords?.filter(
-    (item) =>
-      item?.patient?.first_name?.toLowerCase()?.includes(searchText) ||
-      item?.patient?.last_name?.toLowerCase()?.includes(searchText) ||
-      item?.folder_number?.includes(searchText) ||
-      item?.nin_number?.includes(searchText)
-  );
-
-  // Table Columns
+  // Define table columns
   const columns = [
     {
-      title: "Full Name",
-      dataIndex: "name",
-      key: "name",
-      render: (_, record) =>
-        `${record?.patient?.first_name || ""} ${record?.patient?.middle_name || ""} ${record?.patient?.last_name || ""}`,
+      title: 'Patient Name',
+      dataIndex: 'record',
+      key: 'patient',
+      render: (record) => `${record?.patient?.first_name} ${record?.patient?.last_name}`,
     },
     {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-      render: (_, record) => record?.patient?.gender || "N/A",
+      title: 'Gender',
+      dataIndex: 'record',
+      key: 'patient_id',
+      render: (record) => record?.patient?.gender,
     },
     {
-      title: "NIN Number",
-      dataIndex: "nin_number",
-      key: "nin_number",
+      title: 'Folder Number',
+      dataIndex: 'record',
+      key: 'folder_number',
+      render: (record) => record?.folder_number || 'N/A',
     },
     {
-      title: "Folder Number",
-      dataIndex: "folder_number",
-      key: "folder_number",
+      title: 'Insurance',
+      dataIndex: 'record',
+      key: 'insurance',
+      render: (record) => (record?.is_insured ? 'Yes' : 'No'),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: () => <Tag color="green">ACTIVE</Tag>,
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <Tag color={status === 'approved' ? 'green' : status === 'pending' ? 'orange' : 'red'}>
+          {status.toUpperCase()}
+        </Tag>
+      ),
     },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (_, record) => (
-        <span>
-          <BhmsButton block={false} size="medium" icon={<EditOutlined />} outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
-            View
-          </BhmsButton>
-        </span>
+        <Space>
+          {record.status === 'pending' ? (
+            <>
+              <BhmsButton
+                block={false}
+                type="primary"
+                loading={loadingState[record.id]}
+                onClick={() => handleApprove(record.id)}
+                size='medium'
+              >
+                Approve
+              </BhmsButton>
+              <BhmsButton
+                type="danger"
+                size='medium'
+                outline
+                block={false}
+                loading={loadingState[record.id]}
+                onClick={() => handleReject(record.id)}
+              >
+                Reject
+              </BhmsButton>
+            </>
+          ) : record.status === 'approved' ? (
+            <BhmsButton
+              type="default"
+              size='medium'
+              block={false}
+              onClick={() => navigate(`/shared/patient/details/${record?.record?.id}`)}
+            >
+              View
+            </BhmsButton>
+          ) : null}
+        </Space>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      {error && <Alert message="Error" description={error.message} type="error" showIcon closable />}
-
-      {/* Search Bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-        <Search
-          placeholder="Search Name, Folder Number, NIN"
-          value={searchText}
-          onChange={(e) => handleSearch(e?.target?.value)}
-          style={{ width: 300 }}
-          allowClear
-        />
-      </div>
-
-      {/* Table */}
-      {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
+    <div> 
+      <h2>Consultation Requests</h2>
+      <Table
+        columns={columns}
+        dataSource={consultations}
+        rowKey="id"
+        loading={loading}
+      />
     </div>
   );
 };
