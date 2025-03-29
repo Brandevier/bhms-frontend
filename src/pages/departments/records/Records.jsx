@@ -31,7 +31,10 @@ const Records = () => {
   // Handle Register New Patient
   const handleRegister = (patientData) => {
     const data = { ...patientData, department_id: id };
-    dispatch(createRecord(data))
+
+    console.log(data)
+
+    dispatch(createRecord({recordData:data}))
       .unwrap()
       .then(() => {
         message.success("Patient created successfully");

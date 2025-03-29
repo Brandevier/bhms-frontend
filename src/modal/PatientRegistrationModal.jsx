@@ -13,9 +13,11 @@ const PatientRegistrationModal = ({ visible, onClose, onSubmit, status }) => {
       .validateFields()
       .then((values) => {
         values.phone_number = phone; // Add phone number to form values
-        onSubmit(values); // Pass form data to parent component
-        form.resetFields();
-        setPhone(""); // Reset phone input
+        onSubmit(values).then((res)=>{
+          form.resetFields();
+          setPhone(""); // Reset phone input
+        }); // Pass form data to parent component
+       
       })
       .catch((info) => console.log("Validation Failed:", info));
   };

@@ -3,25 +3,27 @@ import axios from "axios";
 import apiClient from "../middleware/apiClient";
 
 
-// API Base URL
-const API_BASE_URL = "https://clinicaltables.nlm.nih.gov/api/rxterms/v3/search";
 
 // 🔹 Async Thunk for Searching Prescriptions
 export const searchPrescription = createAsyncThunk(
   "prescriptions/search",
   async (query, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}`, {
-        params: {
-          terms: query,
-          maxList: 10,
-          df: "DISPLAY_NAME,STRENGTHS_AND_FORMS"
-        },
+      const response = await fetch("/medi/drugs.json");
+      const drugs = await response.json(); // Changed from parsing CSV to JSON
+      
+      const filteredDrugs = drugs.filter(drug => {
+        const searchQuery = query.toLowerCase();
+        return (
+          drug["Drug Name"]?.toLowerCase().includes(searchQuery) ||
+          drug.Form?.toLowerCase().includes(searchQuery) ||
+          drug["Administration Cautions"]?.toLowerCase().includes(searchQuery)
+        );
       });
-
-      return response.data;
+      
+      return filteredDrugs;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch prescriptions");
+      return rejectWithValue("Failed to load drug data");
     }
   }
 );
@@ -175,7 +177,7 @@ export const deletePrescription = createAsyncThunk(
 const prescriptionSlice = createSlice({
   name: "prescriptions",
   initialState: {
-    results: [],
+    searchResults: [],
     status: "idle",
     prescriptions: [],
     error: null,
@@ -189,7 +191,7 @@ const prescriptionSlice = createSlice({
       })
       .addCase(searchPrescription.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.results = action.payload;
+        state.searchResults = action.payload;
       })
       .addCase(searchPrescription.rejected, (state, action) => {
         state.status = "failed";

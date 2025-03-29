@@ -77,10 +77,10 @@ const Service = () => {
             ),
         },
         {
-            title: "Cost ($)",
+            title: "Cost (GHC)",
             dataIndex: "cost",
             key: "cost",
-            render: (cost) => `$${cost?.toFixed(2)}`,
+            render: (cost) => `${cost?.toFixed(2)}`,
         },
         {
             title: "Actions",
@@ -151,7 +151,7 @@ const Service = () => {
                     <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please enter description" }]}>
                         <Input.TextArea placeholder="Enter service description" />
                     </Form.Item>
-                    <Form.Item name="cost" label="Cost ($)" rules={[{ required: true, message: "Please enter cost" }]}>
+                    <Form.Item name="cost" label="Cost (GHC)" rules={[{ required: true, message: "Please enter cost" }]}>
                         <Input type="number" placeholder="Enter cost" min={0} />
                     </Form.Item>
                 </Form>

@@ -70,7 +70,7 @@ const BhmsSidebar = () => {
           <Link to="/shared/chat" className="text-gray-800">Chat</Link> {/* 🔹 Added Chat Link */}
         </Menu.Item>
 
-        <Menu.Item key="8" icon={<BilibiliOutlined style={{ color: "#475569" }} />}>
+        <Menu.Item key="10" icon={<BilibiliOutlined style={{ color: "#475569" }} />}>
           <Link to="/shared/departments/accounts" className="text-gray-800">Bills</Link> {/* 🔹 Added Chat Link */}
         </Menu.Item>
         <Menu.Item key="9" icon={<CalendarOutlined style={{ color: "#475569" }} />}>

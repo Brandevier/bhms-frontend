@@ -1,51 +1,61 @@
-import React, { useState } from "react";
-import { Modal, Form, Select, Input, InputNumber, Button, Spin } from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import { Modal, Form, Input, InputNumber, List, Typography, Divider,Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { searchPrescription } from "../redux/slice/prescriptionSlice";
+import { debounce } from "lodash";
 import BhmsButton from "../heroComponents/BhmsButton";
 
-
-const { Option } = Select;
 const { TextArea } = Input;
+const { Text } = Typography;
 
-const PrescriptionModal = ({ visible, onClose, onSave,loading }) => {
+const PrescriptionModal = ({ visible, onClose, onSave }) => {
   const dispatch = useDispatch();
-  const { results, status } = useSelector((state) => state.prescription);
+  const { searchResults = [], status } = useSelector((state) => state.prescription);
   
   const [selectedDrug, setSelectedDrug] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false); // Controls dropdown visibility
+  const [searchValue, setSearchValue] = useState("");
   const [form] = Form.useForm();
 
-  // Handle Drug Search
-  const handleSearch = (value) => {
-    if (value.length > 2) {
-      dispatch(searchPrescription(value));
-      setDropdownOpen(true); // Open dropdown on search
+  // Debounced search
+  const handleSearch = useCallback(
+    debounce((value) => {
+      if (value.trim().length > 0) {
+        dispatch(searchPrescription(value));
+      } else {
+        // dispatch(clearSearchResults());
+      }
+    }, 300),
+    [dispatch]
+  );
+
+  // Clear on close
+  useEffect(() => {
+    if (!visible) {
+      setSearchValue("");
+      setSelectedDrug(null);
+      // dispatch(clearSearchResults());
+      form.resetFields();
     }
+  }, [visible, dispatch, form]);
+
+  // Handle drug selection
+  const handleDrugSelect = (drug) => {
+    setSelectedDrug(drug);
+    form.setFieldsValue({
+      drug: drug["Drug Name"],
+      form: drug.Form,
+      dosage: drug.Dosage || "",
+      notes: drug["Administration Cautions"] || ""
+    });
   };
 
-  // Handle Drug Selection & Auto-fill Dosage
-  const handleDrugSelect = (value) => {
-    const index = results[1].indexOf(value);
-    const drug = results[3]?.[index];
-  
-    // Ensure drug is an array and get the second item (dosage details)
-    const availableDosages = Array.isArray(drug) && drug.length > 1 ? drug[1].split(", ") : [];
-  
-    setSelectedDrug(availableDosages);
-    form.setFieldsValue({ dosage: availableDosages[0] || null }); // Set first dosage if available
-  };
-  
-
-  // Handle Form Submission
   const handleSubmit = () => {
     form.validateFields()
       .then((values) => {
         onSave(values);
-        form.resetFields();
-        // onClose();
+        onClose();
       })
-      .catch((error) => console.log("Validation Failed:", error));
+      .catch(console.error);
   };
 
   return (
@@ -57,62 +67,108 @@ const PrescriptionModal = ({ visible, onClose, onSave,loading }) => {
         <BhmsButton key="cancel" block={false} size="medium" outline onClick={onClose}>
           Cancel
         </BhmsButton>,
-        <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit}>
-         {status==="loading" ? <Spin/> : "Save Prescription"} 
+        <BhmsButton 
+          key="submit" 
+          block={false} 
+          size="medium" 
+          onClick={handleSubmit}
+          disabled={!selectedDrug}
+        >
+          Save Prescription
         </BhmsButton>,
       ]}
-      width={720} // Increase modal size
+      width={800}
     >
       <Form form={form} layout="vertical">
-        {/* Search & Select Drug */}
-        <Form.Item label="Drug Name" name="drug" rules={[{ required: true, message: "Please select a drug" }]}>
-          <Select
-            showSearch
-            placeholder="Search for a drug"
-            onSearch={handleSearch}
-            onSelect={handleDrugSelect}
-            open={dropdownOpen}
-            onDropdownVisibleChange={setDropdownOpen} // Control dropdown visibility
-            notFoundContent={status === "loading" ? "Loading..." : "No results"}
-            filterOption={false}
-          >
-            {results[1]?.map((drug, index) => (
-              <Option key={drug} value={drug}>{drug}</Option>
-            ))}
-          </Select>
-        </Form.Item>
+        {/* Search Section */}
+        <div style={{ marginBottom: 24 }}>
+          <Input
+            placeholder="Type drug name (e.g., morphine)"
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              handleSearch(e.target.value);
+            }}
+            allowClear
+          />
 
-        {/* Dosage Auto-fill */}
-        <Form.Item label="Dosage" name="dosage" rules={[{ required: true, message: "Please select dosage" }]}>
-          <Select placeholder="Select dosage" disabled={!selectedDrug}>
-            {selectedDrug?.map((dose, index) => (
-              <Option key={index} value={dose}>{dose}</Option>
-            ))}
-          </Select>
-        </Form.Item>
+          {/* Search Results */}
+          {status === "succeeded" && (
+            <div style={{ marginTop: 16, maxHeight: 300, overflowY: 'auto' }}>
+              {searchResults.length > 0 ? (
+                <List
+                  dataSource={searchResults}
+                  renderItem={(drug) => (
+                    <List.Item 
+                      onClick={() => handleDrugSelect(drug)}
+                      style={{ 
+                        cursor: 'pointer',
+                        padding: 12,
+                        backgroundColor: selectedDrug?.["Drug Name"] === drug["Drug Name"] ? '#e6f7ff' : 'transparent',
+                        borderBottom: '1px solid #f0f0f0'
+                      }}
+                    >
+                      <List.Item.Meta
+                        title={<Text strong>{drug["Drug Name"]}</Text>}
+                        description={
+                          <>
+                            <Text type="secondary">Form: {drug.Form}</Text>
+                            {drug.Dosage && <Text type="secondary" style={{ display: 'block' }}>Dosage: {drug.Dosage}</Text>}
+                            {drug["Administration Cautions"] && (
+                              <Text type="secondary" style={{ display: 'block' }}>Cautions: {drug["Administration Cautions"]}</Text>
+                            )}
+                          </>
+                        }
+                      />
+                    </List.Item>
+                  )}
+                />
+              ) : searchValue && (
+                <Text type="secondary" style={{ display: 'block', padding: 16, textAlign: 'center' }}>
+                  No medications found for "{searchValue}"
+                </Text>
+              )}
+            </div>
+          )}
+        </div>
 
-        {/* Frequency & Duration */}
-        <Form.Item label="Frequency" name="frequency" rules={[{ required: true, message: "Select frequency" }]}>
-          <Select placeholder="Select frequency">
-            <Option value="Once Daily">Once Daily</Option>
-            <Option value="Twice Daily">Twice Daily</Option>
-            <Option value="Three Times Daily">Three Times Daily</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Duration (Days)" name="duration" rules={[{ required: true, message: "Enter duration" }]}>
-          <InputNumber min={1} max={30} style={{ width: "100%" }} />
-        </Form.Item>
-
-        {/* Refills */}
-        <Form.Item label="Refills" name="refills">
-          <InputNumber min={0} max={10} style={{ width: "100%" }} />
-        </Form.Item>
-
-        {/* Additional Notes */}
-        <Form.Item label="Additional Notes" name="notes">
-          <TextArea rows={3} placeholder="Add any extra instructions..." />
-        </Form.Item>
+        {/* Prescription Form */}
+        {selectedDrug && (
+          <>
+            <Divider />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div>
+                <Form.Item label="Drug Name" name="drug">
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item label="Form" name="form">
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item label="Dosage" name="dosage">
+                  <Input placeholder="Enter dosage" />
+                </Form.Item>
+              </div>
+              <div>
+                <Form.Item label="Frequency" name="frequency" rules={[{ required: true }]}>
+                  <Select placeholder="Select frequency">
+                    <Option value="Once Daily">Once Daily</Option>
+                    <Option value="Twice Daily">Twice Daily</Option>
+                    <Option value="Three Times Daily">Three Times Daily</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item label="Duration (Days)" name="duration" rules={[{ required: true }]}>
+                  <InputNumber min={1} max={30} style={{ width: '100%' }} />
+                </Form.Item>
+                <Form.Item label="Refills" name="refills">
+                  <InputNumber min={0} max={5} style={{ width: '100%' }} />
+                </Form.Item>
+              </div>
+            </div>
+            <Form.Item label="Notes" name="notes">
+              <TextArea rows={3} placeholder="Additional instructions..." />
+            </Form.Item>
+          </>
+        )}
       </Form>
     </Modal>
   );

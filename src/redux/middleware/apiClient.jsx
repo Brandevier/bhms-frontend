@@ -78,23 +78,7 @@ apiClient.interceptors.response.use(
     const { response, config } = error;
 
     if (response) {
-      const { status, data } = response;
-      const errorMessage = data?.message?.toLowerCase() || '';
-
-      // 🔹 Handle invalid token
-      if (status === 403 && (errorMessage.includes('invalid token') || errorMessage.includes('not authorized'))) {
-        toast.error('Session expired! Redirecting to login.');
-        window.localStorage.clear();
-        window.location.href = '/hms/login';
-        return Promise.reject(error);
-      }
-
-      if (status === 401) {
-        toast.error('Session expired! Redirecting to login.');
-        window.localStorage.clear();
-        window.location.href = '/hms/login'; 
-        return Promise.reject(error);
-      }
+      const { status } = response;
 
       if (status === 500) {
         toast.error('Server error, please try again later.');

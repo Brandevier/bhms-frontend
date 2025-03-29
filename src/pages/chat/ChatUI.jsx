@@ -14,7 +14,7 @@ const ChatUI = () => {
   const { chats, departments = [], loading, chatLoading } = useSelector((state) => state.chat);
   const { auth } = useSelector((state) => state);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [ws, setWs] = useState(null);
   const currentUser = auth?.user || auth?.admin; // Handle both user and admin
   const isAdmin = !!auth?.admin; // Check if the logged-in user is an admin
 
@@ -23,7 +23,26 @@ const ChatUI = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-  }, [dispatch, chats]);
+    const socket = new WebSocket("ws://localhost:7000"); // Adjust this to your WebSocket server URL
+    setWs(socket);
+    socket.onopen = () => {
+      console.log("Connected to WebSocket");
+    };
+    socket.onmessage = (event) => {
+      const newMessage = JSON.parse(event.data);
+      if (newMessage.receiverDepartmentId === selectedDepartment?.id) {
+        dispatch(sendMessage(newMessage)); // Update Redux store with the new message
+      }
+    }; 
+
+    socket.onclose = () => {
+      console.log("WebSocket disconnected, attempting to reconnect...");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [dispatch, selectedDepartment]);
 
   useEffect(() => {
     if (selectedDepartment) {
@@ -34,14 +53,15 @@ const ChatUI = () => {
   const handleSendMessage = () => {
     if (!chatInput.trim() || !selectedDepartment) return;
 
-    const data = { 
+    const messageData = { 
       receiverDepartmentId: selectedDepartment.id, 
       text: chatInput, 
     };
     
-    dispatch(sendMessage(data)).unwrap().then((res) => {
-      dispatch(fetchRecentChats());
-    });
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(messageData));
+    }
+
     setChatInput("");
   };
 

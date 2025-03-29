@@ -26,7 +26,7 @@ export const fetchRecordsByInstitution = createAsyncThunk(
             if (!institutionId) throw new Error("Institution ID is missing");
 
             const response = await apiClient.get(`/records/institution`, {
-                params: { institution_id: institutionId, page, limit, is_antenatal_patient: true }
+                params: { institution_id: institutionId, page, limit, is_antenatal_patient: false }
             });
 
             return response.data;
