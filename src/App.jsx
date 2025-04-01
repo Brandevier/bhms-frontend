@@ -39,7 +39,8 @@ import {
   ChatUI,
   Pharmacy,
   InstitutionAccounts,
-  PatientBillHistory
+  PatientBillHistory,
+  QrAttendance
 } from "./routesConfig";
 import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 
@@ -108,6 +109,7 @@ const App = () => {
         <Route path="/admin/*" element={<AdminRoutes />}>
           <Route path="" element={<Dashboard />} />
           <Route path="staffs" element={<StaffList />} />
+          <Route path="attendance" element={<QrAttendance />} />
           <Route path="patient-report" element={<PatientReport />} />
           <Route path="service" element={<Service />} />
           <Route path="details/:id" element={<StaffDetails />} />

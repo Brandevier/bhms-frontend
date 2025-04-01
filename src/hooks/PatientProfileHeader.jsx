@@ -6,9 +6,12 @@ import {
   HeartOutlined,
   PlusCircleOutlined,
   FileTextOutlined,
-  MedicineBoxOutlined, // Prescription Icon
-  LoginOutlined
+  MedicineBoxOutlined,
+  LoginOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined
 } from "@ant-design/icons";
+import { useMediaQuery } from 'react-responsive';
 import BhmsButton from "../heroComponents/BhmsButton";
 const { Title, Text } = Typography;
 import VitalSignsModal from "../modal/VitalSignsModal";
@@ -37,12 +40,14 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const [modalVisible, setModalVisible] = useState(false);
   const [admitModalVisible, setAdmitModalVisible] = useState(false);
   const [transferModal, setTransferModal] = useState(false);
-
-
-  const dispatch = useDispatch();
-  const { status } = useSelector((state) => state.vitals);
+  const [scrollPosition, setScrollPosition] = useState(0);
   const { createLabLoading, error } = useSelector((state) => state.lab);
-  const { id } = useParams();
+  const dispatch = useDispatch()
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
+
+  // ... keep all your existing handler functions ...
+
 
   const handleVitalsSubmit = (data) => {
     const vitalSignsData = {
@@ -56,6 +61,19 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
         setVitalModalVisible(false);
       })
       .catch(() => message.error('Failed to record vitals'));
+  };
+
+  const handleScroll = (direction) => {
+    const container = document.getElementById('action-buttons-container');
+    const scrollAmount = 200;
+    if (container) {
+      if (direction === 'left') {
+        container.scrollLeft -= scrollAmount;
+      } else {
+        container.scrollLeft += scrollAmount;
+      }
+      setScrollPosition(container.scrollLeft);
+    }
   };
 
   const handleLabSubmit = (data) => {
@@ -145,26 +163,36 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   : null;
 
 
+  const actionButtons = [
+    { icon: <ExperimentOutlined />, tooltip: "Request Lab", action: () => setLabModalVisible(true), disabled: !hasAccess },
+    { icon: <FileTextOutlined />, tooltip: "Add Diagnosis", action: () => setDiagnosisModalVisible(true), disabled: !hasAccess },
+    { icon: <HeartOutlined />, tooltip: "Take Vitals", action: () => setVitalModalVisible(true), disabled: false },
+    { icon: <PlusCircleOutlined />, tooltip: "Request Procedure", action: () => setModalVisible(true), disabled: !hasAccess },
+    { icon: <MedicineBoxOutlined />, tooltip: "Prescribe Medication", action: () => setPrescriptionModalVisible(true), disabled: !hasAccess },
+    { icon: <LoginOutlined />, tooltip: "Admit Patient", action: () => setAdmitModalVisible(true), disabled: !hasAccess }
+  ];
+
+
 
 
   return ( 
     <>
       <Card>
         {/* Patient Details Row */}
-        <Row align="middle" justify="space-between">
-          <Col span={18}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+        <Row align="middle" justify="space-between" gutter={[16, 16]}>
+          <Col xs={24} sm={18}>
+            <div style={{ display: "flex", alignItems: "center", flexWrap: 'wrap' }}>
               {/* Avatar */}
               <Avatar
-                size={64}
+                size={isMobile ? 48 : 64}
                 src={patient_record?.patient?.gender === "Male" ? "/assets/male_patient.jpg" : "/assets/female_patient.jpg"}
                 shape="square"
-                style={{ marginRight: 15 }}
+                style={{ marginRight: 15, marginBottom: isMobile ? 10 : 0 }}
               />
 
               {/* Patient Info */}
-              <div>
-                <Title level={3} style={{ margin: 0 }}>
+              <div style={{ flex: 1, minWidth: isMobile ? '100%' : 0 }}>
+                <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
                   {`${patient_record?.patient?.first_name} ${patient_record?.patient?.middle_name || ''} ${patient_record?.patient?.last_name}`}
                 </Title>
                 <Text type={patient_record?.status === "active" ? "success" : "danger"} style={{ marginBottom: 5 }}>
@@ -173,53 +201,74 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
                 <Text type="secondary" style={{ display: "block" }}>
                   Diagnosis: {latestDiagnosis?.diagnosis_name.map(d => d.description).join(", ") || "No diagnosis available"}
                 </Text>
-
               </div>
             </div>
           </Col>
 
           {/* Edit Button */}
-          <Col>
-            <BhmsButton block={false} size="medium" disabled={!hasAccess} onClick={()=>setTransferModal(true)}>Transfer Patient</BhmsButton>
+          <Col xs={24} sm={6} style={{ textAlign: isMobile ? 'left' : 'right' }}>
+            <BhmsButton 
+              block={isMobile} 
+              size={isMobile ? 'small' : 'medium'} 
+              disabled={!hasAccess} 
+              onClick={()=>setTransferModal(true)}
+            >
+              Transfer Patient
+            </BhmsButton>
           </Col>
         </Row>
 
-        {/* Action Buttons */}
-        <Row justify="center" style={{ marginTop: 20 }} gutter={[16, 16]}>
-          <Col>
-            <Tooltip title="Request Lab">
-              <Button shape="circle" icon={<ExperimentOutlined />} onClick={() => setLabModalVisible(true)} disabled={!hasAccess} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip title="Add Diagnosis">
-              <Button shape="circle" icon={<FileTextOutlined />} onClick={() => setDiagnosisModalVisible(true)} disabled={!hasAccess} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip title="Take Vitals">
-              <Button shape="circle" icon={<HeartOutlined />} onClick={() => setVitalModalVisible(true)} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip title="Request Procedure">
-              <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setModalVisible(true)} disabled={!hasAccess} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip title="Prescribe Medication">
-              <Button shape="circle" icon={<MedicineBoxOutlined />} onClick={() => setPrescriptionModalVisible(true)} disabled={!hasAccess} />
-            </Tooltip>
-          </Col>
-          <Col>
-            <Tooltip title="Admit Patient">
-              <Button shape="circle" icon={<LoginOutlined />} onClick={() => setAdmitModalVisible(true)} disabled={!hasAccess} />
-            </Tooltip>
-          </Col>
-        </Row>
+        {/* Action Buttons - Horizontal Scroll on Mobile */}
+        <div style={{ marginTop: 20, position: 'relative' }}>
+          {isMobile && scrollPosition > 0 && (
+            <Button 
+              shape="circle" 
+              icon={<ArrowLeftOutlined />} 
+              onClick={() => handleScroll('left')}
+              style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 1 }}
+            />
+          )}
+          
+          <div 
+            id="action-buttons-container"
+            style={{ 
+              display: 'flex',
+              overflowX: isMobile ? 'auto' : 'visible',
+              scrollBehavior: 'smooth',
+              padding: isMobile ? '10px 0' : 0,
+              justifyContent: isMobile ? 'flex-start' : 'center',
+              gap: isMobile ? '16px' : '8px',
+              msOverflowStyle: 'none',
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': { display: 'none' }
+            }}
+          >
+            {actionButtons.map((btn, index) => (
+              <Tooltip key={index} title={btn.tooltip}>
+                <Button 
+                  shape="circle" 
+                  icon={btn.icon} 
+                  onClick={btn.action} 
+                  disabled={btn.disabled}
+                  size={isMobile ? 'large' : 'default'}
+                  style={{ flexShrink: 0 }}
+                />
+              </Tooltip>
+            ))}
+          </div>
+
+          {isMobile && (
+            <Button 
+              shape="circle" 
+              icon={<ArrowRightOutlined />} 
+              onClick={() => handleScroll('right')}
+              style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 1 }}
+            />
+          )}
+        </div>
       </Card>
 
-      {/* Modals */}
+      {/* Modals - keep all your existing modals */}
       <VitalSignsModal
         visible={vitalModalVisible}
         onClose={() => setVitalModalVisible(false)}

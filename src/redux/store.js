@@ -40,7 +40,8 @@ const rootReducer = combineReducers({
   immunization:reducers.ImmunizationSlice,
   consultation: reducers.consultationSlice,
   chat: reducers.chatSlice,
-  bills:reducers.billSlice
+  bills:reducers.billSlice,
+  attendance:reducers.attendanceSlice
 
 });
 

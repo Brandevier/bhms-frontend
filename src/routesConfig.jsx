@@ -32,6 +32,8 @@ import ChatUI from "./pages/chat/ChatUI";
 import Pharmacy from "./pages/departments/pharmacy/Pharmacy";
 import InstitutionAccounts from "./pages/departments/accounts/Accounts";
 import PatientBillHistory from "./pages/departments/accounts/PatientBillHistory";
+import QrAttendance from "./pages/attendance/QrAttendance";
+
 
 
 // Export all imports
@@ -69,5 +71,6 @@ export {
   ChatUI,
   Pharmacy,
   InstitutionAccounts,
-  PatientBillHistory
+  PatientBillHistory,
+  QrAttendance
 };

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Table, Tag, Typography, Space, Button, Popconfirm, message } from "antd";
+import { Table, Tag, Typography, Space, Button, Popconfirm, message, Card } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
+import { useMediaQuery } from 'react-responsive';
 import { deletePrescription } from "../redux/slice/prescriptionSlice";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 // Status color mapping
 const statusColors = {
@@ -14,32 +15,76 @@ const statusColors = {
   rejected: "red",
 };
 
-const PrescriptionList = ({ prescriptionData,onDelete }) => {
+const PrescriptionList = ({ prescriptionData, onDelete }) => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.prescription);
-  
-  const [loadingId, setLoadingId] = useState(null); // Store ID of prescription being deleted
+  const [loadingId, setLoadingId] = useState(null);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  // Handle Delete Prescription
   const handleDelete = async (id) => {
-    setLoadingId(id); // Set loading state for the specific row
+    setLoadingId(id);
     try {
       await dispatch(deletePrescription(id)).unwrap();
       message.success("Prescription deleted successfully");
-      onDelete()
+      onDelete();
     } catch (error) {
       message.error("Failed to delete prescription");
     } finally {
-      setLoadingId(null); // Reset loading state
+      setLoadingId(null);
     }
   };
 
-  // Handle Edit Prescription (Placeholder)
   const handleEdit = (prescription) => {
     console.log("Edit Prescription:", prescription);
-    // Open Edit Form or Modal
   };
 
+  // Mobile view render
+  const mobileRender = (record) => (
+    <Card 
+      style={{ marginBottom: 16 }}
+      bodyStyle={{ padding: 12 }}
+    >
+      <div style={{ marginBottom: 8 }}>
+        <Text strong>{record.prescriptions}</Text>
+      </div>
+      <div style={{ marginBottom: 8 }}>
+        <Text>Dosage: {record.dosage}</Text>
+      </div>
+      <div style={{ marginBottom: 8 }}>
+        <Tag color={statusColors[record.status.toLowerCase()] || "blue"}>
+          {record.status}
+        </Tag>
+      </div>
+      <div style={{ marginBottom: 8 }}>
+        <Text>Prescribed by: Dr. {record.doctor?.lastName}</Text>
+      </div>
+      <div style={{ marginBottom: 8 }}>
+        <Text>Date: {moment(record.createdAt).format("MMM DD, YYYY")}</Text>
+      </div>
+      <Space>
+        <Button
+          size="small"
+          icon={<EditOutlined />}
+          onClick={() => handleEdit(record)}
+        />
+        <Popconfirm
+          title="Delete this prescription?"
+          onConfirm={() => handleDelete(record.id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button
+            size="small"
+            danger
+            icon={<DeleteOutlined />}
+            loading={loadingId === record.id}
+          />
+        </Popconfirm>
+      </Space>
+    </Card>
+  );
+
+  // Desktop columns
   const columns = [
     {
       title: "Drug Name",
@@ -56,7 +101,11 @@ const PrescriptionList = ({ prescriptionData,onDelete }) => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => <Tag color={statusColors[status.toLowerCase()] || "blue"}>{status}</Tag>,
+      render: (status) => (
+        <Tag color={statusColors[status.toLowerCase()] || "blue"}>
+          {status}
+        </Tag>
+      ),
     },
     {
       title: "Prescribed By",
@@ -75,26 +124,22 @@ const PrescriptionList = ({ prescriptionData,onDelete }) => {
       key: "action",
       render: (_, record) => (
         <Space>
-          {/* Edit Button */}
           <Button
             type="link"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           />
-
-          {/* Delete Button with Popconfirm */}
           <Popconfirm
-            title="Are you sure you want to delete this prescription?"
+            title="Delete this prescription?"
             onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
-            okButtonProps={{ danger: true }}
           >
             <Button
               type="link"
               danger
               icon={<DeleteOutlined />}
-              loading={loadingId === record.id} // Show loading only for the clicked row
+              loading={loadingId === record.id}
             />
           </Popconfirm>
         </Space>
@@ -103,15 +148,28 @@ const PrescriptionList = ({ prescriptionData,onDelete }) => {
   ];
 
   return (
-    <div style={{ padding: 20 }}>
-      <Title level={4}>Prescriptions</Title>
-      <Table
-        columns={columns}
-        dataSource={prescriptionData}
-        rowKey="id"
-        pagination={{ pageSize: 5 }}
-        bordered
-      />
+    <div style={{ padding: isMobile ? 10 : 20 }}>
+      <Title level={4} style={{ marginBottom: 16 }}>Prescriptions</Title>
+      
+      {isMobile ? (
+        <div>
+          {prescriptionData?.map(record => (
+            <div key={record.id}>
+              {mobileRender(record)}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={prescriptionData}
+          rowKey="id"
+          pagination={{ pageSize: 5 }}
+          scroll={{ x: true }}
+          bordered
+          loading={status === "loading"}
+        />
+      )}
     </div>
   );
 };

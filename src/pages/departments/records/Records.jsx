@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Skeleton, Alert, Popconfirm } from "antd";
+import { Table, Tag, Input, message, Skeleton, Alert, Popconfirm, Button } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
 import { useDispatch, useSelector } from "react-redux";
 import { createRecord, fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
 import { useParams, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 
 const { Search } = Input;
 
@@ -14,26 +15,23 @@ const Records = () => {
   const dispatch = useDispatch();
   const { records, loading, totalPages, status } = useSelector((state) => state.records);
   const [modalVisible, setModalVisible] = useState(false);
-  const { id } = useParams(); // Institution ID
+  const { id } = useParams();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const limit = 10; // Items per page
+  const limit = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const { consultationLoading } = useSelector((state) => ({
     consultationLoading: state.consultation?.loading ?? loading
   }));
 
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
     dispatch(fetchRecordsByInstitution({ page, limit }));
   }, [dispatch]);
 
-  // Handle Register New Patient
   const handleRegister = (patientData) => {
     const data = { ...patientData, department_id: id };
-
-    console.log(data)
-
     dispatch(createRecord({recordData:data}))
       .unwrap()
       .then(() => {
@@ -44,12 +42,10 @@ const Records = () => {
       .catch(() => message.error("Failed to create patient"));
   };
 
-  // Handle Search Filtering
   const handleSearch = (value) => {
     setSearchText(value?.toLowerCase() || "");
   };
 
-  // Filter patients based on search term
   const filteredData = records?.patients?.filter((record) =>
     record.patient.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     record.patient.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,20 +53,6 @@ const Records = () => {
     record.serial_number?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  const handleConsultation = (record_id) => {
-    dispatch(requestConsultation(record_id))
-      .unwrap()
-      .then(() => {
-        message.success("Consultation requested successfully");
-        dispatch(fetchRecordsByInstitution());
-        // navigate(`/shared/patient/details/${record_id}`)
-      })
-      .catch(() => message.error("Failed to request consultation"));
-
-  }
-
-
-  // Handle Delete
   const handleDelete = (id) => {
     dispatch(deleteRecord(id))
       .unwrap()
@@ -81,7 +63,7 @@ const Records = () => {
       .catch(() => message.error("Failed to delete record"));
   };
 
-  // Table Columns
+  // Responsive columns configuration
   const columns = [
     {
       title: "Full Name",
@@ -89,6 +71,8 @@ const Records = () => {
       key: "name",
       render: (_, record) =>
         `${record?.patient?.first_name || ""} ${record?.patient?.middle_name || ""} ${record?.patient?.last_name || ""}`,
+      fixed: isMobile ? 'left' : false,
+      width: isMobile ? 150 : undefined,
     },
     {
       title: "Gender",
@@ -118,12 +102,32 @@ const Records = () => {
     {
       title: "Actions",
       key: "actions",
+      fixed: isMobile ? 'right' : false,
+      width: isMobile ? 150 : undefined,
       render: (_, record) => (
         <div className='flex'>
-          <BhmsButton outline block={false} size='medium' onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>View</BhmsButton>
-          <Popconfirm title="Are you sure?" onConfirm={() => handleDelete(record?.id)}>
-            <BhmsButton block={false} size="medium" icon={<DeleteOutlined />} color="red" className="mx-2">
-              Delete
+          <BhmsButton 
+            outline 
+            block={false} 
+            size={isMobile ? 'small' : 'medium'} 
+            onClick={() => navigate(`/shared/patient/details/${record?.id}`)}
+          >
+            {isMobile ? 'View' : 'View Details'}
+          </BhmsButton>
+          <Popconfirm 
+            title="Are you sure to delete this record?" 
+            onConfirm={() => handleDelete(record?.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <BhmsButton 
+              block={false} 
+              size={isMobile ? 'small' : 'medium'} 
+              icon={<DeleteOutlined />} 
+              color="red" 
+              className="mx-2"
+            >
+              {isMobile ? '' : 'Delete'}
             </BhmsButton>
           </Popconfirm>
         </div>
@@ -132,32 +136,73 @@ const Records = () => {
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      {/* {error && <Alert message="Error" description={error.message} type="error" showIcon closable />} */}
-
+    <div style={{ padding: isMobile ? "10px" : "20px" }}>
       {/* Top Bar: Search & Register */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        marginBottom: "15px",
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '10px' : 0
+      }}>
         <Search
           placeholder="Search Name, Folder Number, NIN"
           value={searchText}
           onChange={(e) => handleSearch(e?.target?.value)}
-          style={{ width: 300 }}
+          style={{ width: isMobile ? '100%' : 300 }}
           allowClear
+          size={isMobile ? 'large' : 'middle'}
         />
-        <BhmsButton block={false} icon={<PlusOutlined />} size="medium" onClick={() => setModalVisible(true)}>
-          Register New Patient
-        </BhmsButton>
+        
+        {isMobile ? (
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />} 
+            onClick={() => setModalVisible(true)}
+            style={{ alignSelf: 'flex-end' }}
+            size="large"
+          />
+        ) : (
+          <BhmsButton 
+            block={false} 
+            icon={<PlusOutlined />} 
+            size="medium" 
+            onClick={() => setModalVisible(true)}
+          >
+            Register New Patient
+          </BhmsButton>
+        )}
       </div>
 
       {/* Table Section */}
       {status === "loading" ? (
         <Skeleton active paragraph={{ rows: 5 }} />
       ) : (
-        <Table dataSource={filteredData} columns={columns} rowKey="id" />
+        <div style={{ 
+          width: '100%', 
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}>
+          <Table 
+            dataSource={filteredData} 
+            columns={columns} 
+            rowKey="id"
+            scroll={{ x: isMobile ? 800 : undefined }}
+            size={isMobile ? 'small' : 'middle'}
+            style={{
+              minWidth: isMobile ? '800px' : '100%'
+            }}
+          />
+        </div>
       )}
 
       {/* Patient Registration Modal */}
-      <PatientRegistrationModal visible={modalVisible} onClose={() => setModalVisible(false)} onSubmit={handleRegister} status={status} />
+      <PatientRegistrationModal 
+        visible={modalVisible} 
+        onClose={() => setModalVisible(false)} 
+        onSubmit={handleRegister} 
+        status={status} 
+      />
     </div>
   );
 };

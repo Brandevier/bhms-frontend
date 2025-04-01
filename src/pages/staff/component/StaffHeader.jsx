@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Layout, Dropdown, Avatar, Badge, List, Button } from "antd";
-import { SettingOutlined, BellOutlined } from "@ant-design/icons";
+import React, { useState, useRef } from "react";
+import { Layout, Dropdown, Avatar, Badge, List, Button, Modal, message } from "antd";
+import { BellOutlined, CameraOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { logout } from "../../../redux/slice/authSlice";
+import QrScanner from "qr-scanner"; // Modern QR scanner library
 
 const { Header } = Layout;
 
@@ -12,10 +13,67 @@ const StaffHeader = () => {
   const { items } = useSelector((state) => state.notification);
   const dispatch = useDispatch();
 
+  const [scanQrModalVisible, setScanQrModalVisible] = useState(false);
+  const [scanResult, setScanResult] = useState("");
+  const videoRef = useRef(null);
+  const qrScannerRef = useRef(null);
+
   const unreadCount = items?.filter((item) => !item.is_read).length || 0;
 
   const handleLogout = () => {
     dispatch(logout());
+  };
+
+  const handleScanModalOpen = () => {
+    setScanQrModalVisible(true);
+    setScanResult("");
+
+    // Initialize scanner when modal opens
+    setTimeout(() => {
+      if (videoRef.current && !qrScannerRef.current) {
+        qrScannerRef.current = new QrScanner(
+          videoRef.current,
+          result => {
+            setScanResult(result.data);
+            message.success("QR Code scanned successfully!");
+            // Here you would typically dispatch an action to handle the scanned data
+            console.log("Scanned data:", result.data);
+            stopScanner();
+            setScanQrModalVisible(false);
+          },
+          {
+            preferredCamera: 'environment',
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
+          }
+        );
+        startScanner();
+      }
+    }, 100);
+  };
+
+  const startScanner = () => {
+    if (qrScannerRef.current) {
+      qrScannerRef.current.start();
+    }
+  };
+
+  const stopScanner = () => {
+    if (qrScannerRef.current) {
+      qrScannerRef.current.stop();
+    }
+  };
+
+  const handleScanModalClose = () => {
+    stopScanner();
+    qrScannerRef.current = null;
+    setScanQrModalVisible(false);
+  };
+
+  const toggleCamera = async () => {
+    if (qrScannerRef.current) {
+      await qrScannerRef.current.toggleCamera();
+    }
   };
 
   const userMenu = (
@@ -32,7 +90,7 @@ const StaffHeader = () => {
     <div className="w-96 bg-white shadow-lg rounded-lg p-4">
       <h3 className="font-semibold text-gray-800 mb-2">Notifications</h3>
       <List
-        dataSource={items.slice(0, 5)} // Show 5 notifications
+        dataSource={items.slice(0, 5)}
         renderItem={(item) => (
           <List.Item
             key={item.id}
@@ -52,34 +110,86 @@ const StaffHeader = () => {
   );
 
   return (
-    <Header
-      style={{
-        backgroundColor: "white",
-        boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.1)",
-        padding: "0 24px",
-        border: "1px solid #E5E7EB",
-      }}
-      className="flex justify-between items-center w-full"
-    >
-      <h1 className="text-lg font-semibold text-gray-800">{user.institution.name}</h1>
+    <>
+      <Header
+        style={{
+          backgroundColor: "white",
+          boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.1)",
+          padding: "0 24px",
+          border: "1px solid #E5E7EB",
+        }}
+        className="flex justify-between items-center w-full"
+      >
+        <h1 className="hidden md:block text-lg font-semibold text-gray-800">
+          {user.institution.name}
+        </h1>
 
-      <div className="flex items-center gap-4">
-        <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
-          <Badge count={unreadCount} overflowCount={9}>
-            <BellOutlined className="text-xl cursor-pointer text-gray-700 hover:text-gray-500" />
-          </Badge>
-        </Dropdown>
-        <Dropdown overlay={userMenu} trigger={["click"]}>
-          <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
-            <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
-            <div>
-              <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
-              <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+        <div className="flex-1 flex justify-end">
+        <div className="flex items-center gap-4">
+          <Button
+            type="text"
+            icon={<CameraOutlined className="text-xl" />}
+            onClick={handleScanModalOpen}
+            className="flex items-center justify-center"
+          />
+
+          <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
+            <Badge count={unreadCount} overflowCount={9}>
+              <BellOutlined className="text-xl cursor-pointer text-gray-700 hover:text-gray-500" />
+            </Badge>
+          </Dropdown>
+
+          <Dropdown overlay={userMenu} trigger={["click"]}>
+            <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
+              <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
+              <div>
+                <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
+                <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+              </div>
             </div>
+          </Dropdown>
+        </div>
+
+        </div>
+
+        
+      </Header>
+
+      <Modal
+        title="Scan QR Code"
+        open={scanQrModalVisible}
+        onCancel={handleScanModalClose}
+        footer={[
+          <Button key="toggle" onClick={toggleCamera}>
+            Switch Camera
+          </Button>,
+          <Button key="cancel" onClick={handleScanModalClose}>
+            Close
+          </Button>,
+        ]}
+        width={400}
+        destroyOnClose
+      >
+        <div style={{ width: "100%", height: "300px", position: "relative" }}>
+          <video
+            ref={videoRef}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: "8px",
+              border: "1px solid #e8e8e8"
+            }}
+          />
+        </div>
+        {scanResult && (
+          <div className="mt-4 p-2 bg-gray-100 rounded">
+            <p className="font-semibold">Scanned Result:</p>
+            <p>{scanResult}</p>
           </div>
-        </Dropdown>
-      </div>
-    </Header>
+        )}
+      </Modal>
+    </>
   );
 };
 

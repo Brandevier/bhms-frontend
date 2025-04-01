@@ -1,14 +1,30 @@
-import React, { useState } from "react";
-import { Modal, Typography, Mentions, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Typography, Mentions, Spin, Button, message } from "antd";
+import { ThunderboltOutlined } from "@ant-design/icons";
 import BhmsButton from "../heroComponents/BhmsButton";
 import { useSelector } from "react-redux";
 
 const { Text } = Typography;
 const { Option } = Mentions;
 
-const PatientNoteModal = ({ visible, onClose,patient_id, onSave,status }) => {
+const PatientNoteModal = ({ visible, onClose, patient_id, onSave, status }) => {
     const [note, setNote] = useState("");
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
     const { allStaffs, loading } = useSelector((state) => state.adminStaffManagement);
+
+    // Check internet connection status
+    useEffect(() => {
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
 
     // Transform staff data into mentionable format
     const staffOptions = allStaffs?.map(staff => ({
@@ -17,18 +33,26 @@ const PatientNoteModal = ({ visible, onClose,patient_id, onSave,status }) => {
     })) || [];
 
     const handleSave = () => {
-        // Extract mentioned users from note
         const mentionedStaff = staffOptions.filter(staff => note.includes(`@${staff.name}`));
         const mentionedStaffIds = mentionedStaff.map(staff => staff.id);
 
         const newNote = {
             note,
-            tagged_staff_ids:mentionedStaffIds,
+            tagged_staff_ids: mentionedStaffIds,
             patient_id
-        }
+        };
 
-        // Pass note and mentioned staff IDs to onSave
         onSave(newNote);
+    };
+
+    const handleAiRewrite = () => {
+        if (!isOnline) {
+            message.error("You are not connected to the internet");
+            return;
+        }
+        
+        // TODO: Implement actual AI rewrite functionality when online
+        message.info("AI rewrite feature will be available when connected");
     };
 
     return (
@@ -41,14 +65,25 @@ const PatientNoteModal = ({ visible, onClose,patient_id, onSave,status }) => {
                     Cancel
                 </BhmsButton>,
                 <BhmsButton key="save" block={false} size="medium" onClick={handleSave}>
-                   {status === 'loading' ? <Spin/> : 'Save'}
+                   {status === 'loading' ? <Spin /> : 'Save'}
                 </BhmsButton>
             ]}
         >
-            {/* Instructions */}
-            <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-                ✍️ Write your note here. Tag staff using <strong>@staffname</strong>.
-            </Text>
+            {/* Instructions and AI Button */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <Text type="secondary">
+                    ✍️ Write your note here. Tag staff using <strong>@staffname</strong>.
+                </Text>
+                <Button 
+                    icon={<ThunderboltOutlined />} 
+                    onClick={handleAiRewrite}
+                    type="text"
+                    style={{ color: '#1890ff' }}
+                    title="Rewrite with AI"
+                >
+                    AI
+                </Button>
+            </div>
 
             {/* Mention Input */}
             <Mentions

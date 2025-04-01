@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import BhmsButton from "../heroComponents/BhmsButton";
 
 const { TextArea } = Input;
-const { Text } = Typography;
+const { Text } = Typography; 
 
 const PrescriptionModal = ({ visible, onClose, onSave }) => {
   const dispatch = useDispatch();
