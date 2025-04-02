@@ -40,7 +40,7 @@ const StaffSideBar = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     handleResize(); // Check on initial render
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -73,8 +73,10 @@ const StaffSideBar = () => {
       { key: "pharmacy-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
     ],
     "Lab": [
-      { key: "lab-1", label: "Test Requests", icon: <FileTextOutlined />, path: "/lab/requests" },
-      { key: "lab-2", label: "Results", icon: <FileSearchOutlined />, path: "/lab/results" },
+      { key: "lab-3", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
+      { key: "lab-4", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
+      { key: "lab-5", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
+
     ],
     "Records": [
       { key: "records-2", label: "Discharge Patients", icon: <UserSwitchOutlined />, path: "/shared/records/history" },
@@ -122,7 +124,7 @@ const StaffSideBar = () => {
         setMobileOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobile, mobileOpen]);
@@ -195,7 +197,7 @@ const StaffSideBar = () => {
 
       {/* Overlay for mobile when sidebar is open */}
       {isMobile && mobileOpen && (
-        <div 
+        <div
           style={{
             position: 'fixed',
             top: 0,

@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Input, Select, Space, Avatar, Skeleton } from "antd";
-import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, Tag, Input, Select, Space, Avatar, Skeleton, Popconfirm, message } from "antd";
+import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
 import AddStaffDialog from "./components/AddStaffDialog";
-import { getAllStaff } from "../../redux/slice/staff_admin_managment_slice";
+import { getAllStaff, deleteStaff } from "../../redux/slice/staff_admin_managment_slice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRoles } from "../../redux/slice/staffPermissionSlice";
-import dayjs from "dayjs"; // Use dayjs instead of Moment.js
+import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-
-
 
 const { Option } = Select;
 
 const StaffList = () => {
   const [visible, setVisible] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState(null);
   const dispatch = useDispatch();
   const { allStaffs, loading, error } = useSelector((state) => state.adminStaffManagement);
-  const { roles, loading: roles_loading } = useSelector((state) => state.permissions)
-  const navigate = useNavigate()
+  const { roles, loading: roles_loading } = useSelector((state) => state.permissions);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getAllStaff());
@@ -30,12 +29,24 @@ const StaffList = () => {
   };
 
   const handleRowClick = (record) => {
-    console.log("Row Clicked:", record);
-    // navigate(`/admin/details/${record.id}`)
-};
+    navigate(`/admin/details/${record.id}`);
+  };
 
+  const handleEdit = (staff) => {
+    setSelectedStaff(staff);
+    setVisible(true);
+  };
 
-  // Define columns for Ant Design Table
+  const handleDelete = async (staffId) => {
+    try {
+      await dispatch(deleteStaff(staffId)).unwrap();
+      message.success('Staff member deleted successfully');
+      handleUpdate();
+    } catch (error) {
+      message.error('Failed to delete staff member');
+    }
+  };
+
   const columns = [
     {
       title: "Profile",
@@ -77,6 +88,43 @@ const StaffList = () => {
       render: (last_login) =>
         last_login ? dayjs(last_login).format("DD MMM YYYY, hh:mm A") : "Never Logged In",
     },
+    {
+      title: "Actions",
+      key: "actions",
+      width: 120,
+      render: (_, record) => (
+        <Space size="small">
+          <BhmsButton
+            block={false}
+            size="medium"
+            
+            icon={<EditOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(record);
+            }}
+          />
+          <Popconfirm
+            title="Are you sure to delete this staff member?"
+            onConfirm={(e) => {
+              e?.stopPropagation();
+              handleDelete(record.id);
+            }}
+            onCancel={(e) => e?.stopPropagation()}
+            okText="Yes"
+            cancelText="No"
+          >
+            <BhmsButton
+              block={false}
+              size="medium"
+              color="red"
+              icon={<DeleteOutlined />}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
 
   return (
@@ -113,7 +161,10 @@ const StaffList = () => {
             </Select>
           )}
         </Space>
-        <BhmsButton type="primary" size="medium" icon={<PlusOutlined />} onClick={() => setVisible(true)}>
+        <BhmsButton type="primary" size="medium" icon={<PlusOutlined />} onClick={() => {
+          setSelectedStaff(null);
+          setVisible(true);
+        }}>
           Add Staff
         </BhmsButton>
       </Space>
@@ -130,17 +181,21 @@ const StaffList = () => {
           style={styles.table}
           rowClassName="clickable-row"
           onRow={(record) => ({
-            onClick: () => handleRowClick(record), // Click event
+            onClick: () => handleRowClick(record),
           })}
         />
       )}
 
-      <AddStaffDialog visible={visible} onClose={() => setVisible(false)} updateComponent={handleUpdate} />
+      <AddStaffDialog 
+        visible={visible} 
+        onClose={() => setVisible(false)} 
+        updateComponent={handleUpdate} 
+        staffData={selectedStaff}
+      />
     </div>
   );
 };
 
-// Inline styles for cleaner UI
 const styles = {
   container: { padding: 20, background: "#fff", borderRadius: 10, boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)" },
   header: { marginBottom: 16, width: "100%", justifyContent: "space-between" },

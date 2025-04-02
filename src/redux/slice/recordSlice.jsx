@@ -111,12 +111,12 @@ export const getStats = createAsyncThunk(
     'records/stats',
     async (_, { rejectWithValue, getState }) => {
         const { auth } = getState()
-        const institution_id = auth.user.institution.id
+        const user = auth.user || auth.admin
 
         try {
             const response = await apiClient.get('records/institution/records/statistics', {
                 params: {
-                    institution_id
+                    institution_id:user.institution.id
                 }
             })
             return response.data.statistics

@@ -43,6 +43,7 @@ import {
   QrAttendance
 } from "./routesConfig";
 import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
+import SmsManagement from "./pages/admin/components/SmsManagement";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -111,6 +112,7 @@ const App = () => {
           <Route path="staffs" element={<StaffList />} />
           <Route path="attendance" element={<QrAttendance />} />
           <Route path="patient-report" element={<PatientReport />} />
+          <Route path="sms-management" element={<SmsManagement />} />
           <Route path="service" element={<Service />} />
           <Route path="details/:id" element={<StaffDetails />} />
           <Route path="task" element={<CalendarComponent />} />

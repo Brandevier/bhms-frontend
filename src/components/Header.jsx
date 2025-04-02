@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import WaitListDialog from './WaitListDialog';
 import { AnimatePresence, motion } from 'framer-motion'; // Import framer-motion
+import { useNavigate } from 'react-router-dom';
+
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const navigate = useNavigate()
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -59,8 +61,8 @@ const Header = () => {
 
       {/* Static Menu Items for Large Devices */}
       <div className="hidden md:flex md:items-center md:space-x-4">
-        <button className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center">
-          Contact Us
+        <button className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center" onClick={()=>navigate('/hms/login')}>
+          Login
         </button>
         <WaitListDialog />
       </div>

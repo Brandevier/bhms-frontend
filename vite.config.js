@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import react from '@vitejs/plugin-react';
+
 export default defineConfig({
-  plugins: [ tailwindcss(),react()],
+  plugins: [tailwindcss(), react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -16,5 +17,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ["moment"],
+  },
+  server: {
+    host: '0.0.0.0',  // Allows external access
+    port: 5173,        // Default Vite port
+    allowedHosts: ['.ngrok-free.app'],  // Allow all ngrok subdomains
+    strictPort: true,   // Ensures Vite doesn't switch ports automatically
   },
 });
