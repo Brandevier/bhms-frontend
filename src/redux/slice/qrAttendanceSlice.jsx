@@ -126,7 +126,7 @@ const qrAttendanceSlice = createSlice({
       })
       .addCase(getAllAttendance.fulfilled, (state, action) => {
         state.loading = false;
-        state.attendanceRecords = action.payload.data;
+        state.attendanceRecords = action.payload;
       })
       .addCase(getAllAttendance.rejected, (state, action) => {
         state.loading = false;

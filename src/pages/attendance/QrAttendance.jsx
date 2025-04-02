@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generateQrCode, getAllAttendance, getLatestQrCode } from "../../redux/slice/qrAttendanceSlice";
-import { Card, Button, Table, Alert, Space, Typography, Row, Col, Divider, Statistic, message } from "antd";
+import { Card, Button, Table, Alert, Space, Typography, Row, Col, Divider, Statistic, message,Tag } from "antd";
 import QRCode from "react-qr-code"; // Simpler QR code library
 import { PrinterOutlined, ReloadOutlined, DownloadOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import html2canvas from "html2canvas";
@@ -97,15 +97,57 @@ const QrAttendance = () => {
     const columns = [
         {
             title: "Staff ID",
-            dataIndex: "staffId",
+            dataIndex: ["staff", "staffID"],
             key: "staffId",
             render: (text) => <Text strong>{text}</Text>
         },
         {
-            title: "Scanned At",
+            title: "Full Name",
+            key: "fullName",
+            render: (_, record) => (
+                <Text>{`${record.staff?.firstName || ''} ${record.staff?.lastName || ''}`}</Text>
+            )
+        },
+        {
+            title: "Department",
+            dataIndex: ["staff", "department", "name"],
+            key: "department",
+            render: (text) => <Text>{text}</Text>
+        },
+        {
+            title: "Time of Day",
+            key: "timeOfDay",
+            render: (_, record) => {
+                const hour = moment(record.scannedAt).hour();
+                let timeOfDay = '';
+                let color = '';
+
+                if (hour >= 5 && hour < 12) {
+                    timeOfDay = 'Morning';
+                    color = 'geekblue';
+                } else if (hour >= 12 && hour < 17) {
+                    timeOfDay = 'Afternoon';
+                    color = 'orange';
+                } else {
+                    timeOfDay = 'Night';
+                    color = 'purple';
+                }
+
+                return <Tag color={color}>{timeOfDay}</Tag>;
+            }
+        },
+        {
+            title: "Scan Time",
             dataIndex: "scannedAt",
             key: "scannedAt",
-            render: (text) => moment(text).format("MMMM Do YYYY, h:mm:ss a"),
+            render: (text) => (
+                <>
+                    <div>{moment(text).format("MMMM Do YYYY")}</div>
+                    <div style={{ fontSize: '12px', color: '#888' }}>
+                        {moment(text).format("h:mm:ss a")}
+                    </div>
+                </>
+            ),
             sorter: (a, b) => new Date(a.scannedAt) - new Date(b.scannedAt),
             defaultSortOrder: 'descend'
         },

@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { logout } from "../../../redux/slice/authSlice";
 import QrScanner from "qr-scanner"; // Modern QR scanner library
+import { scanQrCode } from "../../../redux/slice/qrAttendanceSlice";
+
 
 const { Header } = Layout;
 
@@ -35,9 +37,15 @@ const StaffHeader = () => {
           videoRef.current,
           result => {
             setScanResult(result.data);
-            message.success("QR Code scanned successfully!");
-            // Here you would typically dispatch an action to handle the scanned data
-            console.log("Scanned data:", result.data);
+
+            console.log(result)
+
+            dispatch(scanQrCode({ token: result.data, staffId: user.id })).unwrap().then((res) => {
+              message.success("QR Code scanned successfully!");
+              // Here you would typically dispatch an action to handle the scanned data
+              console.log("Scanned data:", result);
+            })
+
             stopScanner();
             setScanQrModalVisible(false);
           },
@@ -125,34 +133,34 @@ const StaffHeader = () => {
         </h1>
 
         <div className="flex-1 flex justify-end">
-        <div className="flex items-center gap-4">
-          <Button
-            type="text"
-            icon={<CameraOutlined className="text-xl" />}
-            onClick={handleScanModalOpen}
-            className="flex items-center justify-center"
-          />
+          <div className="flex items-center gap-4">
+            <Button
+              type="text"
+              icon={<CameraOutlined className="text-xl" />}
+              onClick={handleScanModalOpen}
+              className="flex items-center justify-center"
+            />
 
-          <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
-            <Badge count={unreadCount} overflowCount={9}>
-              <BellOutlined className="text-xl cursor-pointer text-gray-700 hover:text-gray-500" />
-            </Badge>
-          </Dropdown>
+            <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
+              <Badge count={unreadCount} overflowCount={9}>
+                <BellOutlined className="text-xl cursor-pointer text-gray-700 hover:text-gray-500" />
+              </Badge>
+            </Dropdown>
 
-          <Dropdown overlay={userMenu} trigger={["click"]}>
-            <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
-              <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
-              <div>
-                <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
-                <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+            <Dropdown overlay={userMenu} trigger={["click"]}>
+              <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
+                <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
+                  <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+                </div>
               </div>
-            </div>
-          </Dropdown>
-        </div>
+            </Dropdown>
+          </div>
 
         </div>
 
-        
+
       </Header>
 
       <Modal
