@@ -28,8 +28,8 @@ const StaffList = () => {
     dispatch(getAllStaff());
   };
 
-  const handleRowClick = (record) => {
-    navigate(`/admin/details/${record.id}`);
+  const handleRowClick = (user) => {
+    navigate(`/admin/details/${user.id}`);
   };
 
   const handleEdit = (staff) => {

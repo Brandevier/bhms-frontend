@@ -38,9 +38,19 @@ export const registerAdmin = createAsyncThunk(
 // Get Single Staff
 export const getSingleStaff = createAsyncThunk(
     "staff/getSingleStaff",
-    async (staffId, { rejectWithValue }) => {
+    async ({staffId}, { rejectWithValue,getState }) => {
+        const { auth } = getState()
+
+        const user = auth.user || auth.admin
+
+
         try {
-            const response = await apiClient.get(`/api/staff/${staffId}`);
+            const response = await apiClient.get(`/auth/single-staff`,{
+                params:{
+                    staff_id:staffId,
+                    institution_id:user.institution.id
+                }
+            });
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

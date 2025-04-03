@@ -1,98 +1,134 @@
-import React from "react";
-import { Card, Col, Row, Avatar, Tag, Statistic, Typography, Divider, List } from "antd";
-import { PhoneOutlined, MailOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import React, { useEffect } from "react";
+import { Card, Col, Row, Avatar, Tag, Statistic, Typography, Divider, List, Spin } from "antd";
+import { PhoneOutlined, MailOutlined, EnvironmentOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import moment from "moment";
+import { getSingleStaff } from "../../redux/slice/staff_admin_managment_slice";
 
 const { Title, Text } = Typography;
 
 const StaffDetails = () => {
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { singleStaff, loading } = useSelector((state) => state.adminStaffManagement);
+
+  useEffect(() => {
+    dispatch(getSingleStaff({ staffId: id }));
+  }, [dispatch, id]);
+
+  if (loading || !singleStaff) {
+    return <Spin size="large" style={{ display: 'flex', justifyContent: 'center', marginTop: 100 }} />;
+  }
+
+  const { staff } = singleStaff;
+  const { firstName, lastName, email, phone_number, department, role, attendance } = staff;
+
+  // Function to determine time of day
+  const getTimeOfDay = (timeString) => {
+    const hour = moment(timeString).hour();
+    if (hour >= 5 && hour < 12) return 'Morning';
+    if (hour >= 12 && hour < 17) return 'Afternoon';
+    return 'Night';
+  };
+
+  // Format attendance data
+  const formattedAttendance = attendance.map(entry => ({
+    id: entry.id,
+    date: moment(entry.scannedAt).format('YYYY-MM-DD'),
+    day: moment(entry.scannedAt).format('dddd'),
+    time: moment(entry.scannedAt).format('h:mm A'),
+    period: getTimeOfDay(entry.scannedAt)
+  }));
+
   return (
     <div style={{ padding: 20, background: "#F5F7FA" }}>
       <Row gutter={[16, 16]}>
         {/* Left Side: Staff Profile */}
-        <Col span={6}>
+        <Col xs={24} md={8} lg={6}>
           <Card>
             <div style={{ textAlign: "center" }}>
-              {/* Profile Picture */}
               <Avatar size={100} src="/assets/user.png" />
-              <Title level={4}>Dr. Petra Winsburry</Title>
-              <Text type="secondary">General Practitioner</Text>
+              <Title level={4} style={{ marginTop: 10 }}>{firstName} {lastName}</Title>
+              <Text type="secondary">{role?.name}</Text>
               <div style={{ marginTop: 10 }}>
-                <Tag color="green">Available</Tag>
+                <Tag color="green">Active</Tag>
               </div>
             </div>
             <Divider />
-            {/* Specialization */}
-            <Text strong>Specialist:</Text>
-            <p>Routine Check-Ups</p>
-            {/* Bio */}
-            <Text>
-              Dr. Petra Winsburry is a seasoned general medicine practitioner with over 15 years of experience...
-            </Text>
+            
+            <Text strong>Department:</Text>
+            <p>{department?.name}</p>
+            
+            <Text strong>Staff ID:</Text>
+            <p>{staff.staffID}</p>
+            
             <Divider />
-            {/* Contact Info */}
+            
             <div>
               <p>
-                <PhoneOutlined /> +1 555-326-5678
+                <PhoneOutlined /> {phone_number}
               </p>
               <p>
-                <MailOutlined /> petra.winsburry@wellhealthhospital.com
-              </p>
-              <p>
-                <EnvironmentOutlined /> WellHealth Hospital, 456 8th Street, Springfield, IL, USA
+                <MailOutlined /> {email}
               </p>
             </div>
-            <Divider />
-            {/* Work Experience */}
-            <Text strong>Work Experience:</Text>
-            <List
-              dataSource={["General Practitioner", "Resident Doctor"]}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
           </Card>
         </Col>
 
-        {/* Right Side: Dashboard Stats & Charts */}
-        <Col span={18}>
+        {/* Right Side: Dashboard Stats & Details */}
+        <Col xs={24} md={16} lg={18}>
           <Row gutter={[16, 16]}>
             {/* Statistics */}
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8}>
               <Card>
-                <Statistic title="Total Patients" value={150} />
+                <Statistic title="Total Attendance" value={attendance.length} />
               </Card>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8}>
               <Card>
-                <Statistic title="Total Appointments" value={320} />
+                <Statistic 
+                  title="Last Login" 
+                  value={moment(staff.last_login).format('MMM D, YYYY')}
+                />
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} md={8}>
+              <Card>
+                <Statistic 
+                  title="Account Created" 
+                  value={moment(staff.created_at).format('MMM D, YYYY')}
+                />
               </Card>
             </Col>
           </Row>
 
           <Divider />
 
-          {/* Appointment Stats Chart Placeholder */}
-          <Card title="Appointment Stats">
-            {/* Insert Chart Component Here */}
-            <div style={{ height: 200, background: "#e8e8e8", borderRadius: 8, textAlign: "center", lineHeight: "200px" }}>
-              [Chart Placeholder]
-            </div>
-          </Card>
-
-          <Divider />
-
-          {/* Schedule Section */}
-          <Card title="Schedule">
+          {/* Attendance Section */}
+          <Card title="Attendance Records">
             <List
-              dataSource={[
-                { time: "8:00 - 9:00 AM", name: "Rupert Twiney" },
-                { time: "9:00 - 10:00 AM", name: "Ruth Hardinger" },
-                { time: "10:00 - 11:00 AM", name: "Caven G. Simpson" },
-                { time: "11:00 - 12:00 PM", name: "Staff Meeting" },
-                { time: "12:00 - 1:00 PM", name: "Administrative Work" },
-              ]}
+              dataSource={formattedAttendance}
               renderItem={(item) => (
                 <List.Item>
-                  <Text strong>{item.name}</Text>
-                  <Text type="secondary">{item.time}</Text>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <div>
+                      <Text strong>{item.date}</Text>
+                      <Text type="secondary" style={{ display: 'block' }}>{item.day}</Text>
+                    </div>
+                    <div>
+                      <Text>{item.time}</Text>
+                      <Tag 
+                        color={
+                          item.period === 'Morning' ? 'gold' : 
+                          item.period === 'Afternoon' ? 'orange' : 'purple'
+                        }
+                        style={{ marginLeft: 8 }}
+                      >
+                        {item.period}
+                      </Tag>
+                    </div>
+                  </div>
                 </List.Item>
               )}
             />
@@ -100,23 +136,24 @@ const StaffDetails = () => {
 
           <Divider />
 
-          {/* Feedback Section */}
-          <Card title="Feedback">
+          {/* Recent Activity Section */}
+          <Card title="Recent Activity">
             <List
-              grid={{ gutter: 16, column: 4 }}
               dataSource={[
-                { name: "Alice Johnson", date: "2024-01-11", feedback: "Dr. Winsburry is very thorough..." },
-                { name: "Robert Brown", date: "2025-02-05", feedback: "Great experience, highly recommend..." },
-                { name: "Chance Siphon", date: "2025-02-01", feedback: "Dr. Winsburry is efficient, professional..." },
-                { name: "Lincoln Donin", date: "2025-01-27", feedback: "A fantastic physician who truly listens..." },
+                { action: "Logged in", time: staff.last_login },
+                { action: "Account created", time: staff.created_at },
+                ...attendance.slice(0, 3).map(entry => ({
+                  action: "Attendance marked",
+                  time: entry.scannedAt
+                }))
               ]}
               renderItem={(item) => (
                 <List.Item>
-                  <Card>
-                    <Text strong>{item.name}</Text>
-                    <Text type="secondary">{item.date}</Text>
-                    <p>{item.feedback}</p>
-                  </Card>
+                  <List.Item.Meta
+                    avatar={<ClockCircleOutlined />}
+                    title={item.action}
+                    description={moment(item.time).format('MMMM Do YYYY, h:mm:ss a')}
+                  />
                 </List.Item>
               )}
             />
