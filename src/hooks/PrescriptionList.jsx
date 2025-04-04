@@ -166,7 +166,7 @@ const PrescriptionList = ({ prescriptionData, onDelete }) => {
           rowKey="id"
           pagination={{ pageSize: 5 }}
           scroll={{ x: true }}
-          bordered
+          bordered 
           loading={status === "loading"}
         />
       )}

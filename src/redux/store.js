@@ -41,7 +41,8 @@ const rootReducer = combineReducers({
   consultation: reducers.consultationSlice,
   chat: reducers.chatSlice,
   bills:reducers.billSlice,
-  attendance:reducers.attendanceSlice
+  attendance:reducers.attendanceSlice,
+  discharge:reducers.dischargeSlice
 
 });
 

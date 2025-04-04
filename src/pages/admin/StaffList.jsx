@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Input, Select, Space, Avatar, Skeleton, Popconfirm, message } from "antd";
+import { Table, Tag, Input, Select, Space, Avatar, Skeleton, Popconfirm, message,Row,Col,Card,Statistic} from "antd";
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
 import AddStaffDialog from "./components/AddStaffDialog";
@@ -9,14 +9,13 @@ import { getAllRoles } from "../../redux/slice/staffPermissionSlice";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
-const { Option } = Select;
 
 const StaffList = () => {
   const [visible, setVisible] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const dispatch = useDispatch();
-  const { allStaffs, loading, error } = useSelector((state) => state.adminStaffManagement);
-  const { roles, loading: roles_loading } = useSelector((state) => state.permissions);
+  const { allStaffs, loading } = useSelector((state) => state.adminStaffManagement);
+  const { roles } = useSelector((state) => state.permissions);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,20 +31,12 @@ const StaffList = () => {
     navigate(`/admin/details/${user.id}`);
   };
 
-  const handleEdit = (staff) => {
-    setSelectedStaff(staff);
-    setVisible(true);
-  };
-
-  const handleDelete = async (staffId) => {
-    try {
-      await dispatch(deleteStaff(staffId)).unwrap();
-      message.success('Staff member deleted successfully');
-      handleUpdate();
-    } catch (error) {
-      message.error('Failed to delete staff member');
-    }
-  };
+  // Calculate statistics
+  const totalStaff = allStaffs?.length || 0;
+  const activeTodayStaff = allStaffs?.filter(staff => 
+    staff.last_login && dayjs(staff.last_login).isSame(dayjs(), 'day')
+  ).length || 0;
+  const neverLoggedIn = allStaffs?.filter(staff => !staff.last_login).length || 0;
 
   const columns = [
     {
@@ -82,92 +73,61 @@ const StaffList = () => {
       render: (role) => role?.name || "N/A",
     },
     {
+      title: "Status",
+      key: "status",
+      render: (_, record) => (
+        <Tag color={record.last_login ? 'green' : 'orange'}>
+          {record.last_login ? 'Active' : 'Inactive'}
+        </Tag>
+      ),
+    },
+    {
       title: "Last Login",
       dataIndex: "last_login",
       key: "last_login",
       render: (last_login) =>
         last_login ? dayjs(last_login).format("DD MMM YYYY, hh:mm A") : "Never Logged In",
     },
-    {
-      title: "Actions",
-      key: "actions",
-      width: 120,
-      render: (_, record) => (
-        <Space size="small">
-          <BhmsButton
-            block={false}
-            size="medium"
-            
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(record);
-            }}
-          />
-          <Popconfirm
-            title="Are you sure to delete this staff member?"
-            onConfirm={(e) => {
-              e?.stopPropagation();
-              handleDelete(record.id);
-            }}
-            onCancel={(e) => e?.stopPropagation()}
-            okText="Yes"
-            cancelText="No"
-          >
-            <BhmsButton
-              block={false}
-              size="medium"
-              color="red"
-              icon={<DeleteOutlined />}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </Popconfirm>
-        </Space>
-      ),
-    },
   ];
 
   return (
     <div style={styles.container}>
-      <Space style={styles.header}>
-        <Space>
-          {loading ? (
-            <Skeleton.Input style={styles.skeletonInput} active />
-          ) : (
-            <Input placeholder="Search staff..." prefix={<SearchOutlined />} style={styles.input} />
-          )}
-          {loading ? (
-            <Skeleton.Button style={styles.skeletonSelect} active />
-          ) : (
-            <Select placeholder="Department" style={styles.select}>
-              <Option value="general">General Medicine</Option>
-              <Option value="cardiology">Cardiology</Option>
-            </Select>
-          )}
-          {loading ? (
-            <Skeleton.Button style={styles.skeletonSelect} active />
-          ) : (
-            <Select placeholder="Role" style={styles.select}>
-              <Option value="doctor">Doctor</Option>
-              <Option value="nurse">Nurse</Option>
-            </Select>
-          )}
-          {loading ? (
-            <Skeleton.Button style={styles.skeletonSelect} active />
-          ) : (
-            <Select placeholder="Status" style={styles.select}>
-              <Option value="available">Available</Option>
-              <Option value="unavailable">Unavailable</Option>
-            </Select>
-          )}
-        </Space>
-        <BhmsButton type="primary" size="medium" icon={<PlusOutlined />} onClick={() => {
-          setSelectedStaff(null);
+      {/* Statistics Cards */}
+      <BhmsButton type="primary" block={false} size="medium" icon={<PlusOutlined />} onClick={() => {
+         
           setVisible(true);
         }}>
           Add Staff
         </BhmsButton>
-      </Space>
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Total Staff"
+              value={totalStaff}
+              valueStyle={{ color: '#3f8600' }}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Active Today"
+              value={activeTodayStaff}
+              valueStyle={{ color: '#1890ff' }}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Never Logged In"
+              value={neverLoggedIn}
+              valueStyle={{ color: '#ff4d4f' }}
+            />
+          </Card>
+        </Col>
+      </Row>
 
       {loading ? (
         <Skeleton active paragraph={{ rows: 8 }} />
@@ -197,13 +157,20 @@ const StaffList = () => {
 };
 
 const styles = {
-  container: { padding: 20, background: "#fff", borderRadius: 10, boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)" },
-  header: { marginBottom: 16, width: "100%", justifyContent: "space-between" },
-  input: { width: 200, borderRadius: 5 },
-  select: { width: 150, borderRadius: 5 },
-  table: { marginTop: 10 },
-  skeletonInput: { width: 200, height: 32 },
-  skeletonSelect: { width: 150, height: 32 },
+  container: { 
+    padding: 20, 
+    background: "#fff", 
+    borderRadius: 10, 
+    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)" 
+  },
+  table: { 
+    marginTop: 10,
+    cursor: 'pointer'
+  },
+  statCard: {
+    borderRadius: 8,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.12)'
+  }
 };
 
 export default StaffList;

@@ -1,21 +1,58 @@
 import React, { useEffect } from "react";
-import { Card, Col, Row, Avatar, Tag, Statistic, Typography, Divider, List, Spin } from "antd";
-import { PhoneOutlined, MailOutlined, EnvironmentOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { 
+  Card, 
+  Col, 
+  Row, 
+  Avatar, 
+  Tag, 
+  Statistic, 
+  Typography, 
+  Divider, 
+  List, 
+  Spin, 
+  Button, 
+  Popconfirm, 
+  message,
+  Space
+} from "antd";
+import { 
+  PhoneOutlined, 
+  MailOutlined, 
+  ClockCircleOutlined,
+  DeleteOutlined,
+  KeyOutlined
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { getSingleStaff } from "../../redux/slice/staff_admin_managment_slice";
+import { getSingleStaff, deleteStaff } from "../../redux/slice/staff_admin_managment_slice";
 
 const { Title, Text } = Typography;
 
 const StaffDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { singleStaff, loading } = useSelector((state) => state.adminStaffManagement);
 
   useEffect(() => {
     dispatch(getSingleStaff({ staffId: id }));
   }, [dispatch, id]);
+
+  const handleDelete = async () => {
+    try {
+      await dispatch(deleteStaff(id)).unwrap();
+      message.success('Staff member deleted successfully');
+      navigate('/admin/staff'); // Redirect to staff list after deletion
+    } catch (error) {
+      message.error('Failed to delete staff member');
+    }
+  };
+
+  const handleResetPassword = () => {
+    // Implement password reset logic here
+    message.info('Password reset functionality will be implemented here');
+  };
 
   if (loading || !singleStaff) {
     return <Spin size="large" style={{ display: 'flex', justifyContent: 'center', marginTop: 100 }} />;
@@ -73,6 +110,34 @@ const StaffDetails = () => {
                 <MailOutlined /> {email}
               </p>
             </div>
+
+            {/* Action Buttons - Placed at the bottom of the profile card */}
+            <Divider />
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Button 
+                type="primary" 
+                icon={<KeyOutlined />} 
+                block
+                onClick={handleResetPassword}
+              >
+                Reset Password
+              </Button>
+              <Popconfirm
+                title="Are you sure to delete this staff member?"
+                onConfirm={handleDelete}
+                okText="Yes"
+                cancelText="No"
+                placement="bottom"
+              >
+                <Button 
+                  danger 
+                  icon={<DeleteOutlined />} 
+                  block
+                >
+                  Delete Staff
+                </Button>
+              </Popconfirm>
+            </Space>
           </Card>
         </Col>
 

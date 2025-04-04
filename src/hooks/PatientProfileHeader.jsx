@@ -29,7 +29,7 @@ import AdmitPatientModal from "../modal/AdmitPatientModal";
 import useDepartmentCheck from "../customHooks/useDepartmentCheck";
 import { addDiagnosis } from "../redux/slice/diagnosisSlice";
 import { admitPatient } from "../redux/slice/admissionSlice";
-import TransferPatientModal from "../modal/TransferPatientModal";
+import DischargePatientModal from "../modal/TransferPatientModal";
 
 
 const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
@@ -213,7 +213,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
               disabled={!hasAccess} 
               onClick={()=>setTransferModal(true)}
             >
-              Transfer Patient
+              Discharge Patient
             </BhmsButton>
           </Col>
         </Row>
@@ -299,7 +299,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
       />
       <AdmitPatientModal visible={admitModalVisible} onClose={() => setAdmitModalVisible(false)} onSubmit={handleAdmit} />
 
-      <TransferPatientModal visible={transferModal} onClose={()=>setTransferModal(false)} onSubmit={()=>console.log('it works')}/>
+      <DischargePatientModal visible={transferModal} onClose={()=>setTransferModal(false)} onSubmit={()=>console.log('it works')} patientId={patient_id}/>
     </>
   );
 };

@@ -25,6 +25,8 @@ import consultationSlice from '../slice/consultationSlice'
 import chatSlice from '../slice/chatSlice'
 import billSlice from  '../slice/PatientBillSlices'
 import attendanceSlice from '../slice/qrAttendanceSlice'
+import dischargeSlice from  '../slice/dischargeSlice'
+
 
 export {
     authReducer,
@@ -53,6 +55,7 @@ export {
     consultationSlice,
     chatSlice,
     billSlice,
-    attendanceSlice
+    attendanceSlice,
+    dischargeSlice,
 }
  
