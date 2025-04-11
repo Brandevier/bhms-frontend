@@ -41,7 +41,7 @@ const StaffDetails = () => {
 
   const handleDelete = async () => {
     try {
-      await dispatch(deleteStaff(id)).unwrap();
+      await dispatch(deleteStaff({staff_id:id,})).unwrap();
       message.success('Staff member deleted successfully');
       navigate('/admin/staff'); // Redirect to staff list after deletion
     } catch (error) {

@@ -2,7 +2,7 @@ import React,{useEffect} from "react";
 import { Form, Input, Button, Typography, Spin, message } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import BhmsButton from "../../heroComponents/BhmsButton";
-import { verifyAdminToken } from "../../redux/slice/authSlice";
+// import { verifyAdminToken } from "../../redux/slice/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
@@ -14,16 +14,16 @@ const EmailVerification = () => {
   const navigate = useNavigate()
 
   const onFinish = (values) => {
-    dispatch(verifyAdminToken({token:values.otp}))
-      .unwrap()
-      .then((res) => {
-        console.log(res);
-        message.success("Login successfully!");
-        navigate('/admin')
-      })
-      .catch((err) => {
-        message.error(err.error || "OTP verification failed. Please try again.");
-      });
+    // dispatch(verifyAdminToken({token:values.otp}))
+    //   .unwrap()
+    //   .then((res) => {
+    //     console.log(res);
+    //     message.success("Login successfully!");
+    //     navigate('/admin')
+    //   })
+    //   .catch((err) => {
+    //     message.error(err.error || "OTP verification failed. Please try again.");
+    //   });
   };
 
 

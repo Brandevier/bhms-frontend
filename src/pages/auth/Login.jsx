@@ -32,7 +32,7 @@ const Login = () => {
         console.log(res);
         message.success("OTP sent successfully!");
         localStorage.setItem("email", trimmedValues.email);
-        navigate("/hms/verify-email");
+        navigate("/admin");
       })
       .catch((err) => {
         message.error(err.error || "Login failed. Please try again.");

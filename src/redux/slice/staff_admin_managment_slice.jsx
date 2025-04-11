@@ -81,10 +81,18 @@ export const getAllStaff = createAsyncThunk(
 // Delete Staff
 export const deleteStaff = createAsyncThunk(
     "staff/deleteStaff",
-    async ({ staff_id, institution_id, admin_id }, { rejectWithValue }) => {
+    async ({ staff_id }, { rejectWithValue,getState }) => {
+        const { auth } = getState()
+        const user = auth.user || auth.admin
         try {
             const response = await apiClient.delete(
-                `/api/staff/delete?staff_id=${staff_id}&institution_id=${institution_id}&admin_id=${admin_id}`
+                `/auth/admin/institution/staff/remove-staff`,
+                {
+                    params:{
+                        staff_id:staff_id,
+                        institution_id:user.institution.id
+                    }
+                }
             );
             return response.data;
         } catch (error) {

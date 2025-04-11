@@ -12,34 +12,47 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (loginData, { 
   }
 });
 
-// Admin login thunk
-export const loginAdmin = createAsyncThunk('auth/loginAdmin', async ({email,password}, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(ADMIN_LOGIN, {
-      email,
-      password
+export const loginAdmin = createAsyncThunk(
+  'auth/loginAdmin',
+  async ({ email, password }, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
       
-    });
-    return response.data;
-  } catch (error) {
-   console.log(error.response.data)
-    return rejectWithValue(error.response.data);
-  }
-});
+      // Check if account is locked
+      if (auth.isLocked && auth.lockUntil > Date.now()) {
+        const remainingTime = Math.ceil((auth.lockUntil - Date.now()) / 60000);
+        return rejectWithValue({
+          error: `Account temporarily locked. Try again in ${remainingTime} minutes.`
+        });
+      }
 
-// Admin token verification thunk
-export const verifyAdminToken = createAsyncThunk('auth/verifyAdminToken', async ({token}, { rejectWithValue }) => {
-
-  try {
-    const response = await axios.post(VERIFY_EMAIL, {
-      token,
-      email:localStorage.getItem('email')
-    });
-    return response.data;
-  } catch (error) {
-    return rejectWithValue(error.response.data);
+      const response = await axios.post(ADMIN_LOGIN, { email, password });
+      return response.data;
+      
+    } catch (error) {
+      // Handle failed attempts
+      if (error.response?.status === 400) {
+        const { auth } = getState();
+        const attempts = auth.loginAttempts + 1;
+        const MAX_ATTEMPTS = 5;
+        const LOCK_TIME = 15 * 60 * 1000; // 15 minutes
+        
+        if (attempts >= MAX_ATTEMPTS) {
+          return rejectWithValue({
+            error: 'Account temporarily locked due to too many failed attempts',
+            lockUntil: Date.now() + LOCK_TIME
+          });
+        }
+        
+        return rejectWithValue({
+          error: 'Invalid credentials',
+          loginAttempts: attempts
+        });
+      }
+      return rejectWithValue(error.response?.data || { error: 'Login failed' });
+    }
   }
-});
+);
 
 // Update staff profile thunk
 export const updateStaffProfile = createAsyncThunk(
@@ -85,10 +98,13 @@ const initialState = {
   admin: null,
   pendingUser: null,
   loading: false,
-  emailSent:false,
+  // emailSent:false,
   error: null,
   token: localStorage.getItem('user') || null,
   isVerified: false, 
+  loginAttempts: 0,
+  isLocked: false,
+  lockUntil: null
 };
 
 // Slice
@@ -133,31 +149,19 @@ const authSlice = createSlice({
       })
       .addCase(loginAdmin.fulfilled, (state, action) => {
         state.loading = false;
-        state.emailSent = true;
+        state.admin = action.payload;
+        state.token = action.payload.token;
+        state.loginAttempts = 0; // Reset on successful login
+        state.isLocked = false;
+        state.lockUntil = null;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('admin', JSON.stringify(action.payload)); // Store the payload in localStorage
+
       })
       .addCase(loginAdmin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.emailSent = false;
-      });
-
-    // Handle admin token verification
-    builder
-      .addCase(verifyAdminToken.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(verifyAdminToken.fulfilled, (state, action) => {
-        state.loading = false;
-        state.admin = action.payload;
-        state.emailSent = false;
-        localStorage.setItem('token', action.payload.token)
-        state.isVerified = true || false; // Set isVerified from the response
-        localStorage.setItem('admin', JSON.stringify(action.payload)); // Store the payload in localStorage
-      })
-      .addCase(verifyAdminToken.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+     
       });
 
     // Handle update staff profile

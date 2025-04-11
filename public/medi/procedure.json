@@ -1,0 +1,545 @@
+{
+    "procedures": [
+      {
+        "id": "PROC001",
+        "name": "Appendectomy",
+        "category": "General Surgery",
+        "description": "Surgical removal of the appendix",
+        "duration": 45,
+        "anesthesia_type": "General",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC002",
+        "name": "Caesarean Section",
+        "category": "Obstetrics",
+        "description": "Surgical delivery of a baby",
+        "duration": 60,
+        "anesthesia_type": "Spinal/General",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC003",
+        "name": "Tubal Ligation",
+        "category": "Family Planning",
+        "description": "Female sterilization procedure",
+        "duration": 30,
+        "anesthesia_type": "Local/General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC004",
+        "name": "Circumcision (Adult)",
+        "category": "Urology",
+        "description": "Surgical removal of foreskin",
+        "duration": 20,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC005",
+        "name": "Herniorrhaphy",
+        "category": "General Surgery",
+        "description": "Surgical repair of hernia",
+        "duration": 60,
+        "anesthesia_type": "General",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC006",
+        "name": "Dilation and Curettage (D&C)",
+        "category": "Gynecology",
+        "description": "Uterine lining scraping procedure",
+        "duration": 30,
+        "anesthesia_type": "General",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC007",
+        "name": "Fracture Reduction (Closed)",
+        "category": "Orthopedics",
+        "description": "Manual realignment of broken bones",
+        "duration": 30,
+        "anesthesia_type": "Local/General",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC008",
+        "name": "Incision and Drainage of Abscess",
+        "category": "General Surgery",
+        "description": "Draining of pus-filled infection",
+        "duration": 15,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC009",
+        "name": "Debridement of Wound",
+        "category": "General Surgery",
+        "description": "Cleaning and removal of dead tissue",
+        "duration": 20,
+        "anesthesia_type": "Local/None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC010",
+        "name": "Blood Transfusion",
+        "category": "Hematology",
+        "description": "Intravenous transfer of blood products",
+        "duration": 120,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC011",
+        "name": "Dental Extraction",
+        "category": "Dentistry",
+        "description": "Tooth removal procedure",
+        "duration": 15,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC012",
+        "name": "Tonsillectomy",
+        "category": "ENT",
+        "description": "Surgical removal of tonsils",
+        "duration": 45,
+        "anesthesia_type": "General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC013",
+        "name": "Myringotomy",
+        "category": "ENT",
+        "description": "Ear tube placement procedure",
+        "duration": 20,
+        "anesthesia_type": "General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC014",
+        "name": "Cataract Surgery",
+        "category": "Ophthalmology",
+        "description": "Removal of cloudy eye lens",
+        "duration": 60,
+        "anesthesia_type": "Local",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC015",
+        "name": "Vasectomy",
+        "category": "Family Planning",
+        "description": "Male sterilization procedure",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC016",
+        "name": "Colposcopy",
+        "category": "Gynecology",
+        "description": "Cervical examination with magnification",
+        "duration": 20,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC017",
+        "name": "Endoscopy (Upper GI)",
+        "category": "Gastroenterology",
+        "description": "Examination of esophagus/stomach",
+        "duration": 30,
+        "anesthesia_type": "Sedation",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC018",
+        "name": "Colonoscopy",
+        "category": "Gastroenterology",
+        "description": "Examination of large intestine",
+        "duration": 45,
+        "anesthesia_type": "Sedation",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC019",
+        "name": "Lumbar Puncture",
+        "category": "Neurology",
+        "description": "Spinal fluid collection",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC020",
+        "name": "Arthrocentesis",
+        "category": "Rheumatology",
+        "description": "Joint fluid aspiration",
+        "duration": 15,
+        "anesthesia_type": "Local/None",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC021",
+        "name": "Skin Grafting",
+        "category": "Plastic Surgery",
+        "description": "Transplant of skin tissue",
+        "duration": 120,
+        "anesthesia_type": "General",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC022",
+        "name": "Hemodialysis",
+        "category": "Nephrology",
+        "description": "Blood filtration for kidney failure",
+        "duration": 240,
+        "anesthesia_type": "None",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC023",
+        "name": "Electrocardiogram (ECG)",
+        "category": "Cardiology",
+        "description": "Heart electrical activity recording",
+        "duration": 10,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC024",
+        "name": "Echocardiography",
+        "category": "Cardiology",
+        "description": "Ultrasound of the heart",
+        "duration": 45,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC025",
+        "name": "Ultrasound (Abdominal)",
+        "category": "Radiology",
+        "description": "Imaging of abdominal organs",
+        "duration": 30,
+        "anesthesia_type": "None",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC026",
+        "name": "X-ray (Chest)",
+        "category": "Radiology",
+        "description": "Imaging of chest structures",
+        "duration": 15,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC027",
+        "name": "CT Scan (Head)",
+        "category": "Radiology",
+        "description": "Cross-sectional brain imaging",
+        "duration": 30,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC028",
+        "name": "MRI (Spine)",
+        "category": "Radiology",
+        "description": "Detailed spinal cord imaging",
+        "duration": 60,
+        "anesthesia_type": "None",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC029",
+        "name": "Mammography",
+        "category": "Radiology",
+        "description": "Breast tissue imaging",
+        "duration": 20,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC030",
+        "name": "Biopsy (Breast)",
+        "category": "Pathology",
+        "description": "Tissue sample collection",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC031",
+        "name": "Pap Smear",
+        "category": "Gynecology",
+        "description": "Cervical cancer screening",
+        "duration": 10,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC032",
+        "name": "Intravenous Therapy",
+        "category": "General Medicine",
+        "description": "Administration of fluids/medications",
+        "duration": 15,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC033",
+        "name": "Nebulization",
+        "category": "Pulmonology",
+        "description": "Respiratory medication administration",
+        "duration": 15,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC034",
+        "name": "Spirometry",
+        "category": "Pulmonology",
+        "description": "Lung function testing",
+        "duration": 20,
+        "anesthesia_type": "None",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC035",
+        "name": "Pulmonary Function Test",
+        "category": "Pulmonology",
+        "description": "Comprehensive lung assessment",
+        "duration": 45,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC036",
+        "name": "Electroencephalogram (EEG)",
+        "category": "Neurology",
+        "description": "Brain wave recording",
+        "duration": 60,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC037",
+        "name": "Nerve Conduction Study",
+        "category": "Neurology",
+        "description": "Peripheral nerve function test",
+        "duration": 60,
+        "anesthesia_type": "None",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC038",
+        "name": "Lumbar Sympathetic Block",
+        "category": "Pain Management",
+        "description": "Pain relief injection",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC039",
+        "name": "Epidural Steroid Injection",
+        "category": "Pain Management",
+        "description": "Spinal inflammation treatment",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC040",
+        "name": "Chemotherapy Administration",
+        "category": "Oncology",
+        "description": "Cancer medication infusion",
+        "duration": 180,
+        "anesthesia_type": "None",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC041",
+        "name": "Radiotherapy Planning",
+        "category": "Oncology",
+        "description": "Cancer radiation treatment preparation",
+        "duration": 60,
+        "anesthesia_type": "None",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC042",
+        "name": "Brachytherapy",
+        "category": "Oncology",
+        "description": "Internal radiation therapy",
+        "duration": 120,
+        "anesthesia_type": "General",
+        "facility_level": "Teaching Hospital"
+      },
+      {
+        "id": "PROC043",
+        "name": "Phototherapy",
+        "category": "Dermatology",
+        "description": "Light treatment for skin conditions",
+        "duration": 30,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC044",
+        "name": "Cryotherapy",
+        "category": "Dermatology",
+        "description": "Freezing of skin lesions",
+        "duration": 15,
+        "anesthesia_type": "Local/None",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC045",
+        "name": "Electrocautery",
+        "category": "Dermatology",
+        "description": "Burn treatment for skin lesions",
+        "duration": 15,
+        "anesthesia_type": "Local",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC046",
+        "name": "Punch Biopsy",
+        "category": "Dermatology",
+        "description": "Circular skin sample collection",
+        "duration": 15,
+        "anesthesia_type": "Local",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC047",
+        "name": "Intrauterine Device (IUD) Insertion",
+        "category": "Family Planning",
+        "description": "Contraceptive device placement",
+        "duration": 15,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC048",
+        "name": "Implant Insertion",
+        "category": "Family Planning",
+        "description": "Subdermal contraceptive placement",
+        "duration": 10,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC049",
+        "name": "Amniocentesis",
+        "category": "Obstetrics",
+        "description": "Amniotic fluid sampling",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC050",
+        "name": "Fetal Ultrasound",
+        "category": "Obstetrics",
+        "description": "Pregnancy imaging",
+        "duration": 30,
+        "anesthesia_type": "None",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC051",
+        "name": "Episiotomy",
+        "category": "Obstetrics",
+        "description": "Perineal incision during childbirth",
+        "duration": 5,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC052",
+        "name": "Manual Vacuum Aspiration",
+        "category": "Gynecology",
+        "description": "Uterine evacuation procedure",
+        "duration": 15,
+        "anesthesia_type": "Local/General",
+        "facility_level": "District Hospital+"
+      },
+      {
+        "id": "PROC053",
+        "name": "Hysteroscopy",
+        "category": "Gynecology",
+        "description": "Uterine cavity examination",
+        "duration": 30,
+        "anesthesia_type": "General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC054",
+        "name": "Laparoscopy (Diagnostic)",
+        "category": "Gynecology",
+        "description": "Minimally invasive abdominal examination",
+        "duration": 60,
+        "anesthesia_type": "General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC055",
+        "name": "Myomectomy",
+        "category": "Gynecology",
+        "description": "Fibroid removal surgery",
+        "duration": 120,
+        "anesthesia_type": "General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC056",
+        "name": "Prostate Biopsy",
+        "category": "Urology",
+        "description": "Prostate tissue sampling",
+        "duration": 30,
+        "anesthesia_type": "Local",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC057",
+        "name": "Cystoscopy",
+        "category": "Urology",
+        "description": "Bladder examination",
+        "duration": 30,
+        "anesthesia_type": "Local/General",
+        "facility_level": "Regional Hospital+"
+      },
+      {
+        "id": "PROC058",
+        "name": "Circumcision (Neonatal)",
+        "category": "Pediatrics",
+        "description": "Newborn foreskin removal",
+        "duration": 10,
+        "anesthesia_type": "Local",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC059",
+        "name": "Neonatal Resuscitation",
+        "category": "Pediatrics",
+        "description": "Newborn life support",
+        "duration": 30,
+        "anesthesia_type": "None",
+        "facility_level": "Health Center+"
+      },
+      {
+        "id": "PROC060",
+        "name": "Exchange Transfusion",
+        "category": "Pediatrics",
+        "description": "Blood replacement in newborns",
+        "duration": 120,
+        "anesthesia_type": "None",
+        "facility_level": "Regional Hospital+"
+      }
+ 
+    ]
+  }

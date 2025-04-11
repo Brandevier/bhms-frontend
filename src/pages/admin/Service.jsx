@@ -36,7 +36,10 @@ const Service = () => {
                 } else {
                     dispatch(createService(values))
                         .unwrap()
-                        .then(() => message.success("Service created successfully"))
+                        .then(function () {
+                            dispatch(fetchServices());
+                            return message.success("Service created successfully");
+                        })
                         .catch(() => message.error("Failed to create service"));
                 }
                 setIsModalOpen(false);

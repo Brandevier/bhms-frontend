@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import WaitListDialog from './WaitListDialog';
-import { AnimatePresence, motion } from 'framer-motion'; // Import framer-motion
+import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -17,7 +16,7 @@ const Header = () => {
         <img src="/assets/logo.svg" alt="Logo" className="h-8" />
       </div>
 
-      {/* Menu Icon for Small Devices */}
+      {/* Menu Icon for Mobile */}
       <div className="md:hidden">
         <button onClick={toggleMenu} className="text-gray-700 focus:outline-none">
           <svg
@@ -37,34 +36,49 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Animated Menu Items */}
+      {/* Animated Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }} // Initial state (before animation)
-            animate={{ opacity: 1, y: 0 }} // Final state (during animation)
-            exit={{ opacity: 0, y: -10 }} // Exit state (when menu closes)
-            transition={{ duration: 0.3, ease: 'easeInOut' }} // Animation settings
-            className="absolute md:static top-16 right-0 bg-white shadow-md md:shadow-none w-full md:w-auto p-4 md:p-0 flex flex-col md:flex-row md:space-x-4 md:items-center"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="absolute top-16 right-0 bg-white shadow-md w-full p-4 flex flex-col space-y-2 md:hidden"
           >
             <button
-              className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center"
-              onClick={() => window.open("https://wa.me/+233531130159", "_blank")}
+              className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 text-left"
+              onClick={() => window.open("https://wa.me/+233509279792", "_blank")}
             >
               Contact Us
             </button>
-
-            <WaitListDialog />
+            <button
+              className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 text-left"
+              onClick={() => {
+                navigate('/hms/login');
+                setIsMenuOpen(false);
+              }}
+            >
+              Login
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Static Menu Items for Large Devices */}
+      {/* Desktop Menu */}
       <div className="hidden md:flex md:items-center md:space-x-4">
-        <button className="block text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300 w-full md:w-auto text-left md:text-center" onClick={()=>navigate('/hms/login')}>
+        <button 
+          className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300"
+          onClick={() => window.open("https://wa.me/+233509279792", "_blank")}
+        >
+          Contact Us
+        </button>
+        <button 
+          className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded transition duration-300"
+          onClick={() => navigate('/hms/login')}
+        >
           Login
         </button>
-        <WaitListDialog />
       </div>
     </nav>
   );
