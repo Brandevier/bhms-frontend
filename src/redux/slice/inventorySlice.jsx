@@ -148,6 +148,7 @@ export const fetchDepartmentItems = createAsyncThunk(
             });
             return response.data;
         } catch (error) {
+            console.log(error)
             return rejectWithValue(error.response?.data?.error || "Failed to fetch issued items");
         }
     }

@@ -36,7 +36,7 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="border-t border-gray-300 mt-6 pt-4 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs">
-          <p>© 2024 Brandevia Technology Ltd. All rights reserved.</p>
+          <p>© 2024 Falcon Hive Technology Ltd. All rights reserved.</p>
           <div className="flex space-x-6 mt-2 md:mt-0">
             <a href="/contact" className="hover:text-black">Contact Us</a>
             <a href="/privacy-policy" className="hover:text-black">Privacy Policy</a>

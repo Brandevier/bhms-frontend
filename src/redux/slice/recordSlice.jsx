@@ -69,8 +69,9 @@ export const createRecord = createAsyncThunk(
         try {
             const response = await apiClient.post('/records/institution/patient/create', {
                 ...recordData,
-                institution_id: user.institution.id,
-                is_antenatal_patient, // Default is false unless explicitly set to true
+                "institution_id": user.institution.id,
+                "department_id":user.department.id,
+                "is_antenatal_patient":is_antenatal_patient, // Default is false unless explicitly set to true
             });
 
             return response.data;

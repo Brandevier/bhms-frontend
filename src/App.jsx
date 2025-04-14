@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { requestNotificationPermission } from "../firebase/requestNotificationPermission";
+// import { requestNotificationPermission } from "../firebase/requestNotificationPermission";
 import { fetchNotifications } from "./redux/slice/notificationSlice";
 
 // Import all routes from the config file
@@ -56,7 +56,7 @@ const App = () => {
         department_id: user.department.id,
       };
       dispatch(fetchNotifications(data));
-      requestNotificationPermission(user);
+      // requestNotificationPermission(user);
     }
 
     if ("serviceWorker" in navigator) {

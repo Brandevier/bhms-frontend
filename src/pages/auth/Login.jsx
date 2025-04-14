@@ -113,7 +113,7 @@ const Login = () => {
 
         {/* Footer */}
         <div className="text-black text-center text-sm shadow-md">
-          &copy; {new Date().getFullYear()} BrandeviaHMS. All rights reserved.
+          &copy; {new Date().getFullYear()} Falcon Hive. All rights reserved.
         </div>
       </div>
     </div>

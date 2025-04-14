@@ -79,7 +79,13 @@ const ChatUI = () => {
   }, {});
 
   return (
-    <Layout style={{ height: "90vh", border: "1px solid #E5E7EB", borderRadius: 8 }}>
+    <div style={{ 
+      height: "90vh", 
+      border: "1px solid #E5E7EB", 
+      borderRadius: 8,
+      display: "flex", // Main container as flex
+      flexDirection: isMobile ? "column" : "row" // Column for mobile, row for desktop
+    }}>
       {/* Mobile Department Toggle */}
       {isMobile && (
         <div style={{ padding: "8px 16px", borderBottom: "1px solid #E5E7EB", display: "flex", alignItems: "center" }}>
@@ -123,15 +129,16 @@ const ChatUI = () => {
         </div>
       )}
 
-      {/* Desktop Department List */}
+      {/* Department List - Desktop */}
       {!isMobile && (
         <div style={{ 
-          width: 250, 
+          width: 250,
+          minWidth: 250, // Ensure it doesn't shrink
           background: "#F7F9FC", 
           padding: "16px", 
           borderRight: "1px solid #E5E7EB",
-          height: "100%",
-          overflowY: "auto"
+          overflowY: "auto",
+          height: "100%"
         }}>
           <Text strong style={{ fontSize: 16, display: "block", marginBottom: 12 }}>
             Departments
@@ -161,32 +168,32 @@ const ChatUI = () => {
       )}
 
       {/* Chat Section */}
-      <Layout style={{ 
-        background: "#fff", 
-        display: "flex", 
+      <div style={{ 
+        flex: 1, // Takes remaining space
+        display: "flex",
         flexDirection: "column",
-        width: isMobile ? "100%" : "calc(100% - 250px)"
+        background: "#fff",
+        height: "100%",
+        overflow: "hidden"
       }}>
         {selectedDepartment ? (
           <>
             {/* Chat Header */}
-            <div
-              style={{
-                padding: "12px 16px",
-                borderBottom: "1px solid #E5E7EB",
-                fontWeight: "bold",
-                background: "#F5F5F5",
-              }}
-            >
+            <div style={{
+              padding: "12px 16px",
+              borderBottom: "1px solid #E5E7EB",
+              fontWeight: "bold",
+              background: "#F5F5F5",
+              flexShrink: 0 // Prevent header from shrinking
+            }}>
               Chat with {selectedDepartment.name}
             </div>
 
             {/* Chat Messages */}
-            <Content style={{ 
+            <div style={{ 
               flex: 1, 
               overflowY: "auto", 
-              padding: "16px",
-              maxHeight: isMobile ? "calc(100vh - 200px)" : "none"
+              padding: "16px"
             }}>
               {chatLoading ? (
                 <Spin size="large" style={{ display: "block", textAlign: "center", marginTop: 50 }} />
@@ -244,7 +251,7 @@ const ChatUI = () => {
                   </div>
                 ))
               )}
-            </Content>
+            </div>
 
             {/* Chat Input */}
             <div style={{ 
@@ -252,8 +259,7 @@ const ChatUI = () => {
               padding: "12px 16px", 
               borderTop: "1px solid #E5E7EB", 
               background: "#fff",
-              position: isMobile ? "sticky" : "static",
-              bottom: 0
+              flexShrink: 0 // Prevent input from shrinking
             }}>
               <Upload showUploadList={false} beforeUpload={() => false}>
                 <Button icon={<PaperClipOutlined />} style={{ marginRight: 8 }} />
@@ -272,16 +278,14 @@ const ChatUI = () => {
             </div>
           </>
         ) : (
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#888",
-              fontSize: 16,
-            }}
-          >
+          <div style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#888",
+            fontSize: 16,
+          }}>
             {isMobile ? (
               <Button type="primary" onClick={() => setShowMobileDepartments(true)}>
                 Select Department
@@ -291,10 +295,11 @@ const ChatUI = () => {
             )}
           </div>
         )}
-      </Layout>
+      </div>
       <AllPatientModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} />
-    </Layout>
+    </div>
   );
 };
 
 export default ChatUI;
+

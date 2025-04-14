@@ -42,7 +42,8 @@ const rootReducer = combineReducers({
   chat: reducers.chatSlice,
   bills:reducers.billSlice,
   attendance:reducers.attendanceSlice,
-  discharge:reducers.dischargeSlice
+  discharge:reducers.dischargeSlice,
+  billingStats : reducers.billingStatsSlice
 
 });
 

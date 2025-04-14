@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Skeleton, Popconfirm } from "antd";
+import { Table, Tag, Input, message, Skeleton, Popconfirm, Tabs } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecordsByInstitution } from "../../../redux/slice/recordSlice";
 import { useNavigate } from "react-router-dom";
+import BillingStatistics from "./BillingStatistics"; // You'll need to create this component
 
 const { Search } = Input;
+const { TabPane } = Tabs;
 
 const InstitutionAccounts = () => {
   const [searchText, setSearchText] = useState("");
+  const [activeTab, setActiveTab] = useState("patients");
   const dispatch = useDispatch();
   const { records, loading } = useSelector((state) => state.records);
   const navigate = useNavigate();
@@ -69,7 +72,12 @@ const InstitutionAccounts = () => {
       key: "actions",
       render: (_, record) => (
         <div className="flex">
-          <BhmsButton outline block={false} size="medium" onClick={() => navigate(`/shared/departments/accounts/${record?.patient?.id}/bill-history`)}>
+          <BhmsButton 
+            outline 
+            block={false} 
+            size="medium" 
+            onClick={() => navigate(`/shared/departments/accounts/${record?.patient?.id}/bill-history`)}
+          >
             View Bills
           </BhmsButton>
         </div>
@@ -90,8 +98,30 @@ const InstitutionAccounts = () => {
         />
       </div>
 
-      {/* Table Section */}
-      {loading ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredData} columns={columns} rowKey="id" />}
+      {/* Tabs Section */}
+      <Tabs 
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        tabBarStyle={{ marginBottom: 24 }}
+      >
+        <TabPane tab="Patients Bills" key="patients">
+          {/* Table Section */}
+          {loading ? (
+            <Skeleton active paragraph={{ rows: 5 }} />
+          ) : (
+            <Table 
+              dataSource={filteredData} 
+              columns={columns} 
+              rowKey="id" 
+              scroll={{ x: true }}
+            />
+          )}
+        </TabPane>
+        
+        <TabPane tab="Statistics" key="statistics">
+          <BillingStatistics />
+        </TabPane>
+      </Tabs>
     </div>
   );
 };

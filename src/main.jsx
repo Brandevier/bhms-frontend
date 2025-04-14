@@ -9,7 +9,7 @@ import { store, persistor } from './redux/store';
 import App from './App';
 import { Toaster } from "react-hot-toast";
 import { PersistGate } from 'redux-persist/integration/react'
-import NotificationSound from './util/Notification';
+// import NotificationSound from './util/Notification';
 
 
 
@@ -22,7 +22,7 @@ root.render(
       <I18nextProvider i18n={i18n}>
         <PersistGate loading={null} persistor={persistor}>
           <App />
-          <NotificationSound />  
+          {/* <NotificationSound />   */}
           <Toaster />
         </PersistGate>
       </I18nextProvider>
