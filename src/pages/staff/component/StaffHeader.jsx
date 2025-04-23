@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import { Layout, Dropdown, Avatar, Badge, List, Button, Modal, message } from "antd";
-import { BellOutlined, CameraOutlined } from "@ant-design/icons";
+import { BellOutlined, CameraOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { logout } from "../../../redux/slice/authSlice";
-import QrScanner from "qr-scanner"; // Modern QR scanner library
+import QrScanner from "qr-scanner";
 import { scanQrCode } from "../../../redux/slice/qrAttendanceSlice";
-
+import { useMediaQuery } from "react-responsive";
 
 const { Header } = Layout;
 
@@ -14,6 +14,7 @@ const StaffHeader = () => {
   const { user } = useSelector((state) => state.auth);
   const { items } = useSelector((state) => state.notification);
   const dispatch = useDispatch();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const [scanQrModalVisible, setScanQrModalVisible] = useState(false);
   const [scanResult, setScanResult] = useState("");
@@ -30,22 +31,16 @@ const StaffHeader = () => {
     setScanQrModalVisible(true);
     setScanResult("");
 
-    // Initialize scanner when modal opens
     setTimeout(() => {
       if (videoRef.current && !qrScannerRef.current) {
         qrScannerRef.current = new QrScanner(
           videoRef.current,
           result => {
             setScanResult(result.data);
-
-            console.log(result)
-
-            dispatch(scanQrCode({ token: result.data, staffId: user.id })).unwrap().then((res) => {
-              message.success("QR Code scanned successfully!");
-              // Here you would typically dispatch an action to handle the scanned data
-              console.log("Scanned data:", result);
-            })
-
+            dispatch(scanQrCode({ token: result.data, staffId: user.id }))
+              .unwrap()
+              .then(() => message.success("QR Code scanned successfully!"))
+              .catch(err => message.error(err.message || "Scan failed"));
             stopScanner();
             setScanQrModalVisible(false);
           },
@@ -95,7 +90,7 @@ const StaffHeader = () => {
   );
 
   const notificationMenu = (
-    <div className="w-96 bg-white shadow-lg rounded-lg p-4">
+    <div className="w-80 md:w-96 bg-white shadow-lg rounded-lg p-4">
       <h3 className="font-semibold text-gray-800 mb-2">Notifications</h3>
       <List
         dataSource={items.slice(0, 5)}
@@ -123,7 +118,7 @@ const StaffHeader = () => {
         style={{
           backgroundColor: "white",
           boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.1)",
-          padding: "0 24px",
+          padding: "0 16px",
           border: "1px solid #E5E7EB",
         }}
         className="flex justify-between items-center w-full"
@@ -133,7 +128,7 @@ const StaffHeader = () => {
         </h1>
 
         <div className="flex-1 flex justify-end">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Button
               type="text"
               icon={<CameraOutlined className="text-xl" />}
@@ -147,20 +142,25 @@ const StaffHeader = () => {
               </Badge>
             </Dropdown>
 
-            <Dropdown overlay={userMenu} trigger={["click"]}>
-              <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
-                <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
-                  <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+            <Dropdown overlay={userMenu} trigger={["click"]} placement="bottomRight">
+              {isMobile ? (
+                <Avatar 
+                  src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg"
+                  icon={<UserOutlined />}
+                  className="cursor-pointer"
+                />
+              ) : (
+                <div className="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg">
+                  <Avatar src="https://justicaanima.com/wp-content/uploads/2022/02/justicaanimablog.jpg" />
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">{user.department.name}</p>
+                    <p className="text-xs text-gray-500">{user.firstName} {user.middleName || ""} {user.lastName}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </Dropdown>
           </div>
-
         </div>
-
-
       </Header>
 
       <Modal

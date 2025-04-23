@@ -88,6 +88,27 @@ export const transferPatientToInstitution = createAsyncThunk("admissions/transfe
     }
 });
 
+
+// Get all admited patient in an institution
+
+export const getAdmitedPatient = createAsyncThunk("admission/admittedPatient", async (_, { rejectWithValue, getState }) => {
+    try {
+        const { auth } = getState()
+        const user = auth.admin || auth.user
+
+        const response = await apiClient.get('/get-admitted-patients', {
+            params: {
+                institution_id: user.institution.id
+                
+            }
+        })
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+})
+
+
 // 🔹 Initial State
 const initialState = {
     admissions: [],
@@ -152,7 +173,10 @@ const admissionSlice = createSlice({
                 state.loading = false;
                 state.admissions = state.admissions.filter(adm => adm.record_id !== action.meta.arg.record_id);
             })
-            .addCase(transferPatientToInstitution.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+            .addCase(transferPatientToInstitution.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+            .addCase(getAdmitedPatient.pending,(state,action)=>{state.loading=false, state.error = null})
+            .addCase(getAdmitedPatient.fulfilled,(state,action)=>{ state.loading = false;state.admissions = action.payload })
+            .addCase(getAdmitedPatient.rejected,(state,action)=>{state.loading=false; state.error = action.payload});
     },
 });
 

@@ -5,34 +5,32 @@ import { Table, Button, Tag, message, Popconfirm, Spin } from "antd";
 import moment from "moment";
 import BhmsButton from "../../../heroComponents/BhmsButton";
 import ApprovalModal from "../../../modal/ApprovalModal";
+import { useMediaQuery } from "react-responsive";
 
 const PendingRequests = () => {
   const { items, loading, rejectDepartmentItemLoading } = useSelector((state) => state.warehouse);
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [rejectingRequestId, setRejectingRequestId] = useState(null); // Track request being rejected
+  const [rejectingRequestId, setRejectingRequestId] = useState(null);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
     dispatch(fetchRequestedItems());
   }, [dispatch]);
 
-  // Status Badge Colors
   const statusColors = {
     pending: "orange",
     approved: "green",
     rejected: "red",
   };
 
-  // Open Modal for Approval
   const openApprovalModal = (record) => {
     setSelectedRequest(record);
     setModalVisible(true);
   };
 
-  // Handle Approval Logic
   const handleApprove = (quantity) => {
-    console.log("Approved request:", selectedRequest.id, "Quantity Issued:", quantity);
     const data = {
       request_id: selectedRequest.id,
       quantity_issued: quantity,
@@ -47,15 +45,12 @@ const PendingRequests = () => {
       });
   };
 
-  // Handle Rejection Logic
   const handleReject = (record) => {
-    console.log("Rejecting request:", record.id);
-    setRejectingRequestId(record.id); // Set loading state for this request
-
+    setRejectingRequestId(record.id);
     const data = {
       request_id: record.id,
       reason: "Reason for rejection",
-      department_id:record.department_id
+      department_id: record.department_id
     };
 
     dispatch(rejectDepartmentItemRequest(data))
@@ -67,15 +62,64 @@ const PendingRequests = () => {
         message.error("Error rejecting item request");
       })
       .finally(() => {
-        setRejectingRequestId(null); // Reset loading state after request
+        setRejectingRequestId(null);
       });
   };
 
-  // Define Table Columns
-  const columns = [
+  // Mobile responsive columns
+  const mobileColumns = [
+    {
+      title: "Item",
+      dataIndex: ["batch", "batch_number"],
+      key: "batch_number",
+      render: (text, record) => (
+        <div>
+          <strong>{text || "Unknown Item"}</strong>
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Dept: {record.department?.name}
+          </div>
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Status: <Tag color={statusColors[record.status] || "default"}>{record.status.toUpperCase()}</Tag>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "8px" }}>
+          <Button 
+            size="small" 
+            type="primary" 
+            onClick={() => openApprovalModal(record)}
+          >
+            Approve
+          </Button>
+          <Popconfirm
+            title="Reject this request?"
+            onConfirm={() => handleReject(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button 
+              size="small" 
+              danger 
+              disabled={rejectingRequestId === record.id}
+            >
+              {rejectingRequestId === record.id ? <Spin size="small" /> : "Reject"}
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+
+  // Desktop columns
+  const desktopColumns = [
     {
       title: "Item Name",
-      dataIndex: ["batch", "batch_number"], // Assuming `batch.batch_number` gives the item name
+      dataIndex: ["batch", "batch_number"],
       key: "batch_number",
       render: (text) => <strong>{text || "Unknown Item"}</strong>,
     },
@@ -83,7 +127,6 @@ const PendingRequests = () => {
       title: "Department",
       dataIndex: ["department", "name"],
       key: "department",
-      render: (text) => <span>{text}</span>,
     },
     {
       title: "Status",
@@ -95,7 +138,6 @@ const PendingRequests = () => {
       title: "Requested By",
       dataIndex: ["requester", "lastName"],
       key: "requester",
-      render: (text) => <span>{text} </span>,
     },
     {
       title: "Date",
@@ -111,7 +153,6 @@ const PendingRequests = () => {
           <BhmsButton block={false} size="medium" type="primary" onClick={() => openApprovalModal(record)}>
             Approve
           </BhmsButton>
-
           <Popconfirm
             title="Are you sure you want to reject this request?"
             onConfirm={() => handleReject(record)}
@@ -128,11 +169,18 @@ const PendingRequests = () => {
   ];
 
   return (
-    <div>
+    <div style={{ padding: isMobile ? '8px' : '16px' }}>
       <h2>Pending Requests</h2>
-      <Table columns={columns} dataSource={items} rowKey="id" loading={loading} pagination={{ pageSize: 5 }} />
+      <Table
+        columns={isMobile ? mobileColumns : desktopColumns}
+        dataSource={items}
+        rowKey="id"
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+        scroll={isMobile ? { x: true } : undefined}
+        size={isMobile ? "small" : "middle"}
+      />
 
-      {/* Approval Modal */}
       {selectedRequest && (
         <ApprovalModal
           visible={modalVisible}

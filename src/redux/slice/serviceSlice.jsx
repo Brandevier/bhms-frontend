@@ -125,9 +125,9 @@ export const deletePatientInvoice = createAsyncThunk(
 // Make a patient payment
 export const makePatientPayment = createAsyncThunk(
   'service/makePatientPayment',
-  async ({ id, patient_id }, { rejectWithValue }) => {
+  async ({ invoice_ids, patient_id }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/api/invoices/pay`, { id, patient_id });
+      const response = await apiClient.put(`/invoices/patient/make-payments`, { bill_ids:invoice_ids, patient_id });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

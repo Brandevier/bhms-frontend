@@ -44,6 +44,8 @@ import {
 } from "./routesConfig";
 import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 import SmsManagement from "./pages/admin/components/SmsManagement";
+import CallComponent from "./pages/admin/components/Call";
+
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -83,6 +85,7 @@ const App = () => {
         <Route path="/shared/*" element={<SharedRoutes />}>
           <Route path="departments" element={<DepartmentsList />} />
           <Route path="departments/store" element={<DepartmentStore />} />
+          <Route path="communication/call-chat" element={<CallComponent />} />
           <Route path="departments/accounts" element={<InstitutionAccounts />} />
           <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
           <Route path="departments/pharmacy" element={<Pharmacy />} />

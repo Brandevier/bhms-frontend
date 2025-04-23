@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LOGIN_URL, ADMIN_LOGIN, VERIFY_EMAIL, BASE_URL } from '../../api/endpoints'; // Ensure UPDATE_STAFF_PROFILE_URL is defined
-
+import { initializeSocket } from '../../service/socketService';
 // User login thunk
 export const loginUser = createAsyncThunk('auth/loginUser', async (loginData, { rejectWithValue }) => {
   try {
@@ -27,6 +27,7 @@ export const loginAdmin = createAsyncThunk(
       }
 
       const response = await axios.post(ADMIN_LOGIN, { email, password });
+      initializeSocket(response.data);
       return response.data;
       
     } catch (error) {
@@ -84,6 +85,7 @@ export const verifyPuzzleAnswer = createAsyncThunk('auth/verifyPuzzleAnswer', as
     
     // If successful, move pendingUser to actual user
     const { pendingUser } = getState().auth;
+    initializeSocket(response.data);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response?.data || "Verification failed");
