@@ -30,23 +30,26 @@ export const dischargePatient = createAsyncThunk("admissions/discharge", async (
     }
 });
 
-// ✅ Get All Admissions in a Department
-export const fetchAdmissions = createAsyncThunk("admissions/fetchAll", async ({ department_id }, { rejectWithValue, getState }) => {
-
-    const { auth } = getState()
-
-    const user = auth.user || auth.admin
-
-
-
+// ✅ Get All Admissions in an Institution (optionally filtered by department)
+export const fetchAdmissions = createAsyncThunk(
+  "admissions/fetchAll", 
+  async ({ department_id }, { rejectWithValue, getState }) => {
+    const { auth } = getState();
+    const user = auth.user || auth.admin;
 
     try {
-        const response = await apiClient.get(`/admission/all`, { params: { department_id, institution_id: user.institution.id } });
-        return response.data;
+      const params = { 
+        institution_id: user.institution.id,
+        ...(department_id && { department_id }) // Only add department_id if provided
+      };
+
+      const response = await apiClient.get(`/admission/institution/department/all-admissions`, { params });
+      return response.data;
     } catch (error) {
-        return rejectWithValue(error.response.data);
-    }
-});
+      return rejectWithValue(error.response?.data || error.message);
+    } 
+  }
+);
 
 // ✅ Update Patient Condition Status
 export const updateConditionStatus = createAsyncThunk("admissions/updateCondition", async (conditionData, { rejectWithValue }) => {

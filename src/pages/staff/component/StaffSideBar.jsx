@@ -23,7 +23,8 @@ import {
   ProfileOutlined,
   WechatOutlined,
   MenuFoldOutlined,
-  MenuUnfoldOutlined
+  MenuUnfoldOutlined,
+  UsergroupAddOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -57,6 +58,7 @@ const StaffSideBar = () => {
       { key: "consult-2", label: "OPD Patients", icon: <UserOutlined />, path: `/shared/consultation/${user.department.id}` },
       { key: "consult-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
       { key: "consult-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
+      { key: "consult-7", label: "Admissions", icon: <UsergroupAddOutlined />, path: `/shared/admissions/all` },
       { key: "consult-5", label: "Staff on Duty", icon: <CalendarOutlined />, path: `/shared/departments/${user.department.id}/shift-schedule` },
       { key: "consult-6", label: "Statistics", icon: <BarChartOutlined />, path: `/shared/departments/${user.department.id}/stats` },
     ],

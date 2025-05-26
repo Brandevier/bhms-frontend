@@ -33,6 +33,10 @@ import Pharmacy from "./pages/departments/pharmacy/Pharmacy";
 import InstitutionAccounts from "./pages/departments/accounts/Accounts";
 import PatientBillHistory from "./pages/departments/accounts/PatientBillHistory";
 import QrAttendance from "./pages/attendance/QrAttendance";
+import InstitutionAdmissions from "./pages/admin/components/InstitutionAdmissions";
+import BedManagement from "./pages/admin/components/BedManagement";
+
+
 
 
 
@@ -53,6 +57,7 @@ export {
   StaffDetails,
   PatientRecords,
   PatientLayout,
+  InstitutionAdmissions,
   Records,
   Lab,
   PuzzleAuthentication,
@@ -69,6 +74,7 @@ export {
   MaternityRegistration,
   PatientReport,
   ChatUI,
+  BedManagement,
   Pharmacy,
   InstitutionAccounts,
   PatientBillHistory,

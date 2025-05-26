@@ -26,7 +26,7 @@ const ChatUI = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-    const socket = new WebSocket("ws://localhost:7000");
+    const socket = new WebSocket("ws://localhost:3000");
     setWs(socket);
     socket.onopen = () => console.log("Connected to WebSocket");
     socket.onmessage = (event) => {

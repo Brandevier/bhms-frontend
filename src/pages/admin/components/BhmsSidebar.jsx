@@ -72,7 +72,7 @@ const BhmsSidebar = () => {
             <Link to="/admin/appointments">Appointments</Link>
           </Menu.Item>
           <Menu.Item key="admissions">
-            <Link to="/admin/admissions">Admissions</Link>
+            <Link to="/shared/admissions/all">Admissions</Link>
           </Menu.Item>
         </SubMenu>
 

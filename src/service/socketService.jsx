@@ -1,11 +1,11 @@
 // services/socketService.js
 import io from 'socket.io-client';
 
-let socket = null;
+let socketInstance = null;
 
 export const initializeSocket = (userData) => {
-  if (!socket) {
-    socket = io('http://localhost:7000', {
+  if (!socketInstance) {
+    socketInstance = io('http://localhost:3000', {
       withCredentials: true,
       transports: ['websocket'],
       autoConnect: true,
@@ -13,14 +13,14 @@ export const initializeSocket = (userData) => {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       auth: {
-        token: userData.token // Include auth token if needed
+        token: userData.token
       }
-    });    
+    });
 
-    socket.emit('register', userData);
-
-    return socket;
+    socketInstance.emit('register', userData);
   }
-  
-  return socket;
+
+  return socketInstance;
 };
+
+export const getSocket = () => socketInstance;
