@@ -27,9 +27,13 @@ import billSlice from  '../slice/PatientBillSlices'
 import attendanceSlice from '../slice/qrAttendanceSlice'
 import dischargeSlice from  '../slice/dischargeSlice'
 import billingStatsSlice from '../slice/billingStatsSlice'
+import bedSlice from '../slice/bedSlice'
+import ORscheduling from '../slice/ORSlice'
 
 export {
     authReducer,
+    ORscheduling,
+    bedSlice,
     waitListReducers,
     departmentReducers,
     staffAdminManagementSlice,

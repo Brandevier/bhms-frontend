@@ -99,6 +99,10 @@ const DepartmentsList = () => {
                 return "/departments/stores.jpg";
             case "Antenatal & Postnatal Ward":
                 return "/departments/ANC.jpg";
+            
+            case "Surgery":
+                return "/assets/surgery.jpg";
+
             default:
                 return "/departments/ward.jpg";
         }

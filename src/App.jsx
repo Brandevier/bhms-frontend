@@ -52,6 +52,9 @@ import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 import SmsManagement from "./pages/admin/components/SmsManagement";
 import CallComponent from "./pages/admin/components/Call";
 import DepartmentCallHandler from "./components/DepartmentCallHandler"
+import ORscheduling from "./pages/departments/theatre/ORscheduling";
+
+
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -113,6 +116,10 @@ const App = () => {
             <Route path="lab/:id" element={<Lab />} />
             <Route path="maternity/registration/:id" element={<MaternityRegistration />} />
             <Route path="admissions/all" element={<InstitutionAdmissions />} />
+
+
+            {/* THEATRE */}
+            <Route path="surgery/scheduling" element={<ORscheduling />} />
 
             {/* CHATUI   */}
             <Route path="chat" element={<ChatUI />} />

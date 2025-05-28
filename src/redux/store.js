@@ -43,7 +43,9 @@ const rootReducer = combineReducers({
   bills:reducers.billSlice,
   attendance:reducers.attendanceSlice,
   discharge:reducers.dischargeSlice,
-  billingStats : reducers.billingStatsSlice
+  billingStats : reducers.billingStatsSlice,
+  beds:reducers.bedSlice,
+  orScheduling:reducers.ORscheduling
 
 });
 

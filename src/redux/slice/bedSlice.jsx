@@ -1,86 +1,95 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import apiClient from '../middleware/apiClient';
 // Async Thunks
+
+// Get all beds in a department
 export const fetchBedsByDepartment = createAsyncThunk(
   'beds/fetchByDepartment',
-  async ({ departmentId, institutionId }, { rejectWithValue }) => {
+  async ({ departmentId, institution_id }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/beds/department/${departmentId}`, {
-        params: { institution_id: institutionId }
-      });
+      const response = await apiClient.get(`/api/beds/department/${departmentId}/${institution_id}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
+// Update bed status
 export const updateBedStatus = createAsyncThunk(
   'beds/updateStatus',
-  async (bedData, { rejectWithValue }) => {
+  async ({ bed_id, bed_number, department_id, institution_id, status }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.patch('/beds/status', bedData);
+      const response = await apiClient.put('/api/beds/update-status', {
+        bed_id,
+        bed_number,
+        department_id,
+        institution_id,
+        status
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
+// Get beds summary by institution
 export const fetchBedsSummary = createAsyncThunk(
   'beds/fetchSummary',
-  async (institutionId, { rejectWithValue }) => {
+  async (institution_id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get('/beds/summary', {
-        params: { institution_id: institutionId }
-      });
+      const response = await apiClient.get('/api/beds/summary', { params: { institution_id } });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
+// Get all beds in an institution
 export const fetchAllBedsInInstitution = createAsyncThunk(
   'beds/fetchAllInInstitution',
-  async (institutionId, { rejectWithValue }) => {
+  async (_, { rejectWithValue,getState }) => {
+
+     const { auth } = getState()
+
+    const user = auth.user || auth.admin
     try {
-      const response = await apiClient.get('/beds/institution', {
-        params: { institution_id: institutionId }
-      });
+      const response = await apiClient.get('/api/beds/institution', { params: { institution_id:user.institution.id } });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
+// Add beds to a department
 export const addBedsToDepartment = createAsyncThunk(
   'beds/addToDepartment',
-  async ({ departmentId, institutionId, numberOfBeds }, { rejectWithValue }) => {
+  async ({ departmentId, institution_id, numberOfBeds }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('/beds/add', {
+      const response = await apiClient.post('/api/beds/add', {
         departmentId,
-        institution_id: institutionId,
+        institution_id,
         numberOfBeds
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
+// Delete a bed from a department
 export const deleteBed = createAsyncThunk(
   'beds/delete',
-  async ({ bedId, institutionId }, { rejectWithValue }) => {
+  async ({ bedId, institution_id }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.delete(`/beds/${bedId}`, {
-        params: { institution_id: institutionId }
-      });
+      const response = await apiClient.delete(`/api/beds/${bedId}/${institution_id}`);
       return { bedId, ...response.data };
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -88,120 +97,123 @@ export const deleteBed = createAsyncThunk(
 // Initial State
 const initialState = {
   beds: [],
-  summary: null,
-  loading: false,
+  summary: {
+    totalBeds: 0,
+    occupiedBeds: 0,
+    availableBeds: 0,
+    occupancyRate: 0,
+    bedsByDepartment: {},
+    bedsByStatus: []
+  },
+  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
-  currentBed: null,
-  status: 'idle' // 'idle' | 'loading' | 'succeeded' | 'failed'
+  currentDepartmentBeds: [],
+  currentInstitutionBeds: []
 };
 
 // Slice
-const bedSlice = createSlice({
+const bedsSlice = createSlice({
   name: 'beds',
   initialState,
   reducers: {
-    resetBedState: () => initialState,
-    setCurrentBed: (state, action) => {
-      state.currentBed = action.payload;
+    resetBedsState: () => initialState,
+    clearBedError: (state) => {
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
     builder
       // Fetch beds by department
       .addCase(fetchBedsByDepartment.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(fetchBedsByDepartment.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
-        state.beds = action.payload;
+        state.currentDepartmentBeds = action.payload;
       })
       .addCase(fetchBedsByDepartment.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       })
       
       // Update bed status
       .addCase(updateBedStatus.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(updateBedStatus.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
-        const updatedBed = action.payload;
+        // Update the bed in currentDepartmentBeds if it exists there
+        state.currentDepartmentBeds = state.currentDepartmentBeds.map(bed => 
+          bed.id === action.payload.id ? action.payload : bed
+        );
+        // Update the bed in currentInstitutionBeds if it exists there
+        state.currentInstitutionBeds = state.currentInstitutionBeds.map(bed => 
+          bed.id === action.payload.id ? action.payload : bed
+        );
+        // Update the bed in all beds array if it exists there
         state.beds = state.beds.map(bed => 
-          bed.id === updatedBed.id ? updatedBed : bed
+          bed.id === action.payload.id ? action.payload : bed
         );
       })
       .addCase(updateBedStatus.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       })
       
       // Fetch beds summary
       .addCase(fetchBedsSummary.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(fetchBedsSummary.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
         state.summary = action.payload;
       })
       .addCase(fetchBedsSummary.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       })
       
       // Fetch all beds in institution
       .addCase(fetchAllBedsInInstitution.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(fetchAllBedsInInstitution.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
-        state.beds = action.payload;
+        state.currentInstitutionBeds = action.payload;
       })
       .addCase(fetchAllBedsInInstitution.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       })
       
       // Add beds to department
       .addCase(addBedsToDepartment.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(addBedsToDepartment.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
-        state.beds = [...state.beds, ...action.payload.beds];
+        state.currentDepartmentBeds = [...state.currentDepartmentBeds, ...action.payload.beds];
+        state.currentInstitutionBeds = [...state.currentInstitutionBeds, ...action.payload.beds];
       })
       .addCase(addBedsToDepartment.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       })
       
       // Delete bed
       .addCase(deleteBed.pending, (state) => {
-        state.loading = true;
         state.status = 'loading';
       })
       .addCase(deleteBed.fulfilled, (state, action) => {
-        state.loading = false;
         state.status = 'succeeded';
-        state.beds = state.beds.filter(bed => bed.id !== action.payload.bedId);
+        state.currentDepartmentBeds = state.currentDepartmentBeds.filter(
+          bed => bed.id !== action.payload.bedId
+        );
+        state.currentInstitutionBeds = state.currentInstitutionBeds.filter(
+          bed => bed.id !== action.payload.bedId
+        );
       })
       .addCase(deleteBed.rejected, (state, action) => {
-        state.loading = false;
         state.status = 'failed';
         state.error = action.payload;
       });
@@ -209,18 +221,13 @@ const bedSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { resetBedState, setCurrentBed } = bedSlice.actions;
-export default bedSlice.reducer;
+export const { resetBedsState, clearBedError } = bedsSlice.actions;
+export default bedsSlice.reducer;
 
 // Selectors
 export const selectAllBeds = (state) => state.beds.beds;
-export const selectBedSummary = (state) => state.beds.summary;
-export const selectBedLoading = (state) => state.beds.loading;
-export const selectBedError = (state) => state.beds.error;
-export const selectCurrentBed = (state) => state.beds.currentBed;
-export const selectAvailableBeds = (state) => 
-  state.beds.beds.filter(bed => bed.status === 'available' && !bed.is_occupied);
-export const selectOccupiedBeds = (state) => 
-  state.beds.beds.filter(bed => bed.is_occupied);
-export const selectBedsByDepartment = (departmentId) => (state) =>
-  state.beds.beds.filter(bed => bed.department_id === departmentId);
+export const selectCurrentDepartmentBeds = (state) => state.beds.currentDepartmentBeds;
+export const selectCurrentInstitutionBeds = (state) => state.beds.currentInstitutionBeds;
+export const selectBedsSummary = (state) => state.beds.summary;
+export const selectBedsStatus = (state) => state.beds.status;
+export const selectBedsError = (state) => state.beds.error;
