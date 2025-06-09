@@ -53,6 +53,13 @@ import SmsManagement from "./pages/admin/components/SmsManagement";
 import CallComponent from "./pages/admin/components/Call";
 import DepartmentCallHandler from "./components/DepartmentCallHandler"
 import ORscheduling from "./pages/departments/theatre/ORscheduling";
+import PreOpManagement from "./pages/departments/theatre/Pre-Op Management/PreOpManagement";
+import RoomStatus from "./pages/departments/theatre/roomstatus_page/RoomStatus";
+import ResourceAllocation from "./pages/departments/theatre/resourceAllocation/ResourceAllocationPage";
+import IntraOpDocumentation from "./pages/departments/theatre/IntOp/IntraOpDocumentation";
+import SurgicalChat from "./pages/departments/theatre/chat/SurgicalChat";
+import PostOpTracking from "./pages/departments/theatre/postOPtracking/PostOpTracking";
+
 
 
 
@@ -120,6 +127,12 @@ const App = () => {
 
             {/* THEATRE */}
             <Route path="surgery/scheduling" element={<ORscheduling />} />
+            <Route path="surgery/room-status" element={<RoomStatus />} />
+            <Route path= "surgery/resource-allocation" element={<ResourceAllocation/>} />
+            <Route path= "surgery/pre-op" element={<PreOpManagement/>} />
+            <Route path="surgery/intra-op" element={<IntraOpDocumentation/>} />
+            <Route path="surgery/chat" element={<SurgicalChat/>} />
+            <Route path="surgery/post-op" element={<PostOpTracking/>} />
 
             {/* CHATUI   */}
             <Route path="chat" element={<ChatUI />} />

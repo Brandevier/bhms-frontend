@@ -126,31 +126,31 @@ const StaffSideBar = () => {
         key: "surgery-2", 
         label: "Room Status", 
         icon: <DashboardOutlined />, 
-        path: "/surgery/room-status" 
+        path: "/shared/surgery/room-status" 
       },
       { 
         key: "surgery-3", 
         label: "Resource Allocation", 
         icon: <DeploymentUnitOutlined />, 
-        path: "/surgery/resource-allocation" 
+        path: "/shared/surgery/resource-allocation" 
       },
       { 
         key: "surgery-4", 
         label: "Pre-Op Management", 
         icon: <FileDoneOutlined />, 
-        path: "/surgery/pre-op" 
+        path: "/shared/surgery/pre-op" 
       },
       { 
         key: "surgery-5", 
         label: "Intra-Op Documentation", 
         icon: <EditOutlined />, 
-        path: "/surgery/intra-op" 
+        path: "/shared/surgery/intra-op" 
       },
       { 
         key: "surgery-6", 
         label: "Post-Op Tracking", 
         icon: <FileSyncOutlined />, 
-        path: "/surgery/post-op" 
+        path: "/shared/surgery/post-op" 
       },
       { 
         key: "surgery-7", 
@@ -180,7 +180,7 @@ const StaffSideBar = () => {
         key: "surgery-11", 
         label: "Message", 
         icon: <MessageOutlined />, 
-        path: `/shared/chat` 
+        path: `/shared/surgery/chat` 
       },
       { 
         key: "surgery-12", 

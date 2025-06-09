@@ -34,6 +34,26 @@ export const fetchProcedures = createAsyncThunk(
   }
 );
 
+// fetch-all procedures for in  institution
+export const fetchAllProcedures = createAsyncThunk(
+  "procedures/fetchAllProcedures",
+  async (_, { rejectWithValue,getState }) => {
+    const { auth } = getState()
+    const user = auth.admin || auth.user;
+    try {
+      const response = await apiClient.get(`/procedure/get-all-procedures`, {
+        params: {
+          institution_id: user.institution.id
+        }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to fetch procedures");
+    }
+  }
+);
+
+
 // Async Thunk to Add a New Procedure
 export const addProcedure = createAsyncThunk(
   "procedures/addProcedure",
