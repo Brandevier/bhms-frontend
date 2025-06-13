@@ -28,7 +28,7 @@ export const fetchProcedures = createAsyncThunk(
         name: item[1], // Procedure Name
       }));
     } catch (error) {
-        console.log(error)
+      console.log(error)
       return rejectWithValue(error.response?.data || "Failed to fetch procedures");
     }
   }
@@ -37,7 +37,7 @@ export const fetchProcedures = createAsyncThunk(
 // fetch-all procedures for in  institution
 export const fetchAllProcedures = createAsyncThunk(
   "procedures/fetchAllProcedures",
-  async (_, { rejectWithValue,getState }) => {
+  async (_, { rejectWithValue, getState }) => {
     const { auth } = getState()
     const user = auth.admin || auth.user;
     try {
@@ -46,7 +46,7 @@ export const fetchAllProcedures = createAsyncThunk(
           institution_id: user.institution.id
         }
       });
-      return response.data;
+      return response.data.procedures;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Failed to fetch procedures");
     }
@@ -57,13 +57,13 @@ export const fetchAllProcedures = createAsyncThunk(
 // Async Thunk to Add a New Procedure
 export const addProcedure = createAsyncThunk(
   "procedures/addProcedure",
-  async (procedureData, { rejectWithValue,getState }) => {
+  async (procedureData, { rejectWithValue, getState }) => {
     const { auth } = getState()
     const user = auth.admin || auth.user;
     try {
       const response = await apiClient.post(`/procedure/add-procedure`, {
         ...procedureData,
-        institution_id:user.institution.id
+        institution_id: user.institution.id
       });
       return response.data;
     } catch (error) {
@@ -105,7 +105,8 @@ const procedureSlice = createSlice({
   name: "procedures",
   initialState: {
     procedures: [], // Stores fetched procedures from API
-    patientProcedures :[],
+    patientProcedures: [],
+    allProcedures: [],
     loading: false,
     error: null,
   },
@@ -152,7 +153,22 @@ const procedureSlice = createSlice({
       // Delete Procedure
       .addCase(deleteProcedure.fulfilled, (state, action) => {
         state.procedures = state.patientProcedures.filter((procedure) => procedure.id !== action.payload);
+      })
+
+      // Fetch all procedures in the institution
+      .addCase(fetchAllProcedures.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllProcedures.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allProcedures = action.payload;
+      })
+      .addCase(fetchAllProcedures.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+
   },
 });
 

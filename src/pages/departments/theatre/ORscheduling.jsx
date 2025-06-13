@@ -1,57 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Table, 
   Card, 
   Button, 
-  Modal, 
-  Form, 
-  Input, 
-  DatePicker, 
-  TimePicker, 
-  Select, 
-  Tag, 
-  Space, 
-  Divider, 
   Row, 
   Col,
   Statistic,
   Tabs,
-  Popconfirm,
-  message,
-  Badge
+  Divider,
+  Space,
+  Select,
+  DatePicker,
+  message
 } from 'antd';
 import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
-  CalendarOutlined,
-  ClockCircleOutlined,
-  UserOutlined,
-  MedicineBoxOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
-  SearchOutlined
+  PlusOutlined,
+  SyncOutlined
 } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
-  createOrSchedule,
-  fetchAvailableTimeSlots,
-  fetchOrScheduleById,
   fetchOrSchedules,
   fetchSurgeonSchedules,
-  cancelOrSchedule,
-  updateOrSchedule,
-  completeSurgery,
   setStatusFilter,
   setDateFilter,
-  clearCurrentSchedule,
-  clearAvailableSlots
+  clearCurrentSchedule
 } from '../../../redux/slice/ORSlice';
 import dayjs from 'dayjs';
 
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+
+import ScheduleModal from './Pre-Op Management/components/ScheduleModal';
+import AllSchedulesTab from './Pre-Op Management/components/AllSchedulesTab';
+import SurgeonSchedulesTab from './Pre-Op Management/components/SurgeonSchedulesTab';
+
+
 const { TabPane } = Tabs;
 
 const ORscheduling = () => {
@@ -61,16 +41,12 @@ const ORscheduling = () => {
     schedules, 
     currentSchedule, 
     surgeonSchedules, 
-    availableSlots, 
     statusFilter, 
     dateFilter 
   } = useSelector((state) => state.orScheduling);
 
-  const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedSurgeon, setSelectedSurgeon] = useState(null);
+  const [viewMode, setViewMode] = useState('list');
 
   // Status options for filtering
   const statusOptions = [
@@ -85,156 +61,9 @@ const ORscheduling = () => {
     dispatch(fetchOrSchedules({ institution_id: 'your-institution-id' }));
   }, [dispatch]);
 
-  // Columns for the main schedules table
-  const columns = [
-    {
-      title: 'Patient',
-      dataIndex: ['patient', 'name'],
-      key: 'patient',
-      render: (text, record) => (
-        <Space>
-          <UserOutlined />
-          <span>{text || 'Unknown'}</span>
-        </Space>
-      ),
-    },
-    {
-      title: 'Procedure',
-      dataIndex: 'procedure',
-      key: 'procedure',
-      render: (text) => text || 'Not specified',
-    },
-    {
-      title: 'Date & Time',
-      dataIndex: 'scheduled_date',
-      key: 'datetime',
-      render: (_, record) => (
-        <Space>
-          <CalendarOutlined />
-          <span>{dayjs(record.scheduled_date).format('MMM D, YYYY')}</span>
-          <ClockCircleOutlined />
-          <span>{record.scheduled_time}</span>
-        </Space>
-      ),
-      sorter: (a, b) => {
-        const dateA = new Date(`${a.scheduled_date} ${a.scheduled_time}`);
-        const dateB = new Date(`${b.scheduled_date} ${b.scheduled_time}`);
-        return dateA - dateB;
-      },
-    },
-    {
-      title: 'Surgeon',
-      dataIndex: ['surgeon', 'name'],
-      key: 'surgeon',
-      render: (text) => text || 'Not assigned',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        let color, icon;
-        switch (status.toLowerCase()) {
-          case 'scheduled':
-            color = 'blue';
-            icon = <SyncOutlined />;
-            break;
-          case 'completed':
-            color = 'green';
-            icon = <CheckCircleOutlined />;
-            break;
-          case 'cancelled':
-            color = 'red';
-            icon = <CloseCircleOutlined />;
-            break;
-          default:
-            color = 'gray';
-        }
-        return (
-          <Tag icon={icon} color={color}>
-            {status.toUpperCase()}
-          </Tag>
-        );
-      },
-      filters: [
-        { text: 'Scheduled', value: 'Scheduled' },
-        { text: 'Completed', value: 'Completed' },
-        { text: 'Cancelled', value: 'Cancelled' },
-      ],
-      onFilter: (value, record) => record.status === value,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            type="link" 
-            icon={<EditOutlined />} 
-            onClick={() => handleEdit(record)}
-          >
-            Edit
-          </Button>
-          {record.status === 'Scheduled' && (
-            <>
-              <Popconfirm
-                title="Are you sure you want to cancel this surgery?"
-                onConfirm={() => handleCancel(record.id)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type="link" danger icon={<CloseCircleOutlined />}>
-                  Cancel
-                </Button>
-              </Popconfirm>
-              <Button 
-                type="link" 
-                icon={<CheckCircleOutlined />} 
-                onClick={() => handleComplete(record.id)}
-              >
-                Complete
-              </Button>
-            </>
-          )}
-        </Space>
-      ),
-    },
-  ];
-
-  // Handle form submission
-  const handleSubmit = async (values) => {
-    try {
-      const formattedValues = {
-        ...values,
-        scheduled_date: values.scheduled_date.format('YYYY-MM-DD'),
-        scheduled_time: values.scheduled_time.format('HH:mm:ss'),
-        institution_id: 'your-institution-id',
-      };
-
-      if (currentSchedule) {
-        await dispatch(updateOrSchedule({ id: currentSchedule.id, updates: formattedValues })).unwrap();
-        message.success('Schedule updated successfully');
-      } else {
-        await dispatch(createOrSchedule(formattedValues)).unwrap();
-        message.success('Schedule created successfully');
-      }
-
-      setIsModalVisible(false);
-      dispatch(clearCurrentSchedule());
-      form.resetFields();
-    } catch (error) {
-      message.error(error.message || 'Operation failed');
-    }
-  };
-
   // Handle edit action
   const handleEdit = (schedule) => {
     dispatch(fetchOrScheduleById(schedule.id));
-    form.setFieldsValue({
-      ...schedule,
-      scheduled_date: dayjs(schedule.scheduled_date),
-      scheduled_time: dayjs(schedule.scheduled_time, 'HH:mm:ss'),
-    });
     setIsModalVisible(true);
   };
 
@@ -258,22 +87,8 @@ const ORscheduling = () => {
     }
   };
 
-  // Handle date change for available slots
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    if (date) {
-      dispatch(fetchAvailableTimeSlots({ 
-        date: date.format('YYYY-MM-DD'), 
-        institution_id: 'your-institution-id' 
-      }));
-    } else {
-      dispatch(clearAvailableSlots());
-    }
-  };
-
   // Handle surgeon selection change
   const handleSurgeonChange = (value) => {
-    setSelectedSurgeon(value);
     if (value) {
       dispatch(fetchSurgeonSchedules({ surgeon_id: value }));
     }
@@ -358,183 +173,30 @@ const ORscheduling = () => {
         {/* Main Content Area */}
         <Tabs defaultActiveKey="1">
           <TabPane tab="All Schedules" key="1">
-            {viewMode === 'list' ? (
-              <Table
-                columns={columns}
-                dataSource={schedules}
-                rowKey="id"
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-                scroll={{ x: true }}
-              />
-            ) : (
-              <div className="calendar-view">
-                {/* Calendar view implementation would go here */}
-                <p>Calendar view would show a weekly/daily schedule of OR bookings</p>
-              </div>
-            )}
+            <AllSchedulesTab 
+              loading={loading}
+              schedules={schedules}
+              viewMode={viewMode}
+              handleEdit={handleEdit}
+              handleCancel={handleCancel}
+              handleComplete={handleComplete}
+            />
           </TabPane>
           <TabPane tab="Surgeon Schedules" key="2">
-            <div className="mb-4">
-              <Select
-                style={{ width: 300 }}
-                placeholder="Select a surgeon"
-                onChange={handleSurgeonChange}
-                allowClear
-              >
-                {/* These would be populated with actual surgeon data */}
-                <Option value="surgeon-1">Dr. Smith (Cardiothoracic)</Option>
-                <Option value="surgeon-2">Dr. Johnson (Orthopedics)</Option>
-                <Option value="surgeon-3">Dr. Lee (Neurosurgery)</Option>
-              </Select>
-            </div>
-            <Table
-              columns={columns}
-              dataSource={surgeonSchedules}
-              rowKey="id"
+            <SurgeonSchedulesTab 
               loading={loading}
-              pagination={{ pageSize: 10 }}
+              surgeonSchedules={surgeonSchedules}
+              handleSurgeonChange={handleSurgeonChange}
             />
           </TabPane>
         </Tabs>
       </Card>
 
-      {/* Schedule Modal */}
-      <Modal
-        title={currentSchedule ? 'Edit Surgery Schedule' : 'New Surgery Schedule'}
-        visible={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          dispatch(clearCurrentSchedule());
-          form.resetFields();
-        }}
-        footer={null}
-        width={800}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          initialValues={{
-            status: 'Scheduled'
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Patient"
-                name="patient_id"
-                rules={[{ required: true, message: 'Please select a patient' }]}
-              >
-                <Select
-                  showSearch
-                  placeholder="Search patients"
-                  optionFilterProp="children"
-                >
-                  {/* These would be populated with actual patient data */}
-                  <Option value="patient-1">John Doe (MRN: 12345)</Option>
-                  <Option value="patient-2">Jane Smith (MRN: 67890)</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Procedure"
-                name="procedure"
-                rules={[{ required: true, message: 'Please enter the procedure' }]}
-              >
-                <Input placeholder="e.g. Laparoscopic Cholecystectomy" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Date"
-                name="scheduled_date"
-                rules={[{ required: true, message: 'Please select a date' }]}
-              >
-                <DatePicker 
-                  style={{ width: '100%' }} 
-                  onChange={handleDateChange}
-                  disabledDate={(current) => current && current < dayjs().startOf('day')}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Time"
-                name="scheduled_time"
-                rules={[{ required: true, message: 'Please select a time' }]}
-              >
-                <Select
-                  placeholder="Select available time"
-                  notFoundContent={availableSlots.length === 0 ? 'No available slots' : null}
-                >
-                  {availableSlots.map((slot, index) => (
-                    <Option key={index} value={slot}>
-                      {slot}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Surgeon"
-                name="surgeon_id"
-                rules={[{ required: true, message: 'Please select a surgeon' }]}
-              >
-                <Select placeholder="Select surgeon">
-                  <Option value="surgeon-1">Dr. Smith (Cardiothoracic)</Option>
-                  <Option value="surgeon-2">Dr. Johnson (Orthopedics)</Option>
-                  <Option value="surgeon-3">Dr. Lee (Neurosurgery)</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Anesthesiologist"
-                name="anesthesiologist_id"
-                rules={[{ required: true, message: 'Please select an anesthesiologist' }]}
-              >
-                <Select placeholder="Select anesthesiologist">
-                  <Option value="anes-1">Dr. Brown</Option>
-                  <Option value="anes-2">Dr. Wilson</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label="Notes"
-            name="notes"
-          >
-            <Input.TextArea rows={3} placeholder="Any additional notes..." />
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                {currentSchedule ? 'Update Schedule' : 'Create Schedule'}
-              </Button>
-              <Button 
-                onClick={() => {
-                  setIsModalVisible(false);
-                  dispatch(clearCurrentSchedule());
-                  form.resetFields();
-                }}
-              >
-                Cancel
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <ScheduleModal 
+        visible={isModalVisible} 
+        onCancel={() => setIsModalVisible(false)}
+        currentSchedule={currentSchedule}
+      />
     </div>
   );
 };
