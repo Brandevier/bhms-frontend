@@ -41,7 +41,7 @@ const EarlyAdopterBanner = () => {
               Special Discounts for Early Adopters
             </h1>
             <p className="text-lg text-blue-200">
-              Join over 100+ Hospitals waiting to transition onto bHMS+ Digital
+              Join over 100+ Hospitals waiting to transition onto Tonitel Digital
               platform
             </p>
             <button className="px-6 py-3  text-blue-900 font-semibold rounded-md shadow-md">

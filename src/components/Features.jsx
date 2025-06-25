@@ -109,7 +109,7 @@ const Features = () => {
           transition={{ duration: 0.7, delay: 0.2 }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          bhms+ is a cutting-edge platform that leverages the latest technology to improve
+          Tonitel is a cutting-edge platform that leverages the latest technology to improve
           healthcare delivery.
         </motion.p>
 
