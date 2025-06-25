@@ -1,63 +1,250 @@
-import React from 'react';
-import { Row, Col, Form, Input } from 'antd';
-import BhmsButton from '../heroComponents/BhmsButton';
+import React, { useState } from "react";
+import { Form, Input, Button, Card, Row, Col, message, Divider } from "antd";
+import { motion } from "framer-motion";
+import { 
+  MailOutlined, 
+  PhoneOutlined, 
+  EnvironmentOutlined, 
+  SendOutlined, 
+  CheckOutlined 
+} from "@ant-design/icons";
+
 const { TextArea } = Input;
 
 const ContactUs = () => {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+  const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const onFinish = async (values) => {
+    setIsSubmitting(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      message.success('Message sent successfully!');
+      setIsSubmitted(true);
+      form.resetFields();
+    } catch (error) {
+      message.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
+  const contactMethods = [
+    {
+      icon: <MailOutlined className="text-blue-500" />,
+      title: "Email Us",
+      content: ["support@tonitel.com", "partners@tonitel.com"],
+      color: "bg-blue-50"
+    },
+    {
+      icon: <PhoneOutlined className="text-green-500" />,
+      title: "Call Us",
+      content: ["+233 50 927 9792", "Mon-Fri, 8AM - 5PM GMT"],
+      color: "bg-green-50"
+    },
+    {
+      icon: <EnvironmentOutlined className="text-purple-500" />,
+      title: "Visit Us",
+      content: ["123 Healthcare Ave", "Accra, Ghana"],
+      color: "bg-purple-50"
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "How quickly will I get a response?",
+      answer: "Our team typically responds within 24 hours on business days."
+    },
+    {
+      question: "Do you offer support for hospitals?",
+      answer: "Yes! We provide dedicated support for healthcare institutions."
+    },
+    {
+      question: "Can I schedule a demo?",
+      answer: "Absolutely! Contact us to arrange a personalized demo."
+    },
+    {
+      question: "Is Tonitel available internationally?",
+      answer: "Currently serving Ghana, with expansion plans in progress."
+    }
+  ];
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8f9fa', padding: '24px' }}>
-      <Row gutter={24} style={{ width: '100%', maxWidth: '1200px', height: '100%' }}>
-        <Col span={12} style={{ padding: '24px', backgroundColor: '#ffffff', borderRadius: '8px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ marginBottom: '16px' }}>Contact Us</h2>
-          <p style={{ marginBottom: '24px' }}>Email, call, or complete the form to learn how BrandeviaHMS+ can transform your healthcare delivery.</p>
-          <p style={{ marginBottom: '16px' }}><strong>Email:</strong> info@brandeviahms.com</p>
-          <p style={{ marginBottom: '16px' }}><strong>Phone:</strong> 321-221-231</p>
-          <h3 style={{ marginBottom: '16px' }}>Customer Support</h3>
-          <p style={{ marginBottom: '24px' }}>Our support team is available around the clock to address any concerns or queries you may have.</p>
-          <h3 style={{ marginBottom: '16px' }}>Feedback and Suggestions</h3>
-          <p style={{ marginBottom: '24px' }}>We value your feedback and are continuously working to improve BrandeviaHMS+. Your input is crucial in shaping the future of our platform.</p>
-          <h3 style={{ marginBottom: '16px' }}>Media Inquiries</h3>
-          <p>For media-related questions or press inquiries, please contact us at media@brandeviahms.com.</p>
-        </Col>
-        <Col span={12} style={{ padding: '24px', backgroundColor: '#ffffff', borderRadius: '8px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ marginBottom: '24px' }}>Send Us a Message</h2>
-          <Form onFinish={onFinish}>
-            <Form.Item
-              name="name"
-              rules={[{ required: true, message: 'Please input your name!' }]}
+    <div className="bg-gray-50 min-h-screen">
+      {/* Hero Section */}
+      <motion.section
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="py-16 bg-gradient-to-r from-blue-600 to-teal-500 text-white text-center"
+      >
+        <div className="max-w-6xl mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-4">Contact Tonitel</h1>
+          <p className="text-xl max-w-2xl mx-auto">
+            Have questions about our healthcare solutions? We're here to help!
+          </p>
+        </div>
+      </motion.section>
+
+      {/* Contact Content */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <Row gutter={[24, 24]}>
+          {/* Contact Methods */}
+          <Col xs={24} md={12}>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="space-y-6"
             >
-              <Input placeholder="Your Name" />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              rules={[{ required: true, message: 'Please input your email!' }]}
+              {contactMethods.map((method, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ y: -5 }}
+                >
+                  <Card
+                    className={`${method.color} border-0 shadow-sm`}
+                  >
+                    <div className="flex items-start">
+                      <div className="p-3 rounded-full bg-white mr-4 shadow-sm">
+                        {method.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">{method.title}</h3>
+                        {method.content.map((text, i) => (
+                          <p key={i} className="text-gray-700">{text}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </Col>
+
+          {/* Contact Form */}
+          <Col xs={24} md={12}>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
             >
-              <Input placeholder="Your Email" />
-            </Form.Item>
-            <Form.Item
-              name="phone"
-              rules={[{ required: true, message: 'Please input your phone number!' }]}
-            >
-              <Input placeholder="Your Phone Number" />
-            </Form.Item>
-            <Form.Item
-              name="message"
-              rules={[{ required: true, message: 'Please input your message!' }]}
-            >
-              <TextArea rows={4} placeholder="Your Message" />
-            </Form.Item>
-            <Form.Item>
-              <BhmsButton type="primary" htmlType="submit">
-                Submit
-              </BhmsButton>
-            </Form.Item>
-          </Form>
-        </Col>
-      </Row>
+              <Card className="shadow-sm">
+                {isSubmitted ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-8"
+                  >
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                      <CheckOutlined className="text-green-600 text-2xl" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">Thank You!</h3>
+                    <p className="text-gray-600">
+                      Your message has been sent. Our team will respond within 24 hours.
+                    </p>
+                    <Button 
+                      type="primary" 
+                      className="mt-6"
+                      onClick={() => setIsSubmitted(false)}
+                    >
+                      Send Another Message
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Send us a message</h2>
+                    <Form
+                      form={form}
+                      layout="vertical"
+                      onFinish={onFinish}
+                    >
+                      <Form.Item
+                        name="name"
+                        label="Full Name"
+                        rules={[{ required: true, message: 'Please input your name' }]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+
+                      <Form.Item
+                        name="email"
+                        label="Email"
+                        rules={[
+                          { 
+                            required: true, 
+                            message: 'Please input your email' 
+                          },
+                          {
+                            type: 'email',
+                            message: 'Please enter a valid email',
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+
+                      <Form.Item
+                        name="message"
+                        label="Message"
+                        rules={[{ required: true, message: 'Please input your message' }]}
+                      >
+                        <TextArea rows={4} size="large" />
+                      </Form.Item>
+
+                      <Form.Item>
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            size="large"
+                            icon={<SendOutlined />}
+                            loading={isSubmitting}
+                            block
+                          >
+                            Send Message
+                          </Button>
+                        </motion.div>
+                      </Form.Item>
+                    </Form>
+                  </>
+                )}
+              </Card>
+            </motion.div>
+          </Col>
+        </Row>
+
+        {/* FAQ Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="mt-16"
+        >
+          <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+            Frequently Asked Questions
+          </h2>
+          <Row gutter={[16, 16]}>
+            {faqs.map((faq, index) => (
+              <Col key={index} xs={24} sm={12}>
+                <motion.div
+                  whileHover={{ y: -3 }}
+                >
+                  <Card className="h-full">
+                    <h3 className="font-semibold text-lg mb-2">{faq.question}</h3>
+                    <p className="text-gray-600">{faq.answer}</p>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </motion.section>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Form, Input, Button, message } from "antd";
-import logo from "/assets/logo.svg"; // Replace with the actual path to your logo
+import logo from "/assets/logo_2.png"; // Replace with the actual path to your logo
 import { addToWaitlist } from "../redux/waitlistSlice";
 import { useDispatch, useSelector } from "react-redux";
 

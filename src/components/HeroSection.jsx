@@ -55,7 +55,7 @@ const HeroSection = () => {
           variants={itemVariants}
         >
           Transform{' '}
-          <span className="text-[#19417D]">Healthcare</span> Delivery with BrandeviaHMS+
+          <span className="text-[#19417D]">Healthcare</span> Delivery with Tonitel
         </motion.h1>
 
         {/* Description */}
@@ -63,7 +63,7 @@ const HeroSection = () => {
           className="text-gray-600 text-lg lg:text-xl mb-8"
           variants={itemVariants}
         >
-          bHMS+ is a modern, cloud-based healthcare platform designed to simplify hospital operations
+          Tonitel is a modern, cloud-based healthcare platform designed to simplify hospital operations
           and improve patient outcomes.
         </motion.p>
 
@@ -85,7 +85,7 @@ const HeroSection = () => {
       >
         <img
           src="/assets/Dashboard.png"
-          alt="Dashboard Mockup"
+          alt="Tonitel Dashboard Mockup"
           className="mx-auto rounded-lg shadow-lg w-[90%]"
         />
       </motion.div>
