@@ -9,6 +9,10 @@ import ComparisonTable from '../../components/ComparismTable'
 import SecurityCompliance from '../../components/SecurityCompliance'
 import AppComingSoon from '../../components/AppComingSoon'
 import ContactUs from '../../components/contactUs'
+import TryDemoSection from '../../components/TryDemoSection'
+
+
+
 
 const Homepage = () => {
   return (
@@ -18,6 +22,7 @@ const Homepage = () => {
       <Features />
       <EarlyAdopterBanner />
       <ComparisonTable/>
+      <TryDemoSection/>
       <SecurityCompliance/>
       <AppComingSoon/>
       <ContactUs/>

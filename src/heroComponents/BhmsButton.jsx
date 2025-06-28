@@ -6,32 +6,73 @@ const BhmsButton = ({
   onClick,
   icon,
   width = "auto",
-  // height="auto",
   size = "large",
-  color = "#19417D", // Default primary color
+  variant = "primary", // 'primary' | 'secondary' | 'accent' | 'outline'
   className = "",
   borderRadius = "8px",
-  block = true, // Makes button full width by default
+  block = false,
   disabled = false,
-  htmlType = "button", // Default type is "button", can be changed to "submit"
-  outline = false, // New prop for outline mode
+  htmlType = "button",
 }) => {
+  // Color configurations
+  const colorConfig = {
+    primary: {
+      bg: "#19417D",
+      hoverBg: "#143265",
+      text: "#FFFFFF",
+      border: "#19417D"
+    },
+    secondary: {
+      bg: "#00DFA2",
+      hoverBg: "#00C78E",
+      text: "#FFFFFF",
+      border: "#00DFA2"
+    },
+    accent: {
+      bg: "#FF6B6B",
+      hoverBg: "#E55A5A",
+      text: "#FFFFFF",
+      border: "#FF6B6B"
+    },
+    outline: {
+      bg: "transparent",
+      hoverBg: "#19417D10", // 10% opacity
+      text: "#19417D",
+      border: "#19417D"
+    }
+  };
+
+  const currentColor = colorConfig[variant] || colorConfig.primary;
+
   return (
     <Button
       onClick={onClick}
       disabled={disabled}
       icon={icon}
-      className={`font-semibold transition-all duration-300 ${className}`}
+      className={`font-semibold transition-all duration-300 hover:shadow-md ${className}`}
       style={{
-        backgroundColor: outline ? "transparent" : color, // Transparent background for outline
-        borderColor: color,
-        color: outline ? color : "#fff", // Text color matches border for outline
+        backgroundColor: currentColor.bg,
+        borderColor: currentColor.border,
+        color: currentColor.text,
         borderRadius: borderRadius,
         width: block ? "100%" : width,
-        // height: block ? "100%" : height,
+        // Hover styles
+        '&:hover': {
+          backgroundColor: currentColor.hoverBg,
+          borderColor: currentColor.hoverBg,
+          color: variant === 'outline' ? currentColor.text : '#FFFFFF'
+        },
+        '&:active': {
+          backgroundColor: currentColor.hoverBg,
+          borderColor: currentColor.hoverBg
+        },
+        '&:focus': {
+          backgroundColor: currentColor.bg,
+          borderColor: currentColor.border
+        }
       }}
       size={size}
-      htmlType={htmlType} // Allows form submission when used inside a form
+      htmlType={htmlType}
     >
       {children}
     </Button>
