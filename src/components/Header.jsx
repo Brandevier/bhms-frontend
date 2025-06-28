@@ -8,9 +8,9 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    // { name: 'Features', path: '/features' },
-    // { name: 'Pricing', path: '/pricing' },
-    // { name: 'About', path: '/about' },
+    { name: 'Features', path: '#' },
+    { name: 'Pricing', path: '#' },
+    { name: 'About', path: '#' },
   ];
 
   const toggleMenu = () => {
