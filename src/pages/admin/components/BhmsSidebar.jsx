@@ -41,7 +41,7 @@ const BhmsSidebar = () => {
       {/* Logo Section */}
       <div className="flex justify-center items-center py-4 border-b border-gray-100">
         <img
-          src="/assets/logo.svg"
+          src= {`${collapsed ? "/assets/tonitel_.png" : "/assets/logo_2.png"}`}
           alt="Hospital Logo"
           className={`transition-all duration-200 ${collapsed ? "w-8" : "w-32"}`}
         />

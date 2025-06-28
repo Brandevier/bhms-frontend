@@ -4,6 +4,8 @@ import { LeftOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-des
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BhmsButton from "../../heroComponents/BhmsButton";
+import { loginAdmin } from "../../redux/slice/authSlice";
+
 
 const { Title, Text } = Typography;
 

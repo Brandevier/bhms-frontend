@@ -116,7 +116,7 @@ const SecurityCompliance = () => {
         </div>
 
         {/* Additional Trust Elements */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.6 }}
@@ -130,7 +130,7 @@ const SecurityCompliance = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

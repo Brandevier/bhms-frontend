@@ -70,7 +70,7 @@ const TryDemoSection = () => {
             <div className="bg-white p-1 rounded-xl shadow-xl border border-gray-100">
               {/* Replace with your actual dashboard image */}
               <img 
-                src="/assets/dashboard-preview.png" 
+                src="/assets/dashboard.png" 
                 alt="Tonitel dashboard preview" 
                 className="rounded-lg w-full"
               />
