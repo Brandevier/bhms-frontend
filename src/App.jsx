@@ -59,8 +59,8 @@ import ResourceAllocation from "./pages/departments/theatre/resourceAllocation/R
 import IntraOpDocumentation from "./pages/departments/theatre/IntOp/IntraOpDocumentation";
 import SurgicalChat from "./pages/departments/theatre/chat/SurgicalChat";
 import PostOpTracking from "./pages/departments/theatre/postOPtracking/PostOpTracking";
-
-
+import Appointments from "./pages/admin/components/Appointments";
+import InsuranceClaims from "./pages/admin/components/InsuranceClaims";
 
 
 const App = () => {
@@ -150,6 +150,8 @@ const App = () => {
             <Route path="details/:id" element={<StaffDetails />} />
             <Route path="task" element={<CalendarComponent />} />
             <Route path="wards" element={<BedManagement />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="insurance" element={<InsuranceClaims />} />
           </Route>
 
           {/* 404 Page - Should always be last */}
