@@ -61,6 +61,9 @@ import SurgicalChat from "./pages/departments/theatre/chat/SurgicalChat";
 import PostOpTracking from "./pages/departments/theatre/postOPtracking/PostOpTracking";
 import Appointments from "./pages/admin/components/Appointments";
 import InsuranceClaims from "./pages/admin/components/InsuranceClaims";
+import InstitutionRegistration from "./components/InstitutionRegistration";
+import TimeTable from "./pages/departments/shared/TimeTable";
+
 
 
 const App = () => {
@@ -98,6 +101,7 @@ const App = () => {
             <Route path="/hms/staff_login" element={<StaffLogin />} />
             <Route path="/hms/puzzle-authentication" element={<PuzzleAuthentication />} />
             <Route path="/hms/verify-email" element={<EmailVerification />} />
+            <Route path="/hms/institution-registration" element={<InstitutionRegistration />} />
           </Route>
 
           {/* Shared Routes - Accessible by both Admin & Staff */}
@@ -123,6 +127,7 @@ const App = () => {
             <Route path="lab/:id" element={<Lab />} />
             <Route path="maternity/registration/:id" element={<MaternityRegistration />} />
             <Route path="admissions/all" element={<InstitutionAdmissions />} />
+            <Route path="departments/time-table" element={<TimeTable />} />
 
 
             {/* THEATRE */}

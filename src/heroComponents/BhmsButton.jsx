@@ -14,33 +14,33 @@ const BhmsButton = ({
   disabled = false,
   htmlType = "button",
 }) => {
-  // Color configurations
-  const colorConfig = {
-    primary: {
-      bg: "#19417D",
-      hoverBg: "#143265",
-      text: "#FFFFFF",
-      border: "#19417D"
-    },
-    secondary: {
-      bg: "#00DFA2",
-      hoverBg: "#00C78E",
-      text: "#FFFFFF",
-      border: "#00DFA2"
-    },
-    accent: {
-      bg: "#FF6B6B",
-      hoverBg: "#E55A5A",
-      text: "#FFFFFF",
-      border: "#FF6B6B"
-    },
-    outline: {
-      bg: "transparent",
-      hoverBg: "#19417D10", // 10% opacity
-      text: "#19417D",
-      border: "#19417D"
-    }
-  };
+ const colorConfig = {
+  primary: {
+    bg: "#00E5B0",           // Tonitel green
+    hoverBg: "#00CDA0",      // Slightly darker for hover
+    text: "#FFFFFF",
+    border: "#00E5B0"
+  },
+  secondary: {
+    bg: "#082135",           // A deep navy for contrast (optional secondary)
+    hoverBg: "#061B2C",
+    text: "#FFFFFF",
+    border: "#082135"
+  },
+  accent: {
+    bg: "#FF6B6B",
+    hoverBg: "#E55A5A",
+    text: "#FFFFFF",
+    border: "#FF6B6B"
+  },
+  outline: {
+    bg: "transparent",
+    hoverBg: "#00E5B020",    // 20% opacity Tonitel green
+    text: "#00E5B0",
+    border: "#00E5B0"
+  }
+};
+
 
   const currentColor = colorConfig[variant] || colorConfig.primary;
 

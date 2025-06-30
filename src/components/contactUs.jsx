@@ -35,13 +35,14 @@ const ContactUs = () => {
     {
       icon: <MailOutlined className="text-blue-500" />,
       title: "Email Us",
-      content: ["support@tonitel.com", "partners@tonitel.com"],
+      content: ["support@tonitel.com",],
       color: "bg-blue-50"
     },
+    
     {
       icon: <PhoneOutlined className="text-green-500" />,
-      title: "Call Us",
-      content: ["+233 50 927 9792", "Mon-Fri, 8AM - 5PM GMT"],
+      title: "Call Us or WhatsApp",
+      content: ["+233 54 700 0364","+233 50 927 9792", "Mon-Fri, 8AM - 5PM GMT"],
       color: "bg-green-50"
     },
     {

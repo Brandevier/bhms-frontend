@@ -1,6 +1,8 @@
 import React from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import BhmsButton from "../heroComponents/BhmsButton";
+
 
 const EarlyAdopterBanner = () => {
   const { ref, inView } = useInView({ threshold: 0.2 });
@@ -44,9 +46,9 @@ const EarlyAdopterBanner = () => {
               Join over 100+ Hospitals waiting to transition onto Tonitel Digital
               platform
             </p>
-            <button className="px-6 py-3  text-blue-900 font-semibold rounded-md shadow-md">
+            <BhmsButton className="px-6 py-3  text-blue-900 font-semibold rounded-md shadow-md" size="sm">
               Join Waitlist
-            </button>
+            </BhmsButton>
           </div>
 
           {/* Right Section */}

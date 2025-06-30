@@ -1,7 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 
 const TryDemoSection = () => {
+  const navigate = useNavigate();
+
+  const handleNavigate =()=>{
+    navigate('/hms/institution-registration')
+  }
+
+
   return (
     <section className="w-full bg-gradient-to-br from-[#E6FFF7] to-[#f0fdf4] py-20 px-6">
       <div className="max-w-6xl mx-auto">
@@ -46,6 +55,7 @@ const TryDemoSection = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-[#19417D] hover:bg-[#143265] text-white text-lg font-semibold py-3 px-4 rounded-full transition duration-300 shadow-lg flex-1"
+               onClick={handleNavigate}
               >
                 Request Live Demo
               </motion.button>

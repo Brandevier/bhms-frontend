@@ -1,8 +1,10 @@
 import React from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import { Modal, Form, Input,  message } from "antd";
 import logo from "/assets/logo_2.png"; // Replace with the actual path to your logo
 import { addToWaitlist } from "../redux/waitlistSlice";
 import { useDispatch, useSelector } from "react-redux";
+import BhmsButton from "../heroComponents/BhmsButton";
+
 
 const WaitListDialog = ({ className, text }) => {
   const [form] = Form.useForm();
@@ -56,18 +58,15 @@ const WaitListDialog = ({ className, text }) => {
   return (
     <div>
       {/* Trigger Button */}
-      <Button
+      <BhmsButton
         type="primary"
         onClick={showModal}
-        style={{
-          backgroundColor: "#19417D",
-          borderColor: "#19417D",
-          fontWeight: "medium",
-        }}
+        variant="solid"
+        size="medium"
         className={className}
       >
         {text || "Join Waitlist"}
-      </Button>
+      </BhmsButton>
 
       {/* Modal */}
       <Modal
@@ -87,10 +86,10 @@ const WaitListDialog = ({ className, text }) => {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" onClick={handleCancel} disabled={loading}>
+          <BhmsButton variant="outline" key="back" onClick={handleCancel} disabled={loading}>
             Cancel
-          </Button>,
-          <Button
+          </BhmsButton>,
+          <BhmsButton
             key="submit"
             type="primary"
             onClick={handleOk}
@@ -98,7 +97,7 @@ const WaitListDialog = ({ className, text }) => {
             style={{ backgroundColor: "#19417D", borderColor: "#19417D" }}
           >
             Join Waitlist
-          </Button>,
+          </BhmsButton>,
         ]}
       >
         {/* Form */}

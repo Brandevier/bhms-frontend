@@ -253,7 +253,7 @@ const StaffSideBar = () => {
         {/* Logo Section */}
         <div className="flex justify-center items-center py-6 border-b border-gray-200">
           <img
-            src="/assets/logo.svg"
+            src= {`${isMobile ? "/assets/tonitel_.png" : "/assets/logo_2.png"}`}
             alt="BHMS"
             className={`transition-all duration-300 ${(isMobile ? !mobileOpen : collapsed) ? "w-10" : "w-28"}`}
           />

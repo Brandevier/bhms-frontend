@@ -84,7 +84,7 @@ const HeroSection = () => {
         animate="visible"
       >
         <img
-          src="/assets/Dashboard.png"
+          src="/assets/dashboard.png"
           alt="Tonitel Dashboard Mockup"
           className="mx-auto rounded-lg shadow-lg w-[90%]"
         />
