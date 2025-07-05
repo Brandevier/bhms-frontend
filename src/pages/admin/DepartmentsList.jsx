@@ -103,6 +103,10 @@ const DepartmentsList = () => {
             case "Surgery":
                 return "/assets/surgery.jpg";
 
+            
+            case "Claims":
+                return "/assets/front.jpg";
+
             default:
                 return "/departments/ward.jpg";
         }
@@ -139,6 +143,9 @@ const DepartmentsList = () => {
                 break;
             case "Pharmacy":
                 navigate(`/shared/departments/pharmacy`);
+                break;
+            case "Claims":
+                navigate(`/shared/departments/claims`);
                 break;
             default:
                 navigate("/departments/general");
@@ -218,6 +225,7 @@ const DepartmentsList = () => {
                                             onClick={() => handleCallDepartment(dept)}
                                             outline
                                             className="mx-2"
+                                            variant="outline"
                                         >
                                             Call
                                         </BhmsButton>

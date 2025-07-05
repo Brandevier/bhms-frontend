@@ -55,7 +55,7 @@ const HeroSection = () => {
           variants={itemVariants}
         >
           Transform{' '}
-          <span className="text-[#19417D]">Healthcare</span> Delivery with Tonitel
+          <span className="text-[#00E5B0]">Healthcare</span> Delivery with Tonitel
         </motion.h1>
 
         {/* Description */}

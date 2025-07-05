@@ -31,11 +31,11 @@ import {
   ExperimentOutlined,
   ControlOutlined,
   SafetyOutlined,
-  LineChartOutlined,
-  PieChartOutlined,
-  AreaChartOutlined,
   EditOutlined,
-  MessageOutlined
+  MessageOutlined,
+  ToolOutlined,
+  NodeIndexOutlined,
+  SyncOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -115,78 +115,135 @@ const StaffSideBar = () => {
       { key: "store-6", label: "Issued Items", icon: <FileDoneOutlined />, path: `/shared/store/${user.department.id}/issued-items` },
       { key: "store-5", label: "Expired Items", icon: <StopOutlined />, path: `/shared/store/${user.department.id}/expired-items` },
     ],
+    "Claims": [
+      {
+        key: "claims-dashboard",
+        label: "Claims Dashboard",
+        icon: <DashboardOutlined />,  // Or <PieChartOutlined /> for analytics
+        path: `/shared/claims/${user.department.id}/dashboard`
+      },
+      {
+        key: "claims-1",
+        label: "Submitted Claims",
+        icon: <FileDoneOutlined />,
+        path: `/shared/claims/${user.department.id}/submitted`
+      },
+      {
+        key: "claims-2",
+        label: "Claim Items",
+        icon: <AppstoreOutlined />,
+        path: `/shared/claims/${user.department.id}/items`
+      },
+      {
+        key: "claims-3",
+        label: "Medications",
+        icon: <MedicineBoxOutlined />,
+        path: `/shared/claims/${user.department.id}/medications`
+      },
+      {
+        key: "claims-4",
+        label: "ICD-10 Codes",
+        icon: <ProfileOutlined />,
+        path: `/shared/claims/${user.department.id}/icd10`
+      },
+      {
+        key: "claims-5",
+        label: "GDRG Mappings",
+        icon: <NodeIndexOutlined />,
+        path: `/shared/claims/${user.department.id}/mappings`
+      },
+      {
+        key: "claims-6",
+        label: "Lab Tests",
+        icon: <ExperimentOutlined />,
+        path: `/shared/claims/${user.department.id}/lab-tests`
+      },
+      {
+        key: "claims-7",
+        label: "Procedures",
+        icon: <ToolOutlined />,
+        path: `/shared/claims/${user.department.id}/procedures`
+      },
+      {
+        key: "claims-8",
+        label: "NHIA Sync",
+        icon: <SyncOutlined />,
+        path: `/shared/claims/${user.department.id}/nhia-sync`
+      }
+    ],
+
     "Surgery": [
-      { 
-        key: "surgery-1", 
-        label: "OR Scheduling", 
-        icon: <ScheduleOutlined />, 
-        path: "/shared/surgery/scheduling" 
+      {
+        key: "surgery-1",
+        label: "OR Scheduling",
+        icon: <ScheduleOutlined />,
+        path: "/shared/surgery/scheduling"
       },
-      { 
-        key: "surgery-2", 
-        label: "Room Status", 
-        icon: <DashboardOutlined />, 
-        path: "/shared/surgery/room-status" 
+      {
+        key: "surgery-2",
+        label: "Room Status",
+        icon: <DashboardOutlined />,
+        path: "/shared/surgery/room-status"
       },
-      { 
-        key: "surgery-3", 
-        label: "Resource Allocation", 
-        icon: <DeploymentUnitOutlined />, 
-        path: "/shared/surgery/resource-allocation" 
+      {
+        key: "surgery-3",
+        label: "Resource Allocation",
+        icon: <DeploymentUnitOutlined />,
+        path: "/shared/surgery/resource-allocation"
       },
-      { 
-        key: "surgery-4", 
-        label: "Pre-Op Management", 
-        icon: <FileDoneOutlined />, 
-        path: "/shared/surgery/pre-op" 
+      {
+        key: "surgery-4",
+        label: "Pre-Op Management",
+        icon: <FileDoneOutlined />,
+        path: "/shared/surgery/pre-op"
       },
-      { 
-        key: "surgery-5", 
-        label: "Intra-Op Documentation", 
-        icon: <EditOutlined />, 
-        path: "/shared/surgery/intra-op" 
+      {
+        key: "surgery-5",
+        label: "Intra-Op Documentation",
+        icon: <EditOutlined />,
+        path: "/shared/surgery/intra-op"
       },
-      { 
-        key: "surgery-6", 
-        label: "Post-Op Tracking", 
-        icon: <FileSyncOutlined />, 
-        path: "/shared/surgery/post-op" 
+      {
+        key: "surgery-6",
+        label: "Post-Op Tracking",
+        icon: <FileSyncOutlined />,
+        path: "/shared/surgery/post-op"
       },
-      { 
-        key: "surgery-7", 
-        label: "Surgical Team", 
-        icon: <TeamOutlined />, 
-        path: "/surgery/team" 
+      {
+        key: "surgery-7",
+        label: "Surgical Team",
+        icon: <TeamOutlined />,
+        path: "/surgery/team"
       },
-      { 
-        key: "surgery-8", 
-        label: "Instrument Tracking", 
-        icon: <ControlOutlined />, 
-        path: "/surgery/instruments" 
+      {
+        key: "surgery-8",
+        label: "Instrument Tracking",
+        icon: <ControlOutlined />,
+        path: "/surgery/instruments"
       },
-      { 
-        key: "surgery-9", 
-        label: "Safety Systems", 
-        icon: <SafetyOutlined />, 
-        path: "/surgery/safety" 
+      {
+        key: "surgery-9",
+        label: "Safety Systems",
+        icon: <SafetyOutlined />,
+        path: "/surgery/safety"
       },
-      { 
-        key: "surgery-10", 
-        label: "Surgical Reports", 
-        icon: <BarChartOutlined />, 
-        path: "/surgery/reports" 
+      {
+        key: "surgery-10",
+        label: "Surgical Reports",
+        icon: <BarChartOutlined />,
+        path: "/surgery/reports"
       },
-      { 
-        key: "surgery-11", 
-        label: "Message", 
-        icon: <MessageOutlined />, 
-        path: `/shared/surgery/chat` 
+      {
+        key: "surgery-11",
+        label: "Message",
+        icon: <MessageOutlined />,
+        path: `/shared/surgery/chat`
       },
-      { 
-        key: "surgery-12", 
-        label: "Stores", 
-        icon: <ShopOutlined />, 
-        path: "/shared/departments/store" 
+      {
+        key: "surgery-12",
+        label: "Stores",
+        icon: <ShopOutlined />,
+        path: "/shared/departments/store"
       },
     ]
   };
@@ -253,7 +310,7 @@ const StaffSideBar = () => {
         {/* Logo Section */}
         <div className="flex justify-center items-center py-6 border-b border-gray-200">
           <img
-            src= {`${isMobile ? "/assets/tonitel_.png" : "/assets/logo_2.png"}`}
+            src={`${isMobile ? "/assets/tonitel_.png" : "/assets/logo_2.png"}`}
             alt="BHMS"
             className={`transition-all duration-300 ${(isMobile ? !mobileOpen : collapsed) ? "w-10" : "w-28"}`}
           />

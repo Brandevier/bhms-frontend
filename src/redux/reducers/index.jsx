@@ -29,9 +29,11 @@ import dischargeSlice from  '../slice/dischargeSlice'
 import billingStatsSlice from '../slice/billingStatsSlice'
 import bedSlice from '../slice/bedSlice'
 import ORscheduling from '../slice/ORSlice'
+import icd10ToGdrg from '../slice/gdrg_mapping'
 
 export {
     authReducer,
+    icd10ToGdrg,
     ORscheduling,
     bedSlice,
     waitListReducers,

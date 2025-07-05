@@ -45,7 +45,8 @@ const rootReducer = combineReducers({
   discharge:reducers.dischargeSlice,
   billingStats : reducers.billingStatsSlice,
   beds:reducers.bedSlice,
-  orScheduling:reducers.ORscheduling
+  orScheduling:reducers.ORscheduling,
+  icd10GDRG:reducers.icd10ToGdrg
 
 });
 

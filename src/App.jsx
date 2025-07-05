@@ -63,8 +63,8 @@ import Appointments from "./pages/admin/components/Appointments";
 import InsuranceClaims from "./pages/admin/components/InsuranceClaims";
 import InstitutionRegistration from "./components/InstitutionRegistration";
 import TimeTable from "./pages/departments/shared/TimeTable";
-
-
+import ClaimsDashboard from "./pages/departments/claims/ClaimsDashboard";
+import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -141,6 +141,10 @@ const App = () => {
 
             {/* CHATUI   */}
             <Route path="chat" element={<ChatUI />} />
+
+            {/* CLAIMS */}
+            <Route path="claims/:id/dashboard" element={<ClaimsDashboard />} />
+            <Route path="claims/id/gdrg-manager" element={<ICD10GDRGManager/>} />
 
           </Route>
 

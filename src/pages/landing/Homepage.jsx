@@ -20,7 +20,7 @@ const Homepage = () => {
      <Header />
       <HeroSection />
       <Features />
-      <EarlyAdopterBanner />
+      {/* <EarlyAdopterBanner /> */}
       <ComparisonTable/>
       <TryDemoSection/>
       <SecurityCompliance/>
