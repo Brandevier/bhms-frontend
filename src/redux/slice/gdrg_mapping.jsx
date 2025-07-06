@@ -5,7 +5,7 @@ export const fetchAllMappings = createAsyncThunk(
   'icd10GDRG/fetchAll',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get('/icd10-gdrg-mappings');
+      const response = await apiClient.get('/gdrg/icd10-gdrg-mappings');
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);

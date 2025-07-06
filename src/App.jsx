@@ -65,6 +65,10 @@ import InstitutionRegistration from "./components/InstitutionRegistration";
 import TimeTable from "./pages/departments/shared/TimeTable";
 import ClaimsDashboard from "./pages/departments/claims/ClaimsDashboard";
 import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
+import NHIAMedicationsManager from "./pages/departments/claims/NHIAMedicationsManager";
+
+
+
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -144,7 +148,8 @@ const App = () => {
 
             {/* CLAIMS */}
             <Route path="claims/:id/dashboard" element={<ClaimsDashboard />} />
-            <Route path="claims/id/gdrg-manager" element={<ICD10GDRGManager/>} />
+            <Route path="claims/:id/mappings" element={<ICD10GDRGManager/>} />
+            <Route path="claims/:id/medications" element={<NHIAMedicationsManager/>} />
 
           </Route>
 

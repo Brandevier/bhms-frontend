@@ -30,9 +30,12 @@ import billingStatsSlice from '../slice/billingStatsSlice'
 import bedSlice from '../slice/bedSlice'
 import ORscheduling from '../slice/ORSlice'
 import icd10ToGdrg from '../slice/gdrg_mapping'
+import nhiaMedicationsReducer from '../slice/nhia_medicationsSlice';
+
 
 export {
     authReducer,
+    nhiaMedicationsReducer,
     icd10ToGdrg,
     ORscheduling,
     bedSlice,
