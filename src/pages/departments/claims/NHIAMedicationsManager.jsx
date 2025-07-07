@@ -116,7 +116,7 @@ const NHIAMedicationsManager = () => {
     // Filter medications based on search
     const filteredMeds = medications.filter(med =>
         med.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        med.generic_name.toLowerCase().includes(searchTerm.toLowerCase()) || // Changed from name to generic_name
         (med.form && med.form.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
@@ -211,7 +211,7 @@ const NHIAMedicationsManager = () => {
                         <Card size="small">
                             <Statistic
                                 title="Total Medications"
-                                value={pagination.totalItems}
+                                value={medications.length}
                                 prefix={<MedicineBoxOutlined />}
                             />
                         </Card>
@@ -220,7 +220,8 @@ const NHIAMedicationsManager = () => {
                         <Card size="small">
                             <Statistic
                                 title="Average Price"
-                                value={medications.reduce((sum, med) => sum + med.price, 0) / medications.length || 0}
+                                value={medications.length > 0 ?
+                                    (medications.reduce((sum, med) => sum + parseFloat(med.price_ghc || 0), 0) / medications.length) : 0}
                                 precision={2}
                                 prefix={<DollarOutlined />}
                             />

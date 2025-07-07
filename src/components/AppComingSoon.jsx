@@ -72,7 +72,7 @@ const AppComingSoon = () => {
             </div>
             
             {/* Right side - QR Code & Phone Mockup */}
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-8 flex flex-col items-center justify-center">
+            <div className="bg-gradient-to-br from-teal-500 to-blue-600 p-8 flex flex-col items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

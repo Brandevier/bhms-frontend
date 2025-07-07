@@ -23,7 +23,7 @@ const TryDemoSection = () => {
             viewport={{ once: true }}
             className="text-center md:text-left"
           >
-            <h2 className="text-4xl font-bold text-[#19417D] mb-4">
+            <h2 className="text-4xl font-bold text-teal-600 mb-4">
               Experience Tonitel in Action{" "}
               <span className="text-[#00DFA2]">🚀</span>
             </h2>
@@ -54,7 +54,7 @@ const TryDemoSection = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-[#19417D] hover:bg-[#143265] text-white text-lg font-semibold py-3 px-4 rounded-full transition duration-300 shadow-lg flex-1"
+                className="bg-teal-600 text-white text-lg font-semibold py-3 px-4 rounded-full transition duration-300 shadow-lg flex-1"
                onClick={handleNavigate}
               >
                 Request Live Demo

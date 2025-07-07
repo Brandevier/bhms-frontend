@@ -86,7 +86,7 @@ const ComparisonTable = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-teal-500">
               Tonitel
             </span> vs Traditional Systems
           </h2>
