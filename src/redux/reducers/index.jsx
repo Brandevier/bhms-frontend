@@ -1,5 +1,5 @@
 import authReducer from '../slice/authSlice'
-import waitListReducers from '../waitlistSlice'
+import waitListReducers from '../slice/waitlistSlice'
 import departmentReducers from '../slice/departmentSlice'
 import staffAdminManagementSlice from  '../slice/staff_admin_managment_slice'
 import staff_permission_slice from  '../slice/staffPermissionSlice'
