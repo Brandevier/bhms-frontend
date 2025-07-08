@@ -44,7 +44,7 @@ const HeroSection = () => {
           variants={itemVariants}
         >
           <span className="text-sm text-green-600 font-medium px-4 py-1 rounded-full bg-green-100 shadow-md">
-            Go Paperless. Deliver Better Care.
+            Digitizing Care. Connecting Lives.
           </span>
         </motion.div>
 

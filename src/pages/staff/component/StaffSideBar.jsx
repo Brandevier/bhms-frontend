@@ -144,7 +144,7 @@ const StaffSideBar = () => {
         key: "claims-4",
         label: "ICD-10 Codes",
         icon: <ProfileOutlined />,
-        path: `/shared/claims/${user.department.id}/icd10`
+        path: `/shared/claims/${user.department.id}/diagnosis`
       },
       {
         key: "claims-5",

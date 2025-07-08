@@ -1,16 +1,12 @@
 import React from "react";
-import { Modal, Form, Input,  message } from "antd";
+import { Modal, Form, Input, message } from "antd";
 import logo from "/assets/logo_2.png"; // Replace with the actual path to your logo
-import { addToWaitlist } from "../redux/waitlistSlice";
-import { useDispatch, useSelector } from "react-redux";
 import BhmsButton from "../heroComponents/BhmsButton";
-
 
 const WaitListDialog = ({ className, text }) => {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const dispatch = useDispatch();
-  const { loading, error, success } = useSelector((state) => state.waitlist);
+  const [loading, setLoading] = React.useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -20,40 +16,27 @@ const WaitListDialog = ({ className, text }) => {
     form
       .validateFields()
       .then((values) => {
+        setLoading(true);
         console.log("Form values:", values); // Log form values for debugging
-        // Dispatch the action to add the user to the waitlist
-        dispatch(addToWaitlist({ email: values.email, hospitalName: values.hospitalName, phone_number: values.phoneNumber })).unwrap().then(() => {
-          message.success("You have been added to the waitlist!");
+        
+        // Simulate API call
+        setTimeout(() => {
+          setLoading(false);
+          message.success("Demo request received! We'll contact you shortly.");
           setIsModalOpen(false);
-        });
+          form.resetFields();
+        }, 1500);
       })
       .catch((info) => {
-        message.error(info);
+        message.error("Please enter a valid phone number");
         console.log("Validation failed:", info);
       });
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    form.resetFields(); // Reset the form fields when the modal is closed
+    form.resetFields();
   };
-
-  React.useEffect(() => {
-    if (success) {
-      // Show success message when the user is added to the waitlist
-      message.success("You have been successfully added to the waitlist!");
-      setIsModalOpen(false); // Close the modal after successful submission
-      form.resetFields(); // Reset the form fields
-    }
-  }, [success, form]);
-
-  React.useEffect(() => {
-    if (error) {
-      console.log('error', error);
-      // Show error message if there's an error during submission
-      message.error(error.message);
-    }
-  }, [error]);
 
   return (
     <div>
@@ -65,7 +48,7 @@ const WaitListDialog = ({ className, text }) => {
         size="medium"
         className={className}
       >
-        {text || "Join Waitlist"}
+        {text || "Request Demo"}
       </BhmsButton>
 
       {/* Modal */}
@@ -78,7 +61,7 @@ const WaitListDialog = ({ className, text }) => {
               style={{ width: "70px", marginBottom: "16px" }}
             />
             <h3 style={{ margin: 0, fontSize: "24px", fontWeight: "bold" }}>
-              Join the Waitlist
+              Request a Demo
             </h3>
           </div>
         }
@@ -93,55 +76,23 @@ const WaitListDialog = ({ className, text }) => {
             key="submit"
             type="primary"
             onClick={handleOk}
-            loading={loading} // Disable the button while loading
+            loading={loading}
             style={{ backgroundColor: "#19417D", borderColor: "#19417D" }}
           >
-            Join Waitlist
+            Request Demo
           </BhmsButton>,
         ]}
       >
         {/* Form */}
         <Form form={form} layout="vertical">
-          {/* Email Field */}
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your email!",
-              },
-              {
-                type: "email",
-                message: "Please enter a valid email!",
-              },
-            ]}
-          >
-            <Input placeholder="Enter your email" />
-          </Form.Item>
-
-          {/* Hospital/Institution Name Field */}
-          <Form.Item
-            name="hospitalName"
-            label="Hospital/Institution Name"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your hospital/institution name!",
-              },
-            ]}
-          >
-            <Input placeholder="Enter your hospital/institution name" />
-          </Form.Item>
-
-          {/* Phone Number Field */}
+          {/* Phone Number Field (only field now) */}
           <Form.Item
             name="phoneNumber"
             label="Phone Number"
             rules={[
               {
                 required: true,
-                message: "Please enter your phone number!",
+                message: "Please enter your phone number with country code!",
               },
               {
                 pattern: /^(\+\d{1,3}[- ]?)?\d{10,15}$/,
@@ -149,7 +100,7 @@ const WaitListDialog = ({ className, text }) => {
               },
             ]}
           >
-            <Input placeholder="Enter your phone number" />
+            <Input placeholder="Please enter your phone number with country code!" />
           </Form.Item>
         </Form>
       </Modal>

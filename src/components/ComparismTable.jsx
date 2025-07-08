@@ -163,17 +163,6 @@ const ComparisonTable = () => {
               </tbody>
             </table>
           </div>
-
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">10+</span> additional features available
-              </div>
-              <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all">
-                Request Full Feature List
-              </button>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>

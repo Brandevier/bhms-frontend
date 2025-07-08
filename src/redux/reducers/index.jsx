@@ -31,10 +31,14 @@ import bedSlice from '../slice/bedSlice'
 import ORscheduling from '../slice/ORSlice'
 import icd10ToGdrg from '../slice/gdrg_mapping'
 import nhiaMedicationsReducer from '../slice/nhia_medicationsSlice';
+import icd10Codes from '../slice/icd10DdiangosisSlice';
+
+
 
 
 export {
     authReducer,
+    icd10Codes,
     nhiaMedicationsReducer,
     icd10ToGdrg,
     ORscheduling,

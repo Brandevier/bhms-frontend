@@ -6,7 +6,7 @@ export const WEBSOCKET_URL = isProduction
 
 export const BASE_URL = isProduction 
   ? 'https://hms-backend-v1.onrender.com/api/v1' 
-  : 'http://localhost:3000/api/v1';
+  : 'http://localhost:7000/api/v1';
 
 export const LOGIN_URL = `${BASE_URL}/auth/login`;
 export const ADMIN_LOGIN = `${BASE_URL}/auth/admin/login`;

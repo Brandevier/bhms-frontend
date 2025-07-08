@@ -66,7 +66,7 @@ import TimeTable from "./pages/departments/shared/TimeTable";
 import ClaimsDashboard from "./pages/departments/claims/ClaimsDashboard";
 import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
 import NHIAMedicationsManager from "./pages/departments/claims/NHIAMedicationsManager";
-
+import ICD10Diagnosis from "./pages/departments/claims/ICD10Diangosis";
 
 
 
@@ -150,6 +150,8 @@ const App = () => {
             <Route path="claims/:id/dashboard" element={<ClaimsDashboard />} />
             <Route path="claims/:id/mappings" element={<ICD10GDRGManager/>} />
             <Route path="claims/:id/medications" element={<NHIAMedicationsManager/>} />
+            <Route path="claims/:id/diagnosis" element={<ICD10Diagnosis />} />
+
 
           </Route>
 

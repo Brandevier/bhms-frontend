@@ -47,7 +47,8 @@ const rootReducer = combineReducers({
   beds: reducers.bedSlice,
   orScheduling: reducers.ORscheduling,
   icd10GDRG: reducers.icd10ToGdrg,
-  nhiaMedications: reducers.nhiaMedicationsReducer
+  nhiaMedications: reducers.nhiaMedicationsReducer,
+  icd10:reducers.icd10Codes
 
 });
 
