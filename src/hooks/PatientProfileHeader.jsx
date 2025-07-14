@@ -52,7 +52,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const handleVitalsSubmit = (data) => {
     const vitalSignsData = {
       ...data,
-      patient_id: patient_id,
+      visit_id: patient_id,
     };
     dispatch(createVitalSignsRecord(vitalSignsData)).unwrap()
       .then((res) => {
