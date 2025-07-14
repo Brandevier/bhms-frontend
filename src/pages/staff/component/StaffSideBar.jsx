@@ -91,7 +91,7 @@ const StaffSideBar = () => {
       { key: "lab-5", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
     ],
     "Records": [
-      { key: "records-2", label: "Discharge Patients", icon: <UserSwitchOutlined />, path: "/shared/records/history" },
+      { key: "records-2", label: "All Patients", icon: <UserSwitchOutlined />, path: "/shared/records" },
       { key: "records-4", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
       { key: "records-5", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
       { key: "records-6", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },

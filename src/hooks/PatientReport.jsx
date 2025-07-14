@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Table, Card, Row, Col, Button, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getPatientReports } from "../redux/slice/recordSlice";
+import { fetchPatientReports } from "../redux/slice/recordSlice";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, Title, ArcElement, Tooltip, Legend } from "chart.js";
 import * as XLSX from "xlsx";
@@ -17,7 +17,7 @@ const PatientReport = () => {
     const { patientReports, loading } = useSelector((state) => state.records);
 
     useEffect(() => {
-        dispatch(getPatientReports());
+        dispatch(fetchPatientReports());
     }, [dispatch]);
 
     // Define table columns

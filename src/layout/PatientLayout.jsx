@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Row, Col, Skeleton, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecordByPatient } from "../redux/slice/recordSlice";
+import { fetchVisitDetails } from "../redux/slice/recordSlice";
 import { useParams } from "react-router-dom";
 import { useMediaQuery } from 'react-responsive'; // Import the hook
 import PatientProfileHeader from "../hooks/PatientProfileHeader";
@@ -23,7 +23,7 @@ import Partograph from "../pages/departments/maternity/components/Partograph";
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
-  const { currentRecord, status } = useSelector((state) => state.records);
+  const { currentVisit, status } = useSelector((state) => state.records);
   const { tests, labResults } = useSelector((state) => state.lab)
   const { notes } = useSelector((state) => state.patientNote);
   const { id } = useParams();
@@ -35,7 +35,7 @@ const PatientLayout = () => {
   const isDesktop = useMediaQuery({ minWidth: 1024 });
 
   useEffect(() => {
-    dispatch(fetchRecordByPatient({ record_id: id })).unwrap().then((res) => {
+    dispatch(fetchVisitDetails(id )).unwrap().then((res) => {
       dispatch(getAllStaff());
       dispatch(fetchLabTest());
       dispatch(fetchServices());
@@ -43,14 +43,14 @@ const PatientLayout = () => {
   }, [dispatch, id]);
 
   const generalHandler = () => {
-    dispatch(fetchRecordByPatient({ record_id: id }));
-    dispatch(fetchPatientLabResults({ patient_id: currentRecord?.patient?.id }));
+    dispatch(fetchVisitDetails({ record_id: id }));
+    dispatch(fetchPatientLabResults({ patient_id: currentVisit?.patient?.id }));
   };
 
   const handlePatientBills = (data) => {
     const submitData = {
       ...data,
-      patient_id: currentRecord?.patient?.id
+      patient_id: currentVisit?.patient?.id
     }
 
     dispatch(createPatientInvoice(submitData)).unwrap().then((res) => {
@@ -75,11 +75,11 @@ const PatientLayout = () => {
         <Skeleton active avatar paragraph={{ rows: 1 }} />
       ) : (
         <PatientProfileHeader
-          patient_record={currentRecord}
+          patient_record={currentVisit}
           handleGeneralSubmit={generalHandler}
-          patient_id={currentRecord?.patient?.id}
+          patient_id={currentVisit?.patient?.id}
           lab={tests}
-          patient_department={currentRecord?.patient?.department_id}
+          patient_department={currentVisit?.patient?.department_id}
         />
       )}
 
@@ -89,7 +89,7 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
           <PrescriptionList 
-            prescriptionData={currentRecord?.patient?.prescriptions} 
+            prescriptionData={currentVisit?.patient?.prescriptions} 
             onDelete={generalHandler}
             isMobile={isMobile}
           />
@@ -101,7 +101,7 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
           <PatientDiagnosis 
-            diagnosis={currentRecord?.patient?.diagnosis} 
+            diagnosis={currentVisit?.patient?.diagnosis} 
             onSubmit={generalHandler}
             isMobile={isMobile}
           />
@@ -116,7 +116,7 @@ const PatientLayout = () => {
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
             <PatientDetailsInfo 
-              patient_record={currentRecord} 
+              patient_record={currentVisit} 
               isMobile={isMobile}
             />
           )}
@@ -127,7 +127,7 @@ const PatientLayout = () => {
               <Skeleton active paragraph={{ rows: 3 }} />
             ) : (
               <PatientVitals 
-                vitals={currentRecord?.patient?.vitalSignsRecords} 
+                vitals={currentVisit?.patient?.vitalSignsRecords} 
                 isMobile={isMobile}
               />
             )}
@@ -138,7 +138,7 @@ const PatientLayout = () => {
               <Skeleton active paragraph={{ rows: 3 }} />
             ) : (
               <PatientVitalsChart 
-                vitalsData={currentRecord?.patient?.vitalSignsRecords} 
+                vitalsData={currentVisit?.patient?.vitalSignsRecords} 
                 isMobile={isMobile}
               />
             )}
@@ -149,7 +149,7 @@ const PatientLayout = () => {
         <Col xs={24} sm={24} md={right} lg={right} xl={right} style={{ marginTop: isMobile ? 20 : 0 }}>
           <HealthReports 
             status={status} 
-            patient_data={currentRecord?.patient?.labResults}
+            patient_data={currentVisit?.patient?.labResults}
             isMobile={isMobile}
           />
           
@@ -157,7 +157,7 @@ const PatientLayout = () => {
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
             <PatientBills 
-              bills={currentRecord?.patient?.serviceBills} 
+              bills={currentVisit?.patient?.serviceBills} 
               services={services} 
               onSubmit={handlePatientBills}
               isMobile={isMobile}
@@ -172,7 +172,7 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientProcedure 
-            procedures={currentRecord?.patient?.procedures} 
+            procedures={currentVisit?.patient?.procedures} 
             onDelete={() => console.log('delete')}
             isMobile={isMobile}
           />
@@ -184,8 +184,8 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientNotes
-            patient_notes={currentRecord?.patient?.patient_notes}
-            patient_id={currentRecord?.patient?.id}
+            patient_notes={currentVisit?.patient?.patient_notes}
+            patient_id={currentVisit?.patient?.id}
             general_handler={generalHandler}
             isMobile={isMobile}
           />
@@ -197,20 +197,20 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientHistory
-            patientData={currentRecord?.patient}
+            patientData={currentVisit?.patient}
             generalSubmit={generalHandler}
             isMobile={isMobile}
           />
         )}
       </div>
 
-      <div style={{ marginTop: 20 }}>
+      {/* <div style={{ marginTop: 20 }}>
         {status === "loading" ? (
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <Partograph isMobile={isMobile} />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

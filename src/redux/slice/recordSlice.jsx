@@ -1,252 +1,266 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../middleware/apiClient';
 
-// Define the initial state
+// Async Actions
+export const fetchActiveVisits = createAsyncThunk(
+  'records/fetchActiveVisits',
+  async (_, { rejectWithValue, getState }) => {
+    const auth = getState().auth;
+    const institutionId = auth.user?.institution?.id || auth.admin?.institution?.id;
+
+    if (!institutionId) {
+      return rejectWithValue('Institution ID is required');
+    }
+
+    try {
+      const response = await apiClient.get('/records/visit/active', {
+        params: { institution_id: institutionId }
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch active visits');
+    }
+  }
+);
+
+
+
+
+export const createPatient = createAsyncThunk(
+  'records/createPatient',
+  async (patientData, { rejectWithValue,getState }) => {
+    const auth = getState().auth;
+      const institutionId = auth.user?.institution?.id || auth.admin?.institution?.id;
+      if (!institutionId) { 
+        return rejectWithValue('Institution ID is required');
+      }
+    try {
+      const response = await apiClient.post('/records/patient/create', {
+        ...patientData,
+        institution_id:institutionId
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to create patient');
+    }
+  }
+);
+
+
+// get all patients in the institution
+export const fetchPatients = createAsyncThunk(
+  'records/fetchPatients',
+  async (_, { rejectWithValue,getState }) => {
+    const auth = getState().auth;
+      const institutionId = auth.user?.institution?.id || auth.admin?.institution?.id;  
+      if (!institutionId) {
+        return rejectWithValue('Institution ID is required');
+      }
+    try {
+      const response = await apiClient.get(`/records/patients/${institutionId}`,);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch patients');
+    }
+  }
+);
+
+
+
+export const startNewVisit = createAsyncThunk(
+  'records/startNewVisit',
+  async (patient_id, { rejectWithValue,getState}) => {
+    const auth = getState().auth;
+      const institution_id = auth.user?.institution?.id || auth.admin?.institution?.id;  
+      if (!institution_id) {
+        return rejectWithValue('Institution ID is required');
+      }
+    
+    try {
+      const response = await apiClient.post('/records/patient/initiate', {
+        patient_id,
+        institution_id
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to initialize visit');
+    }
+  }
+);
+
+
+export const fetchVisitDetails = createAsyncThunk(
+  'records/fetchVisitDetails',
+  async (visitId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/records/visits/${visitId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch visit details');
+    }
+  }
+);
+
+export const fetchPatientReports = createAsyncThunk(
+  'records/fetchPatientReports',
+  async (institutionId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/records/patientReport', {
+        params: { institution_id: institutionId }
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to fetch patient reports');
+    }
+  }
+);
+
+// Initial State
 const initialState = {
-    records: [], // Array to store all records
-    currentRecord: null, // Object to store the currently selected record
-    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    error: null, // Store any error messages
-    statistics: null,
-    patientReports: []
+  activeVisits: [],
+  currentVisit: null,
+  patientReports: [],
+  patients: [],
+  createdPatient: null,
+  loading: {
+    activeVisits: false,
+    createPatient: false,
+    startVisit: false,
+    visitDetails: false,
+    patientReports: false,
+    patients: false
+  },
+  error: {
+    activeVisits: null,
+    createPatient: null,
+    startVisit: null,
+    visitDetails: null,
+    patientReports: null,
+    patients: null
+  }
 };
 
-// Define async thunks for API calls
-
-// Fetch all records for an institution
-export const fetchRecordsByInstitution = createAsyncThunk(
-    'records/fetchRecordsByInstitution',
-    async ({ page = 1, limit = 10 } = {}, { rejectWithValue, getState }) => {
-        try {
-            const state = getState();
-            const { admin, user } = state.auth;
-
-            // Ensure institution exists before accessing ID
-            const institutionId = admin?.institution?.id || user?.institution?.id;
-            if (!institutionId) throw new Error("Institution ID is missing");
-
-            const response = await apiClient.get(`/records/institution`, {
-                params: { institution_id: institutionId, page, limit, is_antenatal_patient: false }
-            });
-
-            return response.data;
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            return rejectWithValue(error.response?.data || { message: error.message });
-        }
-    }
-);
-
-
-
-// Fetch a single record by patient ID and institution ID
-export const fetchRecordByPatient = createAsyncThunk(
-    'records/fetchRecordByPatient',
-    async ({ record_id }, { rejectWithValue, getState }) => {
-        const { auth } = getState()
-        const user = auth.admin || auth.user
-        try {
-            const response = await apiClient.get(`/records/institution/patient/get-patient-details`, {
-                params: {
-                    'institution_id': user.institution.id,
-                    'record_id': record_id
-                }
-            });
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Create a new record
-export const createRecord = createAsyncThunk(
-    'records/createRecord',
-    async ({ recordData, is_antenatal_patient = false }, { rejectWithValue, getState }) => {
-        const { auth } = getState();
-        const user = auth.admin || auth.user;
-
-        try {
-            const response = await apiClient.post('/records/institution/patient/create', {
-                ...recordData,
-                "institution_id": user.institution.id,
-                "department_id":user.department.id,
-                "is_antenatal_patient":is_antenatal_patient, // Default is false unless explicitly set to true
-            });
-
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data || { error: 'Something went wrong' });
-        }
-    }
-);
-
-
-// Update a record
-export const updateRecord = createAsyncThunk(
-    'records/updateRecord',
-    async ({ recordId, updatedData }, { rejectWithValue }) => {
-        try {
-            const response = await apiClient.put(`/api/records/${recordId}`, updatedData);
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-// Delete a record
-export const deleteRecord = createAsyncThunk(
-    'records/deleteRecord',
-    async (recordId, { rejectWithValue }) => {
-        try {
-            await apiClient.delete(`/api/records/${recordId}`);
-            return recordId;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-);
-
-export const getStats = createAsyncThunk(
-    'records/stats',
-    async (_, { rejectWithValue, getState }) => {
-        const { auth } = getState()
-        const user = auth.user || auth.admin
-
-        try {
-            const response = await apiClient.get('records/institution/records/statistics', {
-                params: {
-                    institution_id:user.institution.id
-                }
-            })
-            return response.data.statistics
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-)
-
-// GET PATIENT REPORT
-export const getPatientReports = createAsyncThunk(
-    'records/getPatientReports',
-    async (_, { rejectWithValue, getState }) => {
-        const { auth } = getState()
-        const user = auth.admin
-        try {
-            const response = await apiClient.get(`/records/patientReport`, {
-                params: {
-                    institution_id: user.institution.id
-                }
-            });
-            return response.data.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
-    }
-
-)
-
-// Create the slice
-const recordSlice = createSlice({
-    name: 'records',
-    initialState,
-    reducers: {
-        // Synchronous reducers (if needed)
-        clearCurrentRecord(state) {
-            state.currentRecord = null;
-        },
+// Slice
+const visitsSlice = createSlice({
+  name: 'records', 
+  initialState,
+  reducers: {
+    resetCurrentVisit: (state) => {
+      state.currentVisit = null;
+      state.error.visitDetails = null;
     },
-    extraReducers: (builder) => {
-        builder
-            // Fetch all records
-            .addCase(fetchRecordsByInstitution.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchRecordsByInstitution.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.records = action.payload;
-            })
-            .addCase(fetchRecordsByInstitution.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            })
+    resetPatientCreation: (state) => {
+      state.createdPatient = null;
+      state.error.createPatient = null;
+    }
+  },
+  extraReducers: (builder) => {
+     const ensureStateStructure = (state) => {
+      if (!state.loading) state.loading = {};
+      if (!state.error) state.error = {};
+      return state;
+    };
+    // Active Visits
+    builder.addCase(fetchActiveVisits.pending, (state) => {
+      ensureStateStructure(state);
+      state.loading.activeVisits = true;
+      state.error.activeVisits = null;
+    });
+    builder.addCase(fetchActiveVisits.fulfilled, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.activeVisits = false;
+      state.activeVisits = action.payload;
+    });
+    builder.addCase(fetchActiveVisits.rejected, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.activeVisits = false;
+      state.error.activeVisits = action.payload;
+    });
 
-            // Fetch a single record
-            .addCase(fetchRecordByPatient.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchRecordByPatient.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.currentRecord = action.payload;
-            })
-            .addCase(fetchRecordByPatient.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            })
+    // Create Patient
+    builder.addCase(createPatient.pending, (state) => {
+       ensureStateStructure(state);
+      state.loading.createPatient = true;
+      state.error.createPatient = null;
+    });
+    builder.addCase(createPatient.fulfilled, (state, action) => {
+       ensureStateStructure(state);
+      state.loading.createPatient = false;
+      state.createdPatient = action.payload;
+    });
+    builder.addCase(createPatient.rejected, (state, action) => {
+       ensureStateStructure(state);
+      state.loading.createPatient = false;
+      state.error.createPatient = action.payload;
+    });
 
-            // Create a new record
-            .addCase(createRecord.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(createRecord.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.records = action.payload;
-            })
-            .addCase(createRecord.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            })
+    // Start New Visit
+    builder.addCase(startNewVisit.pending, (state) => {
+      ensureStateStructure(state);
+      state.loading.startVisit = true;
+      state.error.startVisit = null;
+    });
+    builder.addCase(startNewVisit.fulfilled, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.startVisit = false;
+      state.currentVisit = action.payload.visit;
+    });
+    builder.addCase(startNewVisit.rejected, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.startVisit = false;
+      state.error.startVisit = action.payload;
+    });
 
-            // Update a record
-            .addCase(updateRecord.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(updateRecord.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                const index = state.records.findIndex(record => record.id === action.payload.id);
-                if (index !== -1) {
-                    state.records[index] = action.payload;
-                }
-            })
-            .addCase(updateRecord.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            })
+    // Visit Details
+    builder.addCase(fetchVisitDetails.pending, (state) => {
+      ensureStateStructure(state);
+      state.loading.visitDetails = true;
+      state.error.visitDetails = null;
+    });
+    builder.addCase(fetchVisitDetails.fulfilled, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.visitDetails = false;
+      state.currentVisit = action.payload;
+    });
+    builder.addCase(fetchVisitDetails.rejected, (state, action) => {
+      ensureStateStructure(state);
+      state.loading.visitDetails = false;
+      state.error.visitDetails = action.payload;
+    });
 
-            // Delete a record
-            .addCase(deleteRecord.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(deleteRecord.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.records = state.records.filter(record => record.id !== action.payload);
-            })
-            .addCase(deleteRecord.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            }).addCase(getStats.pending, (state, action) => {
-                state.status = 'loading';
-            }).addCase(getStats.fulfilled, (state, action) => {
-                state.status = 'succeeded',
-                    state.statistics = action.payload
-            }).addCase(getStats.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
-            }).addCase(getPatientReports.pending, (state, action) => {
-                state.status = 'loading';
-            }).addCase(getPatientReports.fulfilled, (state, action) => {
-                state.status = 'succeeded',
-                    state.patientReports = action.payload
-            }).addCase(getPatientReports.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.payload;
+    // Patient Reports
+    builder.addCase(fetchPatientReports.pending, (state) => {
+      state.loading.patientReports = true;
+      state.error.patientReports = null;
+    });
+    builder.addCase(fetchPatientReports.fulfilled, (state, action) => {
+      state.loading.patientReports = false;
+      state.patientReports = action.payload;
+    });
+    builder.addCase(fetchPatientReports.rejected, (state, action) => {
+      state.loading.patientReports = false;
+      state.error.patientReports = action.payload;
+    })
 
-            })
-
-            ;
-    },
+    // Fetch Patients
+    builder.addCase(fetchPatients.pending, (state) => {
+      state.loading.patients = true;
+      state.error.patients = null;
+    });
+    builder.addCase(fetchPatients.fulfilled, (state, action) => {
+      state.loading.patients = false;
+      state.patients = action.payload;
+    });
+    builder.addCase(fetchPatients.rejected, (state, action) => {
+      state.loading.patients = false;
+      state.error.patients = action.payload;
+    }
+    );
+  }
 });
 
-// Export actions
-export default recordSlice.reducer;
+// Actions
+export const { resetCurrentVisit, resetPatientCreation } = visitsSlice.actions;
+
+// Reducer
+export default visitsSlice.reducer;

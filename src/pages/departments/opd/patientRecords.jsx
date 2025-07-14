@@ -1,183 +1,201 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Input, message, Tabs, Skeleton, Alert, Popconfirm, Spin } from "antd";
+import { 
+  Table, 
+  Input, 
+  message, 
+  Modal, 
+  Tag, 
+  Card, 
+  Spin,
+  Popconfirm,
+  Space,
+  Badge
+} from "antd";
+import { 
+  FileSearchOutlined, 
+  MedicineBoxOutlined,
+  ExclamationCircleFilled 
+} from "@ant-design/icons";
 import BhmsButton from "../../../heroComponents/BhmsButton";
-import PatientRegistrationModal from "../../../modal/PatientRegistrationModal";
 import { useDispatch, useSelector } from "react-redux";
-import { createRecord, fetchRecordsByInstitution, deleteRecord } from "../../../redux/slice/recordSlice";
-import { useParams, useNavigate } from "react-router-dom";
-import { requestConsultation } from "../../../redux/slice/consultationSlice";
-
+import { useNavigate } from "react-router-dom";
+import { fetchActiveVisits } from "../../../redux/slice/recordSlice";
 
 const { Search } = Input;
-const { TabPane } = Tabs;
+const { confirm } = Modal;
 
 const PatientRecordsOPD = () => {
-  const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
-  const { records, status, error } = useSelector((state) => state.records);
-  const [modalVisible, setModalVisible] = useState(false);
-  const { id } = useParams(); // Institution ID
   const navigate = useNavigate();
-  const { consultationLoading } = useSelector((state) => ({
-    consultationLoading: state.consultation?.loading ?? loading
-  }));
-  const [page, setPage] = useState(1);
+  
+  // Redux state
+  const { activeVisits, loading, error } = useSelector((state) => state.records);
+  
+  // Local state
   const [searchTerm, setSearchTerm] = useState('');
-  const limit = 10; // Items per page
-  const [loadingRow, setLoadingRow] = useState(null);
-
-
-
-
+  const [consultationLoading, setConsultationLoading] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchRecordsByInstitution({ page, limit }));
+    dispatch(fetchActiveVisits());
   }, [dispatch]);
 
-  // Handle Register New Patient
-  const handleRegister = (patientData) => {
-    const data = { ...patientData, department_id: id };
-    dispatch(createRecord(data))
-      .unwrap()
-      .then(() => {
-        message.success("Patient created successfully");
-        dispatch(fetchRecordsByInstitution());
-        setModalVisible(false);
-      })
-      .catch(() => message.error("Failed to create patient"));
+  const showConsultationConfirmation = (patientId) => {
+    const patient = activeVisits.find(v => v.patient.id === patientId)?.patient;
+    
+    confirm({
+      title: 'Confirm Consultation Request',
+      icon: <ExclamationCircleFilled />,
+      content: (
+        <div>
+          <p>Request consultation for:</p>
+          <p className="font-semibold">{patient?.first_name} {patient?.last_name}</p>
+          <p className="text-sm text-gray-500">Folder #: {patient?.folder_number}</p>
+        </div>
+      ),
+      okText: 'Confirm Request',
+      cancelText: 'Cancel',
+      onOk() {
+        return handleConsultationRequest(patientId);
+      }
+    });
   };
 
-  // Handle Search Filtering
-  const handleSearch = (value) => {
-    setSearchText(value?.toLowerCase() || "");
+  const handleConsultationRequest = async (patientId) => {
+    setConsultationLoading(patientId);
+    try {
+      // Replace with actual consultation request action
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      message.success("Consultation requested successfully");
+      navigate(`/opd/patient/${patientId}`);
+    } catch (err) {
+      message.error("Failed to request consultation");
+    } finally {
+      setConsultationLoading(null);
+    }
   };
 
-  // Filter only active records
+  const filteredVisits = activeVisits.filter(visit => {
+    const patient = visit.patient || {};
+    return (
+      patient.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.folder_number?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
-  // Filter for search text
-  const filteredRecords = records?.patients?.filter((record) =>
-    record.patient.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.patient.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.folder_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.serial_number?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
-  // Handle Delete
-  const handleDelete = (id) => {
-    dispatch(deleteRecord(id))
-      .unwrap()
-      .then(() => {
-        message.success("Record deleted successfully");
-        dispatch(fetchRecordsByInstitution());
-      })
-      .catch(() => message.error("Failed to delete record"));
-  };
-
-  // handle request consultation
-
-  const handleConsultation = (record_id) => {
-    setLoadingRow(record_id); // Set the loading row
-
-    dispatch(requestConsultation(record_id))
-      .unwrap()
-      .then(() => {
-        message.success("Consultation requested successfully");
-        dispatch(fetchRecordsByInstitution());
-        navigate(`/shared/patient/details/${record_id}`);
-      })
-      .catch(() => message.error("Failed to request consultation"))
-      .finally(() => {
-        setLoadingRow(null); // Reset loading state after completion
-      });
-  };
-
-
-
-  // Table Columns
   const columns = [
     {
-      title: "Full Name",
-      dataIndex: "name",
-      key: "name",
-      render: (_, record) =>
-        `${record?.patient?.first_name || ""} ${record?.patient?.middle_name || ""} ${record?.patient?.last_name || ""}`,
-    },
-    {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-      render: (_, record) => record?.patient?.gender || "N/A",
-    },
-    {
-      title: "NIN Number",
-      dataIndex: "nin_number",
-      key: "nin_number",
-    },
-    {
-      title: "Folder Number",
-      dataIndex: "folder_number",
-      key: "folder_number",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => <Tag color="green">{status?.toUpperCase()}</Tag>,
-    },
-    {
-      title: "Actions",
-      key: "actions",
+      title: 'Patient',
+      dataIndex: ['patient', 'first_name'],
+      key: 'patient',
       render: (_, record) => (
-        <span>
-          <BhmsButton block={false} size="medium" outline onClick={() => navigate(`/shared/patient/details/${record?.id}`)}>
-            View
-          </BhmsButton>
-          <span className="mx-2"></span>
+        <div className="flex items-center">
+          <div className="ml-2">
+            <div className="font-medium">
+              {record.patient.first_name} {record.patient.last_name}
+            </div>
+            <div className="text-xs text-gray-500">
+              {record.patient.gender} • {record.patient.date_of_birth}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: 'Folder Number',
+      dataIndex: ['patient', 'folder_number'],
+      key: 'folder_number',
+      render: (text) => <span className="font-mono">{text}</span>,
+    },
+    {
+      title: 'Visit Date',
+      dataIndex: 'visit_date',
+      key: 'visit_date',
+      render: (date) => new Date(date).toLocaleString(),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <Badge 
+          status="processing" 
+          text={status.charAt(0).toUpperCase() + status.slice(1)}
+        />
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space size="small">
           <BhmsButton
-            disabled={loadingRow === record?.id}
             block={false}
             size="medium"
-            onClick={() => handleConsultation(record?.id)}
+            outline
+            icon={<FileSearchOutlined />}
+            onClick={() => navigate(`/opd/patient/${record.patient.id}`)}
           >
-            {loadingRow === record?.id ? <Spin /> : "Request Consultation"}
+            Details
           </BhmsButton>
-
-        </span>
+          <BhmsButton
+            block={false}
+            size="medium"
+            type="primary"
+            icon={<MedicineBoxOutlined />}
+            onClick={() => showConsultationConfirmation(record.patient.id)}
+            loading={consultationLoading === record.patient.id}
+          >
+            Request Consultation
+          </BhmsButton>
+        </Space>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      {error && <Alert message="Error" description={error.message} type="error" showIcon closable />}
-
-      {/* Top Bar: Search & Register */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-        <Search
-          placeholder="Search Name, Folder Number, NIN"
-          value={searchText}
-          onChange={(e) => handleSearch(e?.target?.value)}
-          style={{ width: 300 }}
-          allowClear
+    <div className="p-4">
+      {error && (
+        <Alert 
+          message="Error" 
+          description={error} 
+          type="error" 
+          showIcon 
+          className="mb-4"
+          closable 
         />
-        {/* <BhmsButton block={false} icon={<PlusOutlined />} size="medium" onClick={() => setModalVisible(true)}>
-          Register New Patient
-        </BhmsButton> */}
-      </div>
+      )}
 
-      {/* Tabs Section */}
-      <Tabs defaultActiveKey="all">
-        {/* All Active Patients */}
-        <TabPane tab={`All`} key="all">
-          {status === "loading" ? <Skeleton active paragraph={{ rows: 5 }} /> : <Table dataSource={filteredRecords} columns={columns} rowKey="id" />}
-        </TabPane>
+      <Card className="mb-4">
+        <div className="flex justify-between items-center">
+          <Search
+            placeholder="Search patients..."
+            allowClear
+            enterButton
+            size="large"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
+          />
+          <div className="text-sm text-gray-500">
+            Showing {filteredVisits.length} active visits
+          </div>
+        </div>
+      </Card>
 
-        {/* Retake Vitals Request (Placeholder, Modify logic as needed) */}
-
-      </Tabs>
-
-      {/* Patient Registration Modal */}
-      <PatientRegistrationModal visible={modalVisible} onClose={() => setModalVisible(false)} onSubmit={handleRegister} status={status} />
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={filteredVisits}
+          rowKey={(record) => record.id}
+          loading={loading}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false
+          }}
+          scroll={{ x: true }}
+        />
+      </Card>
     </div>
   );
 };

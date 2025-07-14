@@ -67,7 +67,7 @@ import ClaimsDashboard from "./pages/departments/claims/ClaimsDashboard";
 import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
 import NHIAMedicationsManager from "./pages/departments/claims/NHIAMedicationsManager";
 import ICD10Diagnosis from "./pages/departments/claims/ICD10Diangosis";
-
+import AllPatientsRecords from "./pages/departments/records/AllPatientsRecords";
 
 
 const App = () => {
@@ -132,6 +132,8 @@ const App = () => {
             <Route path="maternity/registration/:id" element={<MaternityRegistration />} />
             <Route path="admissions/all" element={<InstitutionAdmissions />} />
             <Route path="departments/time-table" element={<TimeTable />} />
+            <Route path="records" element={<AllPatientsRecords />} />
+
 
 
             {/* THEATRE */}
