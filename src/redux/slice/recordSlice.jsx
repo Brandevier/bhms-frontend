@@ -215,7 +215,7 @@ const visitsSlice = createSlice({
     });
     builder.addCase(fetchVisitDetails.fulfilled, (state, action) => {
       state.loading.visitDetails = false;
-      state.currentVisit = action.payload || {}; // Fallback to empty object
+      state.currentVisit = action.payload || {}; // Fallback to empty object 
     });
     builder.addCase(fetchVisitDetails.rejected, (state, action) => {
       state.loading.visitDetails = false;

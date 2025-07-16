@@ -30,14 +30,14 @@ const Records = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  const patients = useSelector(state => state.records.activeVisits);
-  const loading = useSelector(state => state.records.loading?.activeVisits);
+const patients = useSelector((state) => state.records?.activeVisits ?? []);
+const loading = useSelector((state) => state.records?.loading?.activeVisits ?? false);
+
 
   const [activeVisits, setActiveVisits] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [bulkModalVisible, setBulkModalVisible] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
   
   // Fetch active visits from Redux
