@@ -26,8 +26,8 @@ const AllPatientsRecords = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const patients = useSelector(state => state.records.patients);
-  const loading = useSelector(state => state.records.loading?.patients);
+const patients = useSelector((state) => state.records?.activeVisits ?? []);
+const loading = useSelector((state) => state.records?.loading?.activeVisits ?? false);
   const error = useSelector(state => state.records.error.patients);
   
 
