@@ -22,7 +22,7 @@ export const fetchAllDiagnoses = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get('/icd10/diagnoses/all');
-      return response.data;
+      return response.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to fetch all diagnoses');
     }
@@ -128,7 +128,7 @@ const diagnosesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllDiagnoses.fulfilled, (state, action) => {
-        state.completeList = action.payload.data;
+        state.completeList = action.payload;
         state.loading = false;
       })
       .addCase(fetchAllDiagnoses.rejected, (state, action) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Card, Row, Col, Avatar, Typography, Button, Tooltip, message } from "antd";
 import {
   EditOutlined,
@@ -30,6 +30,8 @@ import useDepartmentCheck from "../customHooks/useDepartmentCheck";
 import { addDiagnosis } from "../redux/slice/diagnosisSlice";
 import { admitPatient } from "../redux/slice/admissionSlice";
 import DischargePatientModal from "../modal/TransferPatientModal";
+import { fetchAllDiagnoses } from "../redux/slice/icd10DdiangosisSlice";
+
 
 
 const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
@@ -45,8 +47,14 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const dispatch = useDispatch()
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
+  const { completeList,loading } = useSelector((state) => state.icd10);
+
 
   // ... keep all your existing handler functions ...
+
+  useEffect(() => {
+    dispatch(fetchAllDiagnoses());
+  }, [dispatch]);
 
 
   const handleVitalsSubmit = (data) => {
@@ -279,6 +287,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
         visible={diagnosisModalVisible}
         onClose={() => setDiagnosisModalVisible(false)}
         onSubmit={handleDiagnosisSubmit}
+        data={completeList}
       />
       <RequestLabDialog
         visible={labModalVisible}
