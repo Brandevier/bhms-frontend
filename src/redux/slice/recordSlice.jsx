@@ -159,6 +159,7 @@ const visitsSlice = createSlice({
     });
     builder.addCase(createPatient.rejected, (state) => {
       state.createdPatient = {};
+      
     });
 
     builder.addCase(startNewVisit.fulfilled, (state, action) => {
