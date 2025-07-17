@@ -21,7 +21,7 @@ export const fetchActiveVisits = createAsyncThunk(
       const response = await apiClient.get('/records/visit/active', {
         params: { institution_id: institutionId }
       });
-      return getSafeData(response) || []; // Return empty array if null/undefined
+      return getSafeData(response) || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch active visits');
     }
@@ -43,7 +43,7 @@ export const createPatient = createAsyncThunk(
         ...patientData,
         institution_id: institutionId
       });
-      return getSafeData(response) || {}; // Return empty object if null/undefined
+      return getSafeData(response) || {};
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to create patient');
     }
@@ -62,7 +62,7 @@ export const fetchPatients = createAsyncThunk(
     
     try {
       const response = await apiClient.get(`/records/patients/${institutionId}`);
-      return getSafeData(response) || []; // Return empty array if null/undefined
+      return getSafeData(response) || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch patients');
     }
@@ -84,7 +84,7 @@ export const startNewVisit = createAsyncThunk(
         patient_id,
         institution_id
       });
-      return getSafeData(response)?.visit || {}; // Safely access visit property
+      return getSafeData(response)?.visit || {};
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to initialize visit');
     }
@@ -96,7 +96,7 @@ export const fetchVisitDetails = createAsyncThunk(
   async (visitId, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`/records/visits/${visitId}`);
-      return getSafeData(response) || {}; // Return empty object if null/undefined
+      return getSafeData(response) || {};
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch visit details');
     }
@@ -110,36 +110,23 @@ export const fetchPatientReports = createAsyncThunk(
       const response = await apiClient.get('/records/patientReport', {
         params: { institution_id: institutionId }
       });
-      return getSafeData(response)?.data || []; // Safely access data property
+      return getSafeData(response)?.data || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch patient reports');
     }
   }
 );
 
-// Enhanced Initial State with deep defaults
+// Enhanced Initial State with single loading and error states
 const initialState = {
   activeVisits: [],
   currentVisit: {},
   patientReports: [],
   patients: [],
   createdPatient: {},
-  loading: {
-    activeVisits: false,
-    createPatient: false,
-    startVisit: false,
-    visitDetails: false,
-    patientReports: false,
-    patients: false
-  },
-  error: {
-    activeVisits: null,
-    createPatient: null,
-    startVisit: null,
-    visitDetails: null,
-    patientReports: null,
-    patients: null
-  }
+  loading: false, // Single loading state for all actions
+  error: null,    // Single error state for all actions
+  lastAction: null // Track which action caused the error
 };
 
 // Slice
@@ -149,114 +136,90 @@ const visitsSlice = createSlice({
   reducers: {
     resetCurrentVisit: (state) => {
       state.currentVisit = {};
-      state.error.visitDetails = null;
     },
     resetPatientCreation: (state) => {
       state.createdPatient = {};
-      state.error.createPatient = null;
     },
-    // New reset action to clear all errors
-    resetAllErrors: (state) => {
-      Object.keys(state.error).forEach(key => {
-        state.error[key] = null;
-      });
+    resetError: (state) => {
+      state.error = null;
+      state.lastAction = null;
     }
   },
   extraReducers: (builder) => {
-    // Active Visits
-    builder.addCase(fetchActiveVisits.pending, (state) => {
-      state.loading.activeVisits = true;
-      state.error.activeVisits = null;
-    });
+    // First, add all specific cases
     builder.addCase(fetchActiveVisits.fulfilled, (state, action) => {
-      state.loading.activeVisits = false;
-      state.activeVisits = action.payload || []; // Fallback to empty array
+      state.activeVisits = action.payload || [];
     });
-    builder.addCase(fetchActiveVisits.rejected, (state, action) => {
-      state.loading.activeVisits = false;
-      state.error.activeVisits = action.payload;
-      state.activeVisits = []; // Reset to empty array on error
+    builder.addCase(fetchActiveVisits.rejected, (state) => {
+      state.activeVisits = [];
     });
 
-    // Create Patient
-    builder.addCase(createPatient.pending, (state) => {
-      state.loading.createPatient = true;
-      state.error.createPatient = null;
-    });
     builder.addCase(createPatient.fulfilled, (state, action) => {
-      state.loading.createPatient = false;
-      state.createdPatient = action.payload || {}; // Fallback to empty object
+      state.createdPatient = action.payload || {};
     });
-    builder.addCase(createPatient.rejected, (state, action) => {
-      state.loading.createPatient = false;
-      state.error.createPatient = action.payload;
-      state.createdPatient = {}; // Reset to empty object on error
+    builder.addCase(createPatient.rejected, (state) => {
+      state.createdPatient = {};
     });
 
-    // Start New Visit
-    builder.addCase(startNewVisit.pending, (state) => {
-      state.loading.startVisit = true;
-      state.error.startVisit = null;
-    });
     builder.addCase(startNewVisit.fulfilled, (state, action) => {
-      state.loading.startVisit = false;
-      state.currentVisit = action.payload || {}; // Fallback to empty object
+      state.currentVisit = action.payload || {};
     });
-    builder.addCase(startNewVisit.rejected, (state, action) => {
-      state.loading.startVisit = false;
-      state.error.startVisit = action.payload;
-      state.currentVisit = {}; // Reset to empty object on error
+    builder.addCase(startNewVisit.rejected, (state) => {
+      state.currentVisit = {};
     });
 
-    // Visit Details
-    builder.addCase(fetchVisitDetails.pending, (state) => {
-      state.loading.visitDetails = true;
-      state.error.visitDetails = null;
-    });
     builder.addCase(fetchVisitDetails.fulfilled, (state, action) => {
-      state.loading.visitDetails = false;
-      state.currentVisit = action.payload || {}; // Fallback to empty object 
+      state.currentVisit = action.payload || {};
     });
-    builder.addCase(fetchVisitDetails.rejected, (state, action) => {
-      state.loading.visitDetails = false;
-      state.error.visitDetails = action.payload;
-      state.currentVisit = {}; // Reset to empty object on error
+    builder.addCase(fetchVisitDetails.rejected, (state) => {
+      state.currentVisit = {};
     });
 
-    // Patient Reports
-    builder.addCase(fetchPatientReports.pending, (state) => {
-      state.loading.patientReports = true;
-      state.error.patientReports = null;
-    });
     builder.addCase(fetchPatientReports.fulfilled, (state, action) => {
-      state.loading.patientReports = false;
-      state.patientReports = action.payload || []; // Fallback to empty array
+      state.patientReports = action.payload || [];
     });
-    builder.addCase(fetchPatientReports.rejected, (state, action) => {
-      state.loading.patientReports = false;
-      state.error.patientReports = action.payload;
-      state.patientReports = []; // Reset to empty array on error
+    builder.addCase(fetchPatientReports.rejected, (state) => {
+      state.patientReports = [];
     });
 
-    // Fetch Patients
-    builder.addCase(fetchPatients.pending, (state) => {
-      state.loading.patients = true;
-      state.error.patients = null;
-    });
     builder.addCase(fetchPatients.fulfilled, (state, action) => {
-      state.loading.patients = false;
-      state.patients = action.payload || []; // Fallback to empty array
+      state.patients = action.payload || [];
     });
-    builder.addCase(fetchPatients.rejected, (state, action) => {
-      state.loading.patients = false;
-      state.error.patients = action.payload;
-      state.patients = []; // Reset to empty array on error
+    builder.addCase(fetchPatients.rejected, (state) => {
+      state.patients = [];
     });
+
+    // Then add the matchers
+    builder.addMatcher(
+      (action) => action.type.endsWith('/pending'),
+      (state, action) => {
+        state.loading = true;
+        state.error = null;
+        state.lastAction = action.type.replace('/pending', '');
+      }
+    );
+
+    builder.addMatcher(
+      (action) => action.type.endsWith('/fulfilled'),
+      (state) => {
+        state.loading = false;
+        state.error = null;
+      }
+    );
+
+    builder.addMatcher(
+      (action) => action.type.endsWith('/rejected'),
+      (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.lastAction = action.type.replace('/rejected', '');
+      }
+    );
   }
 });
 
 // Actions
-export const { resetCurrentVisit, resetPatientCreation, resetAllErrors } = visitsSlice.actions;
+export const { resetCurrentVisit, resetPatientCreation, resetError } = visitsSlice.actions;
 
 // Reducer
 export default visitsSlice.reducer;

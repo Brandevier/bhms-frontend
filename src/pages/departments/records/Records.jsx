@@ -31,7 +31,7 @@ const Records = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
 const patients = useSelector((state) => state.records?.activeVisits ?? []);
-const loading = useSelector((state) => state.records?.loading?.activeVisits ?? false);
+const loading = useSelector((state) => state.records?.loading ?? false);
 
 
   const [activeVisits, setActiveVisits] = useState([]);

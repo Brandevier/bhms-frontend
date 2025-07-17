@@ -102,7 +102,7 @@ const ConsultationDepartment = () => {
     },
   ];
 
-  if (loading.activeVisits) {
+  if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
         <Spin size="large" />
@@ -110,7 +110,7 @@ const ConsultationDepartment = () => {
     );
   }
 
-  if (error.activeVisits) {
+  if (error) {
     return (
       <div style={{ padding: '24px' }}>
         <Alert message="Error Loading Data" description={error} type="error" showIcon />
