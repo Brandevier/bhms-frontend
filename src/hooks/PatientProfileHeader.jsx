@@ -54,7 +54,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   // ... keep all your existing handler functions ...
 
   useEffect(() => {
-    dispatch(fetchAllDiagnoses());
+    // dispatch(fetchAllDiagnoses());
   }, [dispatch]);
 
 
