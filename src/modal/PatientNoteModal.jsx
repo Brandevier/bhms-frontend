@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 const { Text } = Typography;
 const { Option } = Mentions;
 
-const PatientNoteModal = ({ visible, onClose, patient_id, onSave, status }) => {
+const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
     const [note, setNote] = useState("");
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [isRecording, setIsRecording] = useState(false);
@@ -89,7 +89,7 @@ const PatientNoteModal = ({ visible, onClose, patient_id, onSave, status }) => {
         const newNote = {
             note,
             tagged_staff_ids: mentionedStaffIds,
-            patient_id
+            visit_id
         };
 
         onSave(newNote);

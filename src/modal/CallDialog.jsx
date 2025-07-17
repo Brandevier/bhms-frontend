@@ -1,12 +1,10 @@
 // components/CallDialog.jsx
 import { Modal, Button } from 'antd';
-import { useContext, useEffect,useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CallContext } from '../context/CallContext';
-
-
-
+import { getSocket } from '../service/socketService';
 const CallDialog = () => {
-  const { incomingCall, showCallDialog, setShowCallDialog } = useContext(CallContext);
+  const { incomingCall, showCallDialog, setShowCallDialog, setIncomingCall } = useContext(CallContext);
   const [callDuration, setCallDuration] = useState(0);
 
   useEffect(() => {
@@ -20,13 +18,33 @@ const CallDialog = () => {
   }, [showCallDialog]);
 
   const handleAccept = () => {
-    // Add your accept call logic here
+    const socket = getSocket(); // Get the socket instance
+    if (!socket) {
+      console.error('Socket not initialized');
+      return;
+    }
+    
+    socket.emit('answer-department-call', { 
+      callId: incomingCall.callId,
+      answererId: incomingCall.answererId
+    });
     setShowCallDialog(false);
+    setIncomingCall(null);
   };
 
   const handleReject = () => {
-    // Add your reject call logic here
+    const socket = getSocket(); // Get the socket instance
+    if (!socket) {
+      console.error('Socket not initialized');
+      return;
+    }
+    
+    socket.emit('reject-department-call', { 
+      callId: incomingCall.callId,
+      reason: 'User rejected the call'
+    });
     setShowCallDialog(false);
+    setIncomingCall(null);
   };
 
   if (!showCallDialog || !incomingCall) return null;

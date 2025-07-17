@@ -5,7 +5,9 @@ import { Layout, List, Input, Button, Upload, Typography, Avatar, Spin, Tooltip,
 import { SendOutlined, PaperClipOutlined, UsergroupAddOutlined, MenuOutlined } from "@ant-design/icons";
 import moment from "moment";
 import AllPatientModal from "../../modal/AllPatientModal";
+import { WEBSOCKET_URL } from "../../api/endpoints";
 import { useMediaQuery } from "react-responsive";
+import { getSocket,initializeSocket } from "../../service/socketService";
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -15,7 +17,7 @@ const ChatUI = () => {
   const { chats, departments = [], loading, chatLoading } = useSelector((state) => state.chat);
   const { auth } = useSelector((state) => state);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [ws, setWs] = useState(null);
+  const [socket, setSocket] = useState(null); // Changed from ws to socket
   const currentUser = auth?.user || auth?.admin;
   const isAdmin = !!auth?.admin;
   const [chatInput, setChatInput] = useState("");
@@ -26,36 +28,69 @@ const ChatUI = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-    const socket = new WebSocket("ws://localhost:3000");
-    setWs(socket);
-    socket.onopen = () => console.log("Connected to WebSocket");
-    socket.onmessage = (event) => {
-      const newMessage = JSON.parse(event.data);
-      if (newMessage.receiverDepartmentId === selectedDepartment?.id) {
-        dispatch(sendMessage(newMessage));
-      }
-    };
-    socket.onclose = () => console.log("WebSocket disconnected, attempting to reconnect...");
+    
+    // Initialize socket connection with user data
+    if (auth?.token) {
+      const socketInstance = initializeSocket({
+        token: auth.token,
+        userId: currentUser?.id,
+        role: isAdmin ? 'admin' : 'user'
+      });
+      setSocket(socketInstance);
 
-    return () => socket.close();
-  }, [dispatch, selectedDepartment]);
+      // Set up event listeners
+      socketInstance.on('connect', () => {
+        console.log("Socket.IO connected");
+      });
+
+      socketInstance.on('new-message', (newMessage) => {
+        if (newMessage.receiverDepartmentId === selectedDepartment?.id) {
+          dispatch(sendMessage(newMessage));
+        }
+      });
+
+      socketInstance.on('disconnect', () => {
+        console.log("Socket.IO disconnected");
+      });
+
+      return () => {
+        socketInstance.off('new-message');
+        socketInstance.disconnect();
+      };
+    }
+  }, [dispatch, auth.token, currentUser?.id, isAdmin]);
 
   useEffect(() => {
     if (selectedDepartment) {
       dispatch(fetchRecentChats({ departmentId: selectedDepartment.id }));
+      
+      // Join department room when department is selected
+      if (socket) {
+        socket.emit('join-department', { departmentId: selectedDepartment.id });
+      }
     }
-  }, [selectedDepartment, dispatch]);
+  }, [selectedDepartment, dispatch, socket]);
 
   const handleSendMessage = () => {
     if (!chatInput.trim() || !selectedDepartment) return;
 
     const messageData = { 
       receiverDepartmentId: selectedDepartment.id, 
-      text: chatInput, 
+      text: chatInput,
+      senderId: currentUser?.id,
+      isAdmin: isAdmin,
+      timestamp: new Date().toISOString()
     };
     
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(messageData));
+    if (socket?.connected) {
+      socket.emit('send-message', messageData);
+      // Optimistically update UI
+      dispatch(sendMessage({
+        ...messageData,
+        Sender: isAdmin ? null : currentUser,
+        SenderAdmin: isAdmin ? currentUser : null,
+        createdAt: new Date().toISOString()
+      }));
     }
 
     setChatInput("");

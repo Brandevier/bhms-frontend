@@ -7,6 +7,7 @@ import apiClient from '../middleware/apiClient';
 export const createPatientNote = createAsyncThunk(
   'patientNotes/createPatientNote',
   async (noteData, { rejectWithValue,getState }) => {
+    console.log('visit notes',noteData)
     const {auth } = getState()
     const user = auth.admin || auth.user 
     try {

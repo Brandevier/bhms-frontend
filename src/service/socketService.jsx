@@ -1,11 +1,13 @@
 // services/socketService.js
+
 import io from 'socket.io-client';
+import { WEBSOCKET_URL } from '../api/endpoints';
 
 let socketInstance = null;
 
 export const initializeSocket = (userData) => {
   if (!socketInstance) {
-    socketInstance = io('http://localhost:3000', {
+    socketInstance = io(WEBSOCKET_URL, {
       withCredentials: true,
       transports: ['websocket'],
       autoConnect: true,

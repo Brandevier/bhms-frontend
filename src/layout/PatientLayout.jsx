@@ -184,8 +184,8 @@ const PatientLayout = () => {
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientNotes
-            patient_notes={currentVisit?.patient?.patient_notes}
-            patient_id={currentVisit?.patient?.id}
+            patient_notes={currentVisit?.patientNote}
+            visit_id={currentVisit?.id}
             general_handler={generalHandler}
             isMobile={isMobile}
           />
