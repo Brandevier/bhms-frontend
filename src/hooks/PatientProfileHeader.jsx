@@ -47,7 +47,8 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const dispatch = useDispatch()
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
-  const { completeList,loading } = useSelector((state) => state.icd10);
+  const { completeList } = useSelector((state) => state.icd10);
+  const { loading } = useSelector((state) => state.records);
 
 
   // ... keep all your existing handler functions ...
@@ -280,8 +281,9 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
       <VitalSignsModal
         visible={vitalModalVisible}
         onClose={() => setVitalModalVisible(false)}
-        status={status}
+        status={loading}
         onSubmit={handleVitalsSubmit}
+      
       />
       <PatientDiagnosisModal
         visible={diagnosisModalVisible}

@@ -3,7 +3,7 @@ import { Modal, Form, Input, InputNumber, Slider, Row, Col, Spin } from "antd";
 import { HeartOutlined, SmileOutlined, FireOutlined, DashboardOutlined } from "@ant-design/icons";
 import BhmsButton from "../heroComponents/BhmsButton";
 
-const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
+const VitalSignsModal = ({ visible, onClose, onSubmit, loading }) => {
   const [form] = Form.useForm();
   const [painLevel, setPainLevel] = useState(1);
   const painEmojis = ["😀", "🙂", "😐", "😕", "😣", "😖", "😩", "😫", "😭", "🤕"];
@@ -31,7 +31,7 @@ const VitalSignsModal = ({ visible, onClose, onSubmit, status }) => {
           Cancel
         </BhmsButton>,
         <BhmsButton key="submit" block={false} size="medium" onClick={handleSubmit} disabled={status === "loading"}>
-          {status === "loading" ? <Spin /> : "Save"}
+          {loading ? <Spin /> : "Save"}
         </BhmsButton>,
       ]}
     >

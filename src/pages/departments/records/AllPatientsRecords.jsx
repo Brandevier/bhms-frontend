@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Table,
   Input,
@@ -9,31 +9,35 @@ import {
   message,
   Tooltip,
   Empty,
+  Popover,
 } from 'antd';
 import {
   FileSearchOutlined,
   HistoryOutlined,
   PlusCircleOutlined,
+  AudioOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchPatients,startNewVisit } from '../../../redux/slice/recordSlice';
-
+import { fetchPatients, startNewVisit } from '../../../redux/slice/recordSlice';
 
 const { Search } = Input;
 
 const AllPatientsRecords = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const recognitionRef = useRef(null);
 
-const patients = useSelector((state) => state.records?.activeVisits ?? []);
-const loading = useSelector((state) => state.records?.loading ?? false);
-const error = useSelector(state => state.records.error);
+  const patients = useSelector((state) => state.records?.patients ?? []);
+  const loading = useSelector((state) => state.records?.loading ?? false);
+  const error = useSelector(state => state.records.error);
   
-
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isListening, setIsListening] = useState(false);
+  const [browserSupport, setBrowserSupport] = useState(true);
 
   const filtered = patients?.filter(p =>
     `${p.first_name} ${p.last_name}`
@@ -47,19 +51,82 @@ const error = useSelector(state => state.records.error);
     dispatch(fetchPatients())
       .unwrap()
       .catch(() => message.error('Failed to load patient records'));
+
+    // Check browser support for speech recognition
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      setBrowserSupport(false);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
   }, [dispatch]);
 
-  const handleVisit = (patient_id,) => {
-    
-    dispatch(startNewVisit( patient_id))
+  const handleVisit = (patient_id) => {
+    dispatch(startNewVisit(patient_id))
       .unwrap()
       .then(() => {
         message.success('Visit initiated successfully');
-        
       })
       .catch(() => message.error('Failed to initiate visit'));
-
   };
+
+  const startVoiceSearch = () => {
+    if (!browserSupport) {
+      message.warning('Voice search is not supported in your browser');
+      return;
+    }
+
+    setIsListening(true);
+    message.info('Listening... Speak now');
+
+    // Initialize speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = false;
+    recognitionRef.current.lang = 'en-US';
+
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setSearchTerm(transcript);
+      setIsListening(false);
+    };
+
+    recognitionRef.current.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+      message.error(`Error: ${event.error}`);
+      setIsListening(false);
+    };
+
+    recognitionRef.current.onend = () => {
+      if (isListening) {
+        setIsListening(false);
+      }
+    };
+
+    recognitionRef.current.start();
+  };
+
+  const stopVoiceSearch = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsListening(false);
+  };
+
+  const voiceSearchButton = (
+    <Popover content={isListening ? "Click to stop" : "Click to speak"}>
+      <Button
+        type="text"
+        icon={isListening ? <StopOutlined /> : <AudioOutlined />}
+        onClick={isListening ? stopVoiceSearch : startVoiceSearch}
+        style={{ color: isListening ? '#ff4d4f' : '#1890ff' }}
+      />
+    </Popover>
+  );
 
   const columns = [
     {
@@ -104,7 +171,7 @@ const error = useSelector(state => state.records.error);
             <Button
               icon={<FileSearchOutlined />}
               size="small"
-              onClick={() => navigate(`/patients/${record.id}`)}
+              onClick={() => navigate(`/shared/patient/details/${record.id}`, { id: record.id })}
             />
           </Tooltip>
 
@@ -136,22 +203,27 @@ const error = useSelector(state => state.records.error);
     }
   ];
 
-
-//   initiate visit
-
   return (
     <div className="p-4">
       <Card
         title="All Patients"
         extra={
-          <Search
-            placeholder="Search patients..."
-            allowClear
-            enterButton
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: 300 }}
-          />
+          <Space>
+            <Search
+              placeholder="Search patients..."
+              allowClear
+              enterButton
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              addonAfter={voiceSearchButton}
+              style={{ width: 300 }}
+            />
+            {!browserSupport && (
+              <Tooltip title="Voice search not supported in your browser">
+                <AudioOutlined style={{ color: '#ccc' }} />
+              </Tooltip>
+            )}
+          </Space>
         }
       >
         <Table

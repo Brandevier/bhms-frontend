@@ -71,7 +71,7 @@ const PatientLayout = () => {
   return (
     <div style={{ padding: isMobile ? '10px' : '20px' }}>
       {/* Profile Header */}
-      {loading.activeVisits ? (
+      {loading ? (
         <Skeleton active avatar paragraph={{ rows: 1 }} />
       ) : (
         <PatientProfileHeader
@@ -85,7 +85,7 @@ const PatientLayout = () => {
 
       {/* Full-Width Components */}
       <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
           <PrescriptionList 
@@ -97,7 +97,7 @@ const PatientLayout = () => {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 3 }} />
         ) : (
           <PatientDiagnosis 
@@ -112,7 +112,7 @@ const PatientLayout = () => {
       <Row gutter={isMobile ? 0 : 16} style={{ marginTop: 20 }}>
         {/* Left Column */}
         <Col xs={24} sm={24} md={left} lg={left} xl={left}>
-          {loading.activeVisits ? (
+          {loading ? (
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
             <PatientDetailsInfo 
@@ -123,7 +123,7 @@ const PatientLayout = () => {
 
           {/* Medical Info */}
           <div style={{ marginTop: 20 }}>
-            {loading.activeVisits ? (
+            {loading ? (
               <Skeleton active paragraph={{ rows: 3 }} />
             ) : (
               <PatientVitals 
@@ -134,7 +134,7 @@ const PatientLayout = () => {
           </div>
 
           <div style={{ marginTop: 20 }}>
-            {loading.activeVisits ? (
+            {loading ? (
               <Skeleton active paragraph={{ rows: 3 }} />
             ) : (
               <PatientVitalsChart 
@@ -153,7 +153,7 @@ const PatientLayout = () => {
             isMobile={isMobile}
           />
           
-          {loading.activeVisits ? (
+          {loading ? (
             <Skeleton active paragraph={{ rows: 3 }} />
           ) : (
             <PatientBills 
@@ -168,7 +168,7 @@ const PatientLayout = () => {
 
       {/* Bottom Sections */}
       <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientProcedure 
@@ -180,7 +180,7 @@ const PatientLayout = () => {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientNotes
@@ -193,7 +193,7 @@ const PatientLayout = () => {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <PatientHistory
@@ -205,7 +205,7 @@ const PatientLayout = () => {
       </div>
 
       {/* <div style={{ marginTop: 20 }}>
-        {loading.activeVisits ? (
+        {loading ? (
           <Skeleton active paragraph={{ rows: 2 }} />
         ) : (
           <Partograph isMobile={isMobile} />

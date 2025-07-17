@@ -6,7 +6,7 @@ import BhmsButton from "../heroComponents/BhmsButton";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const PatientDiagnosisModal = ({ visible, onClose, onSubmit, data }) => {
+const PatientDiagnosisModal = ({ visible, onClose, onSubmit, data,loading }) => {
     const [form] = Form.useForm();
     const [selectedDiagnoses, setSelectedDiagnoses] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -150,7 +150,7 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit, data }) => {
                     onClick={handleSubmit} 
                     disabled={selectedDiagnoses.length === 0}
                 >
-                    Submit
+                    {loading ? <Spin size="small" /> : "Submit"}
                 </BhmsButton>
             ]}
             destroyOnClose
