@@ -14,17 +14,18 @@ import { getAllStaff } from "../redux/slice/staff_admin_managment_slice";
 import { fetchPatientNotes } from "../redux/slice/patientNotesSlice";
 import HealthReports from "../hooks/HealthReports";
 import PrescriptionList from "../hooks/PrescriptionList";
-import { fetchLabTest, fetchPatientLabResults } from "../redux/slice/labSlice";
 import PatientProcedure from "../hooks/PatientProcedure";
 import PatientDiagnosis from "../hooks/PatientDiagnosisComponent";
 import { fetchServices, createPatientInvoice } from "../redux/slice/serviceSlice";
 import PatientHistory from "../pages/departments/maternity/components/PatientHistory";
 import Partograph from "../pages/departments/maternity/components/Partograph";
+import { fetchTemplates } from "../redux/slice/labSlice";
+
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
   const { currentVisit, loading } = useSelector((state) => state.records);
-  const { tests, labResults } = useSelector((state) => state.lab)
+  const { templates } = useSelector((state) => state.lab)
   const { notes } = useSelector((state) => state.patientNote);
   const { id } = useParams();
   const { services } = useSelector((state) => state.service);
@@ -37,7 +38,7 @@ const PatientLayout = () => {
   useEffect(() => {
     dispatch(fetchVisitDetails(id )).unwrap().then((res) => {
       dispatch(getAllStaff());
-      dispatch(fetchLabTest());
+      dispatch(fetchTemplates());
       dispatch(fetchServices());
     });
   }, [dispatch, id]);
@@ -78,7 +79,7 @@ const PatientLayout = () => {
           patient_record={currentVisit}
           handleGeneralSubmit={generalHandler}
           patient_id={currentVisit?.id}
-          lab={tests}
+          lab={templates}
           patient_department={currentVisit?.patient?.department_id}
         />
       )}
@@ -149,7 +150,7 @@ const PatientLayout = () => {
         <Col xs={24} sm={24} md={right} lg={right} xl={right} style={{ marginTop: isMobile ? 20 : 0 }}>
           <HealthReports 
             status={status} 
-            patient_data={currentVisit?.patient?.labResults}
+            patient_data={currentVisit?.labTests}
             isMobile={isMobile}
           />
           

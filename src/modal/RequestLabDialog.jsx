@@ -6,7 +6,7 @@ import BhmsButton from "../heroComponents/BhmsButton";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const RequestLabDialog = ({ visible, tests, onClose, onSubmit, loading }) => {
+const RequestLabDialog = ({ visible,  onClose, onSubmit, loading,templates }) => {
   const [form] = Form.useForm();
   const [selectedTest, setSelectedTest] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -156,7 +156,7 @@ const RequestLabDialog = ({ visible, tests, onClose, onSubmit, loading }) => {
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         {/* Lab Test Selection */}
         <Form.Item
-          name="test_id"
+          name="templateId"
           label="Search & Select Lab Test"
           rules={[{ required: true, message: "Please select a lab test" }]}
         >
@@ -168,16 +168,16 @@ const RequestLabDialog = ({ visible, tests, onClose, onSubmit, loading }) => {
               option.children.toLowerCase().includes(input.toLowerCase())
             }
           >
-            {tests?.map((test) => (
+            {templates?.map((test) => (
               <Option key={test.id} value={test.id}>
-                {test.test_name}
+                {test.name}
               </Option>
             ))}
           </Select>
         </Form.Item>
 
         {/* Additional Comments with Speech-to-Text */}
-        <Form.Item name="comment" label="Additional Comments">
+        <Form.Item name="note" label="Additional Comments">
           <div style={{ position: 'relative' }}>
             <TextArea 
               rows={4} 

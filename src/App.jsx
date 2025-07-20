@@ -26,7 +26,6 @@ import {
   PatientRecords,
   PatientLayout,
   Records,
-  Lab,
   PuzzleAuthentication,
   Service,
   Store,
@@ -68,6 +67,11 @@ import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
 import NHIAMedicationsManager from "./pages/departments/claims/NHIAMedicationsManager";
 import ICD10Diagnosis from "./pages/departments/claims/ICD10Diangosis";
 import AllPatientsRecords from "./pages/departments/records/AllPatientsRecords";
+import CreateTemplatePage from "./pages/departments/lab/form_templates/CreateTemplatePage";
+import TemplateManagementPage from "./pages/departments/lab/form_templates/TemplateManagementPage";
+import LabTestsPendingPage from "./pages/departments/lab/form_templates/LabTestsPendingPage";
+
+
 
 
 const App = () => {
@@ -128,11 +132,17 @@ const App = () => {
             <Route path="store/:id/issued-items" element={<IssuedItems />} />
             <Route path="store/:id/expired-items" element={<ExpiredItems />} />
             <Route path="store/:id/pending-requests" element={<PendingRequests />} />
-            <Route path="lab/:id" element={<Lab />} />
+            {/* <Route path="lab/:id" element={<Lab />} /> */}
             <Route path="maternity/registration/:id" element={<MaternityRegistration />} />
             <Route path="admissions/all" element={<InstitutionAdmissions />} />
             <Route path="departments/time-table" element={<TimeTable />} />
             <Route path="records" element={<AllPatientsRecords />} />
+
+
+            {/* LAB ROUTES */}
+            <Route path="lab/templates/create" element={<CreateTemplatePage />} />
+            <Route path="lab/templates/manage" element={<TemplateManagementPage />} />
+            <Route path="lab/tests/pending" element={<LabTestsPendingPage />} />
 
 
 

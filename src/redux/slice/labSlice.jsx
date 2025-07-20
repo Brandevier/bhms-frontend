@@ -1,265 +1,247 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import apiClient from "../middleware/apiClient";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiClient from '../middleware/apiClient';
 
 // Async Thunks
-export const requestLab = createAsyncThunk(
-  "lab/requestLab",
-  async (labData, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    const user = auth.admin || auth.user;
-
+export const createTemplate = createAsyncThunk(
+  'lab/createTemplate',
+  async (templateData, { rejectWithValue,getState }) => {
+    const user = getState().auth.user || getState().auth.admin
     try {
-      const response = await apiClient.post(`/lab/request`, {
-        ...labData,
-        doctor_id: user.id,
-        institution_id: user.institution.id,
+      const response = await apiClient.post('/lab/templates', {
+        ...templateData,
+        createdBy:user.id
       });
       return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to request lab");
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to create template' });
     }
   }
 );
 
-export const acceptLabRequest = createAsyncThunk(
-  "lab/acceptLabRequest",
-  async ({ labResultId }, { rejectWithValue, getState }) => {
-    const { user } = getState().auth;
-
+export const fetchTemplates = createAsyncThunk(
+  'lab/fetchTemplates',
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/lab/accept`, {
-        labResultId,
-        lab_technician_id: user.id,
-        institution_id: user.institution.id,
+      const response = await apiClient.get('/lab/templates');
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to fetch templates' });
+    }
+  }
+);
+
+export const updateTemplate = createAsyncThunk(
+  'lab/updateTemplate',
+  async ({ id, templateData }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/lab/templates/${id}`, templateData);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to update template' });
+    }
+  }
+);
+
+export const deleteTemplate = createAsyncThunk(
+  'lab/deleteTemplate',
+  async (id, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/lab/templates/${id}`);
+      return id;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to delete template' });
+    }
+  }
+);
+
+export const createTestResult = createAsyncThunk(
+  'lab/createTestResult',
+  async (resultData, { rejectWithValue,getState }) => {
+    const user = getState().auth.user || getState().auth.admin;
+    try {
+      const response = await apiClient.post('/lab/results', {
+        ...resultData,
+        user: user.id
       });
+      if (!response.data) {
+        throw new Error('Invalid response format');
+      }
+      console.log(response.data)
       return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to accept lab request");
+    } catch (err) {
+      console.log(err)
+      return rejectWithValue(err.response || { message: 'Failed to create test result' });
     }
   }
 );
 
-export const uploadLabResult = createAsyncThunk(
-  "lab/uploadLabResult",
-  async ({ labResultId, testImage, results_comment }, { rejectWithValue, getState }) => {
-    const { user } = getState().auth;
+export const fetchTestResults = createAsyncThunk(
+  'lab/fetchTestResults',
+  async (filters = {}, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      formData.append("labResultId", labResultId);
-      formData.append("testImage", testImage);
-      formData.append("results_comment", results_comment);
-      formData.append("institution_id", user.institution.id);
-
-      const response = await apiClient.put(`/lab/institution/uploadResults`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await apiClient.get('/lab/results', { params: filters });
+      if (!Array.isArray(response.data?.results)) {
+        throw new Error('Invalid response format');
+      }
       return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to upload lab result");
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to fetch test results' });
     }
   }
 );
 
-export const cancelLabRequest = createAsyncThunk(
-  "lab/cancelLabRequest",
-  async (labData, { rejectWithValue }) => {
+export const fetchResultById = createAsyncThunk(
+  'lab/fetchResultById',
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.patch(`/cancel`, labData);
+      const response = await apiClient.get(`/lab/results/${id}`);
       return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to cancel lab request");
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to fetch test result' });
     }
   }
 );
 
-export const fetchPatientLabResults = createAsyncThunk(
-  "lab/fetchPatientLabResults",
-  async ({ patient_id, page = 1 }, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    const user = auth.admin || auth.user;
-    try {
-      const response = await apiClient.get("/lab/labrequests/institution/lab-request", {
-        params: {
-          patient_id,
-          institution_id: user.institution.id,
-          page,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch lab results");
-    }
+const initialState = {
+  templates: [],
+  results: [],
+  currentResult: null,
+  loading: false,
+  error: null,
+  success: false,
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 0
   }
-);
+};
 
-export const fetchLabTest = createAsyncThunk(
-  "lab/fetchLabTest",
-  async (_, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    const user = auth.admin || auth.user;
-    try {
-      const response = await apiClient.get("/lab/test");
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch lab results");
-    }
-  }
-);
-
-export const fetchLabStatistics = createAsyncThunk(
-  "lab/labStatistics",
-  async (_, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    const user = auth.admin || auth.user;
-    try {
-      const response = await apiClient.get("/lab/statistics", {
-        params: {
-          institution_id: user.institution.id,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch lab results");
-    }
-  }
-);
-
-export const fetchLabResultsByStatus = createAsyncThunk(
-  "lab/fetchLabResultsByStatus",
-  async ({ status, page = 1 }, { rejectWithValue, getState }) => {
-    const { auth } = getState();
-    const user = auth.admin || auth.user;
-    try {
-      const response = await apiClient.get(`/lab/lab-results/by-status`, {
-        params: {
-          institution_id: user.institution.id,
-          status,
-          page,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch lab results by status");
-    }
-  }
-);
-
-// Slice
 const labSlice = createSlice({
-  name: "lab",
-  initialState: {
-    labResults: [],
-    tests: [],
-    statistics: [],
-    loading: false,
-    createLabLoading: false,
-    approveLoading: false,
-    uploadLoading: false,
-    error: null,
-
-    // Pagination fields
-    currentPage: 1,
-    totalPages: 1,
-    totalItems: 0,
+  name: 'lab',
+  initialState,
+  reducers: {
+    resetLabState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.success = false;
+    },
+    clearCurrentResult: (state) => {
+      state.currentResult = null;
+    },
+    setPagination: (state, action) => {
+      state.pagination = action.payload;
+    }
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(requestLab.pending, (state) => {
-        state.createLabLoading = true;
+      // Template CRUD
+      .addCase(createTemplate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
       })
-      .addCase(requestLab.fulfilled, (state, action) => {
-        state.createLabLoading = false;
-        state.labResults.push(action.payload.labResult);
+      .addCase(createTemplate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.templates.unshift(action.payload.template);
+        state.success = true;
       })
-      .addCase(requestLab.rejected, (state, action) => {
-        state.createLabLoading = false;
-        state.error = action.payload;
+      .addCase(createTemplate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message;
       })
-      .addCase(acceptLabRequest.pending, (state) => {
-        state.approveLoading = true;
+
+      .addCase(fetchTemplates.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(acceptLabRequest.fulfilled, (state, action) => {
-        state.approveLoading = false;
-        state.labResults = state.labResults.map((lab) =>
-          lab.id === action.payload.labResult.id ? action.payload.labResult : lab
+      .addCase(fetchTemplates.fulfilled, (state, action) => {
+        state.loading = false;
+        state.templates = action.payload.data.templates || [];
+      })
+      .addCase(fetchTemplates.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message;
+      })
+
+      .addCase(updateTemplate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(updateTemplate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.templates = state.templates.map(template =>
+          template.id === action.payload.template.id ? action.payload.template : template
         );
+        state.success = true;
       })
-      .addCase(acceptLabRequest.rejected, (state, action) => {
-        state.approveLoading = false;
-        state.error = action.payload;
+      .addCase(updateTemplate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message;
       })
-      .addCase(uploadLabResult.pending, (state) => {
-        state.uploadLoading = true;
-      })
-      .addCase(uploadLabResult.fulfilled, (state, action) => {
-        state.uploadLoading = false;
-        state.labResults = state.labResults.map((lab) =>
-          lab.id === action.payload.labResult.id ? action.payload.labResult : lab
-        );
-      })
-      .addCase(uploadLabResult.rejected, (state, action) => {
-        state.uploadLoading = false;
-        state.error = action.payload;
-      })
-      .addCase(cancelLabRequest.fulfilled, (state, action) => {
-        state.labResults = state.labResults.map((lab) =>
-          lab.id === action.payload.labResult.id ? action.payload.labResult : lab
-        );
-      })
-      .addCase(fetchPatientLabResults.pending, (state) => {
+
+      .addCase(deleteTemplate.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.success = false;
       })
-      .addCase(fetchPatientLabResults.fulfilled, (state, action) => {
+      .addCase(deleteTemplate.fulfilled, (state, action) => {
         state.loading = false;
-        state.labResults = action.payload.labResults;
-        state.currentPage = action.payload.currentPage;
-        state.totalPages = action.payload.totalPages;
-        state.totalItems = action.payload.totalItems;
+        state.templates = state.templates.filter(template => template.id !== action.payload);
+        state.success = true;
       })
-      .addCase(fetchPatientLabResults.rejected, (state, action) => {
+      .addCase(deleteTemplate.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload?.message;
       })
-      .addCase(fetchLabTest.pending, (state) => {
+
+      // Test Results
+      .addCase(createTestResult.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.success = false;
       })
-      .addCase(fetchLabTest.fulfilled, (state, action) => {
+      .addCase(createTestResult.fulfilled, (state, action) => {
         state.loading = false;
-        state.tests = action.payload;
+        state.results.unshift(action.payload.result);
+        state.success = true;
       })
-      .addCase(fetchLabTest.rejected, (state, action) => {
+      .addCase(createTestResult.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload?.message;
       })
-      .addCase(fetchLabResultsByStatus.pending, (state) => {
+
+      .addCase(fetchTestResults.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(fetchLabResultsByStatus.fulfilled, (state, action) => {
+      .addCase(fetchTestResults.fulfilled, (state, action) => {
         state.loading = false;
-        state.labResults = action.payload.labResults;
-        state.currentPage = action.payload.currentPage;
-        state.totalPages = action.payload.totalPages;
-        state.totalItems = action.payload.totalItems;
+        state.results = action.payload.results || [];
+        if (action.payload.pagination) {
+          state.pagination = action.payload.pagination;
+        }
       })
-      .addCase(fetchLabResultsByStatus.rejected, (state, action) => {
+      .addCase(fetchTestResults.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload?.message;
       })
-      .addCase(fetchLabStatistics.pending, (state) => {
+
+      .addCase(fetchResultById.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(fetchLabStatistics.fulfilled, (state, action) => {
+      .addCase(fetchResultById.fulfilled, (state, action) => {
         state.loading = false;
-        state.statistics = action.payload;
+        state.currentResult = action.payload.result;
       })
-      .addCase(fetchLabStatistics.rejected, (state, action) => {
+      .addCase(fetchResultById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload?.message;
       });
-  },
+  }
 });
+
+export const { resetLabState, clearCurrentResult, setPagination } = labSlice.actions;
 
 export default labSlice.reducer;

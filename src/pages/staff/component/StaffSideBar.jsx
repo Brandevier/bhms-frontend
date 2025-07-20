@@ -35,7 +35,9 @@ import {
   MessageOutlined,
   ToolOutlined,
   NodeIndexOutlined,
-  SyncOutlined
+  SyncOutlined,
+  FormOutlined,
+  SettingOutlined
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 
@@ -86,9 +88,112 @@ const StaffSideBar = () => {
       { key: "pharmacy-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
     ],
     "Lab": [
-      { key: "lab-3", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
-      { key: "lab-4", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
-      { key: "lab-5", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
+      {
+        key: "lab-1",
+        label: "Test Templates",
+        icon: <FormOutlined />,
+        children: [
+          {
+            key: "lab-1-1",
+            label: "Create Template",
+            path: "/shared/lab/templates/create"
+          },
+          {
+            key: "lab-1-2",
+            label: "Manage Templates",
+            path: "/shared/lab/templates/manage"
+          },
+          {
+            key: "lab-1-3",
+            label: "Template Categories",
+            path: "/lab/templates/categories"
+          }
+        ]
+      },
+      {
+        key: "lab-2",
+        label: "Test Results",
+        icon: <ExperimentOutlined />,
+        children: [
+          {
+            key: "lab-2-1",
+            label: "Pending Test",
+            path: "/shared/lab/tests/pending"
+          },
+          {
+            key: "lab-2-2",
+            label: "Results History",
+            path: "/lab/results"
+          },
+          {
+            key: "lab-2-3",
+            label: "Pending Verification",
+            path: "/lab/results/pending"
+          }
+        ]
+      },
+      {
+        key: "lab-3",
+        label: "Message",
+        icon: <WechatOutlined />,
+        path: `/shared/chat`
+      },
+      {
+        key: "lab-4",
+        label: "Stores",
+        icon: <ShopOutlined />,
+        path: "/shared/departments/store"
+      },
+      {
+        key: "lab-5",
+        label: "Time Table",
+        icon: <CalendarOutlined />,
+        path: "/shared/departments/time-table"
+      },
+      {
+        key: "lab-6",
+        label: "Reports",
+        icon: <FileTextOutlined />,
+        children: [
+          {
+            key: "lab-6-1",
+            label: "Test Volume",
+            path: "/lab/reports/volume"
+          },
+          {
+            key: "lab-6-2",
+            label: "Turnaround Time",
+            path: "/lab/reports/turnaround"
+          },
+          {
+            key: "lab-6-3",
+            label: "Custom Reports",
+            path: "/lab/reports/custom"
+          }
+        ]
+      },
+      {
+        key: "lab-7",
+        label: "Settings",
+        icon: <SettingOutlined />,
+        children: [
+          {
+            key: "lab-7-1",
+            label: "Reference Ranges",
+            path: "/lab/settings/reference-ranges"
+          },
+          {
+            key: "lab-7-2",
+            label: "Workflow Config",
+            path: "/lab/settings/workflow"
+          },
+          {
+            key: "lab-7-3",
+            label: "Integration",
+            path: "/lab/settings/integration"
+          }
+        ]
+      }
     ],
     "Records": [
       { key: "records-2", label: "All Patients", icon: <UserSwitchOutlined />, path: "/shared/records" },
@@ -317,18 +422,41 @@ const StaffSideBar = () => {
         </div>
 
         {/* Menu Items */}
+        {/* Menu Items */}
         <div className="flex-1 overflow-y-auto">
-          <Menu mode="vertical" defaultSelectedKeys={["dashboard"]} style={{ background: "white", borderRight: "none" }}>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={["dashboard"]}
+            defaultOpenKeys={departmentMenuItems.filter(item => item.children).map(item => item.key)}
+            style={{ background: "white", borderRight: "none" }}
+          >
             <Menu.Item key="dashboard" icon={<DashboardOutlined style={{ color: "#475569" }} />}>
               <Link to="/shared/departments" className="text-gray-800">Dashboard</Link>
             </Menu.Item>
 
             {departmentMenuItems.length > 0 ? (
-              departmentMenuItems.map((item) => (
-                <Menu.Item key={item.key} icon={item.icon}>
-                  <Link to={item.path} className="text-gray-800">{item.label}</Link>
-                </Menu.Item>
-              ))
+              departmentMenuItems.map((item) => {
+                if (item.children) {
+                  return (
+                    <Menu.SubMenu
+                      key={item.key}
+                      icon={item.icon}
+                      title={item.label}
+                    >
+                      {item.children.map(child => (
+                        <Menu.Item key={child.key}>
+                          <Link to={child.path} className="text-gray-800">{child.label}</Link>
+                        </Menu.Item>
+                      ))}
+                    </Menu.SubMenu>
+                  );
+                }
+                return (
+                  <Menu.Item key={item.key} icon={item.icon}>
+                    <Link to={item.path} className="text-gray-800">{item.label}</Link>
+                  </Menu.Item>
+                );
+              })
             ) : (
               <Menu.Item key="unknown" disabled>
                 No department assigned

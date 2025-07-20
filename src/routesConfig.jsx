@@ -14,7 +14,6 @@ import StaffDetails from "./pages/admin/StaffDetails";
 import PatientRecords from "./pages/departments/opd/patientRecords";
 import PatientLayout from "./layout/PatientLayout";
 import Records from "./pages/departments/records/Records";
-import Lab from "./pages/departments/lab/Lab";
 import PuzzleAuthentication from "./pages/auth/PuzzleAuthentication";
 import Service from "./pages/admin/Service";
 import Store from "./pages/departments/store/Store";
@@ -59,7 +58,6 @@ export {
   PatientLayout,
   InstitutionAdmissions,
   Records,
-  Lab,
   PuzzleAuthentication,
   Service,
   Store,

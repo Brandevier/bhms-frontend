@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { createVitalSignsRecord } from "../redux/slice/vitalSignsSlice";
 import { useParams } from 'react-router-dom';
 import RequestLabDialog from "../modal/RequestLabDialog";
-import { requestLab } from "../redux/slice/labSlice";
 import PrescriptionModal from "../modal/PrescriptionModal";
 import CreateProcedureModal from "../modal/CreateProcedureModal";
 import { createPrescription } from "../redux/slice/prescriptionSlice";
@@ -31,10 +30,10 @@ import { addDiagnosis } from "../redux/slice/diagnosisSlice";
 import { admitPatient } from "../redux/slice/admissionSlice";
 import DischargePatientModal from "../modal/TransferPatientModal";
 import { fetchAllDiagnoses } from "../redux/slice/icd10DdiangosisSlice";
+import { createTestResult } from "../redux/slice/labSlice";
 
 
-
-const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, lab, patient_department }) => {
+const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, patient_department,lab }) => {
   const [vitalModalVisible, setVitalModalVisible] = useState(false);
   const [diagnosisModalVisible, setDiagnosisModalVisible] = useState(false);
   const [labModalVisible, setLabModalVisible] = useState(false);
@@ -43,7 +42,6 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const [admitModalVisible, setAdmitModalVisible] = useState(false);
   const [transferModal, setTransferModal] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const { createLabLoading, error } = useSelector((state) => state.lab);
   const dispatch = useDispatch()
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
@@ -88,19 +86,17 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const handleLabSubmit = (data) => {
     const labData = {
       ...data,
-      patient_id: patient_id,
-      department_id: patient_department
+      visit_id: patient_id,
     };
 
-    dispatch(requestLab(labData)).unwrap()
-      .then((res) => {
-        message.success("Lab request submitted");
-        handleGeneralSubmit();
-        setLabModalVisible(false);
-      })
-      .catch(() => {
-        message.error("Lab request failed");
-      });
+    console.log(labData);
+
+    dispatch(createTestResult(labData)).unwrap().then((res) => {
+      message.success('Lab request created successfully');
+      handleGeneralSubmit();
+      setLabModalVisible(false);
+    })
+   
   };
 
   const handlePrescriptionSubmit = (data) => {
@@ -294,9 +290,8 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
       <RequestLabDialog
         visible={labModalVisible}
         onClose={() => setLabModalVisible(false)}
-        loading={createLabLoading}
         onSubmit={handleLabSubmit}
-        tests={lab}
+        templates={lab}
       />
       <PrescriptionModal
         visible={prescriptionModalVisible}
