@@ -29,7 +29,7 @@ import { fetchTemplates,deleteTemplate } from '../../../../redux/slice/labSlice'
 const { Title, Text } = Typography;
 const { Column } = Table;
 import { useDispatch, useSelector } from 'react-redux';
-
+import moment from 'moment';
 
 const TemplateManagementPage = () => {
  const { templates,loading } = useSelector((state) => state.lab);
@@ -205,7 +205,7 @@ const TemplateManagementPage = () => {
             title="Last Updated" 
             dataIndex="updatedAt" 
             key="updatedAt" 
-            render={date => new Date(date).toLocaleDateString()}
+            render={date => moment(date).format('LLLL')}
           />
           <Column
             title="Actions"

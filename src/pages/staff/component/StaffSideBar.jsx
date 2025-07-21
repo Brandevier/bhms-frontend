@@ -90,6 +90,28 @@ const StaffSideBar = () => {
     "Lab": [
       {
         key: "lab-1",
+        label: "Test Results",
+        icon: <ExperimentOutlined />,
+        children: [
+          {
+            key: "lab-2-1",
+            label: "Pending Test",
+            path: "/shared/lab/tests/pending"
+          },
+          {
+            key: "lab-2-2",
+            label: "Lab Ranges",
+            path: "/shared/lab/ranges"
+          },
+          {
+            key: "lab-2-3",
+            label: "Statistics",
+            path: "/shared/lab/statistics"
+          }
+        ]
+      },
+      {
+        key: "lab-2",
         label: "Test Templates",
         icon: <FormOutlined />,
         children: [
@@ -110,28 +132,7 @@ const StaffSideBar = () => {
           }
         ]
       },
-      {
-        key: "lab-2",
-        label: "Test Results",
-        icon: <ExperimentOutlined />,
-        children: [
-          {
-            key: "lab-2-1",
-            label: "Pending Test",
-            path: "/shared/lab/tests/pending"
-          },
-          {
-            key: "lab-2-2",
-            label: "Results History",
-            path: "/lab/results"
-          },
-          {
-            key: "lab-2-3",
-            label: "Pending Verification",
-            path: "/lab/results/pending"
-          }
-        ]
-      },
+      
       {
         key: "lab-3",
         label: "Message",
@@ -158,17 +159,17 @@ const StaffSideBar = () => {
           {
             key: "lab-6-1",
             label: "Test Volume",
-            path: "/lab/reports/volume"
+            path: "#"
           },
           {
             key: "lab-6-2",
             label: "Turnaround Time",
-            path: "/lab/reports/turnaround"
+            path: "#"
           },
           {
             key: "lab-6-3",
             label: "Custom Reports",
-            path: "/lab/reports/custom"
+            path: "#"
           }
         ]
       },
@@ -180,17 +181,17 @@ const StaffSideBar = () => {
           {
             key: "lab-7-1",
             label: "Reference Ranges",
-            path: "/lab/settings/reference-ranges"
+            path: "#"
           },
           {
             key: "lab-7-2",
             label: "Workflow Config",
-            path: "/lab/settings/workflow"
+            path: "#"
           },
           {
             key: "lab-7-3",
             label: "Integration",
-            path: "/lab/settings/integration"
+            path: "#"
           }
         ]
       }

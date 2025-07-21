@@ -70,8 +70,8 @@ import AllPatientsRecords from "./pages/departments/records/AllPatientsRecords";
 import CreateTemplatePage from "./pages/departments/lab/form_templates/CreateTemplatePage";
 import TemplateManagementPage from "./pages/departments/lab/form_templates/TemplateManagementPage";
 import LabTestsPendingPage from "./pages/departments/lab/form_templates/LabTestsPendingPage";
-
-
+import LabRanges from "./pages/departments/lab/ranges/LabRanges";
+import LabStats from "./pages/departments/lab/form_templates/LabStats";
 
 
 const App = () => {
@@ -143,6 +143,8 @@ const App = () => {
             <Route path="lab/templates/create" element={<CreateTemplatePage />} />
             <Route path="lab/templates/manage" element={<TemplateManagementPage />} />
             <Route path="lab/tests/pending" element={<LabTestsPendingPage />} />
+            <Route path="lab/ranges" element={<LabRanges />} />
+            <Route path="lab/statistics" element={<LabStats />} />
 
 
 
