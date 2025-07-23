@@ -1,350 +1,264 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import apiClient from "../middleware/apiClient";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import apiClient from '../middleware/apiClient';
 
 
-
-// 🔹 Async Thunk for Searching Prescriptions
-export const searchPrescription = createAsyncThunk(
-  "prescriptions/search",
-  async (query, { rejectWithValue }) => {
-    try {
-      const response = await fetch("/medi/drugs.json");
-      const drugs = await response.json(); // Changed from parsing CSV to JSON
-      
-      const filteredDrugs = drugs.filter(drug => {
-        const searchQuery = query.toLowerCase();
-        return (
-          drug["Drug Name"]?.toLowerCase().includes(searchQuery) ||
-          drug.Form?.toLowerCase().includes(searchQuery) ||
-          drug["Administration Cautions"]?.toLowerCase().includes(searchQuery)
-        );
-      });
-      
-      return filteredDrugs;
-    } catch (error) {
-      return rejectWithValue("Failed to load drug data");
-    }
-  }
-);
-
+// Async Thunks
 export const createPrescription = createAsyncThunk(
-  "prescriptions/create",
-  async (prescriptionData, { rejectWithValue, getState }) => {
-    const { auth } = getState()
-    const { user } = auth
+  'prescriptions/create',
+  async (prescriptionData, { rejectWithValue,getState }) => {
+    const { user } = getState().auth; // Get the current user from the auth state
     try {
-      const response = await apiClient.post(`/prescriptions/create`, {
+      const response = await apiClient.post('/prescriptions', {
         ...prescriptionData,
-        institution_id: user.institution.id,
-        prescribed_by: user.id
+        institution_id: user.institution.id, // Include institution_id from the user
+        department_id: user.department.id, // Include department_id from the user
+        doctor_id:user.id // Include doctor_id from the user
       });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to create prescription");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// 🔹 Async Thunk for Approving a Prescription
-export const approvePrescription = createAsyncThunk(
-  "prescriptions/approve",
-  async ({ prescriptionId, patientId }, { rejectWithValue }) => {
+export const fetchPrescriptions = createAsyncThunk(
+  'prescriptions/fetchAll',
+  async (params = {}, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/prescriptions/approve`, {
-        prescriptionId,
-        patientId,
-      });
+      const response = await apiClient.get('/prescriptions', { params });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to approve prescription");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// 🔹 Async Thunk for Issuing a Prescription
-export const issuePrescription = createAsyncThunk(
-  "prescriptions/issue",
-  async (prescriptionId, { rejectWithValue }) => {
+export const fetchPrescriptionById = createAsyncThunk(
+  'prescriptions/fetchById',
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/prescriptions/issue`);
+      const response = await apiClient.get(`/prescriptions/${id}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to issue prescription");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// 🔹 Async Thunk for Requesting a Refill
-export const requestRefill = createAsyncThunk(
-  "prescriptions/requestRefill",
-  async (prescriptionId, { rejectWithValue }) => {
+export const updatePrescription = createAsyncThunk(
+  'prescriptions/update',
+  async ({ id, updates }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`/prescriptions/request-refill`);
+      const response = await apiClient.put(`/prescriptions/${id}`, updates);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to request refill");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
-// 🔹 Async Thunk for Approving a Refill
-export const approveRefill = createAsyncThunk(
-  "prescriptions/approveRefill",
-  async (prescriptionId, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post(`/prescriptions/approve-refill`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to approve refill");
-    }
-  }
-);
-
-// 🔹 Async Thunk for Issuing a Refill
-export const issueRefill = createAsyncThunk(
-  "prescriptions/issueRefill",
-  async (prescriptionId, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post(`/prescriptions/issue-refill`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to issue refill");
-    }
-  }
-);
-
-// 🔹 Async Thunk for Fetching Prescriptions by Institution
-export const fetchPrescriptionsByInstitution = createAsyncThunk(
-  "prescriptions/fetchByInstitution",
-  async (_, { rejectWithValue,getState }) => {
-
-    const { auth } = getState()
-    const user = auth.user || auth.admin
-
-
-    try {
-      const response = await apiClient.get(`/prescriptions/institution/`,{
-        params:{
-          institutionId:user.institution.id
-        }
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch prescriptions");
-    }
-  }
-);
-
-// 🔹 Async Thunk for Fetching Prescriptions by Institution and Patient
-export const fetchPrescriptionsByInstitutionAndPatient = createAsyncThunk(
-  "prescriptions/fetchByInstitutionAndPatient",
-  async ({ institutionId, patientId }, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.get("/patient/prescriptions/", {
-        params: {
-          institutionId,
-          patientId
-        }
-      });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch prescriptions");
-    }
-  }
-);
-
-// Delete Prescription
 
 export const deletePrescription = createAsyncThunk(
-  "prescriptions/delete",
-  async (prescriptionId, { rejectWithValue }) => {
+  'prescriptions/delete',
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.delete(`/prescriptions/${prescriptionId}`);
-      return response.data;
+      await apiClient.delete(`/prescriptions/${id}`);
+      return id;
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to delete prescription");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
+);
 
-)
+export const fetchPrescriptionsByVisit = createAsyncThunk(
+  'prescriptions/fetchByVisit',
+  async (visitId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/prescriptions/visit/${visitId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
+export const updatePrescriptionStatus = createAsyncThunk(
+  'prescriptions/updateStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/prescriptions/${id}/status`, { status });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
+export const fetchPharmacyDashboardStats = createAsyncThunk(
+  'prescriptions/fetchDashboardStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/prescriptions/dashboard/stats');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
+const initialState = {
+  prescriptions: [],
+  currentPrescription: null,
+  dashboardStats: null,
+  loading: false,
+  error: null,
+  pagination: {
+    page: 1,
+    pages: 1,
+    total: 0,
+    limit: 10
+  }
+};
 
-
-// 🔹 Prescription Slice
 const prescriptionSlice = createSlice({
-  name: "prescriptions",
-  initialState: {
-    searchResults: [],
-    status: "idle",
-    prescriptions: [],
-    error: null,
+  name: 'prescriptions',
+  initialState,
+  reducers: {
+    clearCurrentPrescription(state) {
+      state.currentPrescription = null;
+    },
+    resetPrescriptionError(state) {
+      state.error = null;
+    }
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(searchPrescription.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(searchPrescription.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.searchResults = action.payload;
-      })
-      .addCase(searchPrescription.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      }).addCase(createPrescription.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
+      // Create Prescription
+      .addCase(createPrescription.pending, (state) => {
+        state.loading = true;
       })
       .addCase(createPrescription.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.prescriptions.push(action.payload);
+        state.loading = false;
+        state.prescriptions.unshift(action.payload);
       })
       .addCase(createPrescription.rejected, (state, action) => {
-        state.status = "failed";
+        state.loading = false;
         state.error = action.payload;
       })
-
-      // Approve Prescription
-      .addCase(approvePrescription.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
+      
+      // Fetch All Prescriptions
+      .addCase(fetchPrescriptions.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(approvePrescription.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const index = state.prescriptions.findIndex(
-          (p) => p.id === action.payload.id
-        );
+      .addCase(fetchPrescriptions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.prescriptions = action.payload.data;
+        state.pagination = {
+          page: action.payload.page,
+          pages: action.payload.pages,
+          total: action.payload.total,
+          limit: action.payload.limit
+        };
+      })
+      .addCase(fetchPrescriptions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Fetch Prescription by ID
+      .addCase(fetchPrescriptionById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPrescriptionById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentPrescription = action.payload;
+      })
+      .addCase(fetchPrescriptionById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Update Prescription
+      .addCase(updatePrescription.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePrescription.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.prescriptions.findIndex(p => p.id === action.payload.id);
         if (index !== -1) {
           state.prescriptions[index] = action.payload;
         }
-      })
-      .addCase(approvePrescription.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Issue Prescription
-      .addCase(issuePrescription.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(issuePrescription.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const index = state.prescriptions.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.prescriptions[index] = action.payload;
+        if (state.currentPrescription?.id === action.payload.id) {
+          state.currentPrescription = action.payload;
         }
       })
-      .addCase(issuePrescription.rejected, (state, action) => {
-        state.status = "failed";
+      .addCase(updatePrescription.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       })
-
-      // Request Refill
-      .addCase(requestRefill.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(requestRefill.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const index = state.prescriptions.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.prescriptions[index] = action.payload;
-        }
-      })
-      .addCase(requestRefill.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Approve Refill
-      .addCase(approveRefill.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(approveRefill.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const index = state.prescriptions.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.prescriptions[index] = action.payload;
-        }
-      })
-      .addCase(approveRefill.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Issue Refill
-      .addCase(issueRefill.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(issueRefill.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const index = state.prescriptions.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.prescriptions[index] = action.payload;
-        }
-      })
-      .addCase(issueRefill.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Fetch Prescriptions by Institution
-      .addCase(fetchPrescriptionsByInstitution.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(fetchPrescriptionsByInstitution.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.prescriptions = action.payload;
-      })
-      .addCase(fetchPrescriptionsByInstitution.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Fetch Prescriptions by Institution and Patient
-      .addCase(fetchPrescriptionsByInstitutionAndPatient.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(fetchPrescriptionsByInstitutionAndPatient.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.prescriptions = action.payload;
-      })
-      .addCase(fetchPrescriptionsByInstitutionAndPatient.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      }).addCase(deletePrescription.pending, (state, action) => {
-        state.status = "loading";
-        state.error = null;
+      
+      // Delete Prescription
+      .addCase(deletePrescription.pending, (state) => {
+        state.loading = true;
       })
       .addCase(deletePrescription.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.prescriptions = state.prescriptions.filter(
-          (p) => p.id !== action.payload.id
-        );
+        state.loading = false;
+        state.prescriptions = state.prescriptions.filter(p => p.id !== action.payload);
+        if (state.currentPrescription?.id === action.payload) {
+          state.currentPrescription = null;
+        }
       })
       .addCase(deletePrescription.rejected, (state, action) => {
-        state.status = "failed";
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Fetch Prescriptions by Visit
+      .addCase(fetchPrescriptionsByVisit.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPrescriptionsByVisit.fulfilled, (state, action) => {
+        state.loading = false;
+        state.prescriptions = action.payload;
+      })
+      .addCase(fetchPrescriptionsByVisit.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Update Prescription Status
+      .addCase(updatePrescriptionStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePrescriptionStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.prescriptions.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+          state.prescriptions[index] = action.payload;
+        }
+        if (state.currentPrescription?.id === action.payload.id) {
+          state.currentPrescription = action.payload;
+        }
+      })
+      .addCase(updatePrescriptionStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Fetch Dashboard Stats
+      .addCase(fetchPharmacyDashboardStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPharmacyDashboardStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.dashboardStats = action.payload.data;
+      })
+      .addCase(fetchPharmacyDashboardStats.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
-  },
+  }
 });
+
+export const { clearCurrentPrescription, resetPrescriptionError } = prescriptionSlice.actions;
 
 export default prescriptionSlice.reducer;

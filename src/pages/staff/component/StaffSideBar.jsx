@@ -82,8 +82,8 @@ const StaffSideBar = () => {
       { key: "ANC-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
     ],
     "Pharmacy": [
-      { key: "pharmacy-1", label: "Medicines", icon: <MedicineBoxOutlined />, path: "/pharmacy/medicines" },
-      { key: "pharmacy-2", label: "Prescriptions", icon: <FileTextOutlined />, path: "/pharmacy/prescriptions" },
+      { key: "pharmacy-1", label: "Medicines", icon: <MedicineBoxOutlined />, path: `/shared/claims/${user.department.id}/medications` },
+      { key: "pharmacy-2", label: "Pending Prescriptions", icon: <FileTextOutlined />, path: "/shared/departments/pharmacy/pending" },
       { key: "pharmacy-3", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
       { key: "pharmacy-4", label: "Message", icon: <WechatOutlined />, path: `/shared/chat` },
     ],
@@ -151,50 +151,8 @@ const StaffSideBar = () => {
         icon: <CalendarOutlined />,
         path: "/shared/departments/time-table"
       },
-      {
-        key: "lab-6",
-        label: "Reports",
-        icon: <FileTextOutlined />,
-        children: [
-          {
-            key: "lab-6-1",
-            label: "Test Volume",
-            path: "#"
-          },
-          {
-            key: "lab-6-2",
-            label: "Turnaround Time",
-            path: "#"
-          },
-          {
-            key: "lab-6-3",
-            label: "Custom Reports",
-            path: "#"
-          }
-        ]
-      },
-      {
-        key: "lab-7",
-        label: "Settings",
-        icon: <SettingOutlined />,
-        children: [
-          {
-            key: "lab-7-1",
-            label: "Reference Ranges",
-            path: "#"
-          },
-          {
-            key: "lab-7-2",
-            label: "Workflow Config",
-            path: "#"
-          },
-          {
-            key: "lab-7-3",
-            label: "Integration",
-            path: "#"
-          }
-        ]
-      }
+     
+     
     ],
     "Records": [
       { key: "records-2", label: "All Patients", icon: <UserSwitchOutlined />, path: "/shared/records" },

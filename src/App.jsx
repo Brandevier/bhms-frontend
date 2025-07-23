@@ -72,6 +72,9 @@ import TemplateManagementPage from "./pages/departments/lab/form_templates/Templ
 import LabTestsPendingPage from "./pages/departments/lab/form_templates/LabTestsPendingPage";
 import LabRanges from "./pages/departments/lab/ranges/LabRanges";
 import LabStats from "./pages/departments/lab/form_templates/LabStats";
+import PendingPrescriptions from "./pages/departments/pharmacy/PendingPrescriptions";
+import PrescriptionDetails from "./pages/departments/pharmacy/PrescriptionDetails";
+
 
 
 const App = () => {
@@ -119,7 +122,16 @@ const App = () => {
             <Route path="communication/call-chat" element={<CallComponent />} />
             <Route path="departments/accounts" element={<InstitutionAccounts />} />
             <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
+
+            {/* PHARMACY */}
             <Route path="departments/pharmacy" element={<Pharmacy />} />
+            <Route path="departments/pharmacy/pending" element={<PendingPrescriptions />} />
+            <Route path="departments/pharmacy/prescriptions/:visit_id" element={<PrescriptionDetails />} />
+            
+
+
+
+
             <Route path="departments/:id/shift-schedule" element={<HMSStaffShiftSchedule />} />
             <Route path="departments/:id/stats" element={<DepartmentalStats />} />
             <Route path="opd/:id" element={<PatientRecords />} />

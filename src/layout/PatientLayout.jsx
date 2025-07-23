@@ -20,7 +20,9 @@ import { fetchServices, createPatientInvoice } from "../redux/slice/serviceSlice
 import PatientHistory from "../pages/departments/maternity/components/PatientHistory";
 import Partograph from "../pages/departments/maternity/components/Partograph";
 import { fetchTemplates } from "../redux/slice/labSlice";
+import { fetchMedications,selectAllMedications
 
+ } from "../redux/slice/nhia_medicationsSlice";
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
@@ -29,7 +31,7 @@ const PatientLayout = () => {
   const { notes } = useSelector((state) => state.patientNote);
   const { id } = useParams();
   const { services } = useSelector((state) => state.service);
-  
+   const medications = useSelector(selectAllMedications);
   // Define media queries
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
@@ -40,6 +42,7 @@ const PatientLayout = () => {
       dispatch(getAllStaff());
       dispatch(fetchTemplates());
       dispatch(fetchServices());
+     dispatch(fetchMedications({ page: 1, pageSize: 100 }));
     });
   }, [dispatch, id]);
 
@@ -81,6 +84,7 @@ const PatientLayout = () => {
           patient_id={currentVisit?.id}
           lab={templates}
           patient_department={currentVisit?.patient?.department_id}
+          medication={medications}
         />
       )}
 

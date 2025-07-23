@@ -32,8 +32,7 @@ import DischargePatientModal from "../modal/TransferPatientModal";
 import { fetchAllDiagnoses } from "../redux/slice/icd10DdiangosisSlice";
 import { createTestResult } from "../redux/slice/labSlice";
 
-
-const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, patient_department,lab }) => {
+const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id, patient_department,lab,medication }) => {
   const [vitalModalVisible, setVitalModalVisible] = useState(false);
   const [diagnosisModalVisible, setDiagnosisModalVisible] = useState(false);
   const [labModalVisible, setLabModalVisible] = useState(false);
@@ -49,11 +48,6 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   const { loading } = useSelector((state) => state.records);
 
 
-  // ... keep all your existing handler functions ...
-
-  useEffect(() => {
-    // dispatch(fetchAllDiagnoses());
-  }, [dispatch]);
 
 
   const handleVitalsSubmit = (data) => {
@@ -100,20 +94,20 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
   };
 
   const handlePrescriptionSubmit = (data) => {
-
-    const prescriptionData = {
-      ...data,
-      patient_id: patient_id,
-      department_id: patient_department
-    };
-    dispatch(createPrescription(prescriptionData)).unwrap().then((res) => {
-      message.success('prescription created successfully')
+   const submitData = {
+    ...data,
+    visit_id:patient_id
+   }
+    dispatch(createPrescription(submitData)).unwrap().then((res) => {
+      message.success('Prescription created successfully');
       handleGeneralSubmit();
       setPrescriptionModalVisible(false);
+    })
+    .catch(() => message.error('Failed to create prescription'));
 
-    }).catch((err) => {
-      message.error('Failed to create prescription')
-    });
+
+
+
   };
 
   const handleAddProcedure = (newProcedure) => {
@@ -297,6 +291,7 @@ const PatientProfileHeader = ({ patient_record, handleGeneralSubmit, patient_id,
         visible={prescriptionModalVisible}
         onClose={() => setPrescriptionModalVisible(false)}
         onSave={handlePrescriptionSubmit}
+        medications={medication}
       />
       <CreateProcedureModal
         visible={modalVisible}
