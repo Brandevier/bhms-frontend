@@ -48,7 +48,8 @@ const rootReducer = combineReducers({
   orScheduling: reducers.ORscheduling,
   icd10GDRG: reducers.icd10ToGdrg,
   nhiaMedications: reducers.nhiaMedicationsReducer,
-  icd10:reducers.icd10Codes
+  icd10:reducers.icd10Codes,
+  clinicalIntervention:reducers.interventionSlice
 
 });
 

@@ -63,9 +63,9 @@ const PendingPrescriptions = () => {
             key: 'patient',
             render: (patient) => (
                 <div>
-                    <Text strong>{`${patient.first_name} ${patient.last_name}`}</Text>
+                    <Text strong>{`${patient?.first_name} ${patient?.last_name}`}</Text>
                     <br />
-                    <Text type="secondary">Folder: {patient.folder_number}</Text>
+                    <Text type="secondary">Folder: {patient?.folder_number}</Text>
                 </div>
             ),
         },

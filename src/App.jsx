@@ -74,6 +74,11 @@ import LabRanges from "./pages/departments/lab/ranges/LabRanges";
 import LabStats from "./pages/departments/lab/form_templates/LabStats";
 import PendingPrescriptions from "./pages/departments/pharmacy/PendingPrescriptions";
 import PrescriptionDetails from "./pages/departments/pharmacy/PrescriptionDetails";
+import PrescriptionPatterns from "./pages/departments/pharmacy/PrescriptionPatterns";
+import PatientCounseling from "./pages/departments/pharmacy/PatientCounseling";
+import RejectedPrescriptions from "./pages/departments/pharmacy/RejectedPrescriptions";
+
+
 
 
 
@@ -126,8 +131,11 @@ const App = () => {
             {/* PHARMACY */}
             <Route path="departments/pharmacy" element={<Pharmacy />} />
             <Route path="departments/pharmacy/pending" element={<PendingPrescriptions />} />
+            <Route path="departments/pharmacy/prescriptions/patterns" element={<PrescriptionPatterns />} />
+            <Route path="departments/pharmacy/prescriptions/rejected" element={<RejectedPrescriptions />} />
+            <Route path="departments/pharmacy/counsel" element={<PatientCounseling />} />
             <Route path="departments/pharmacy/prescriptions/:visit_id" element={<PrescriptionDetails />} />
-            
+
 
 
 
@@ -163,19 +171,19 @@ const App = () => {
             {/* THEATRE */}
             <Route path="surgery/scheduling" element={<ORscheduling />} />
             <Route path="surgery/room-status" element={<RoomStatus />} />
-            <Route path= "surgery/resource-allocation" element={<ResourceAllocation/>} />
-            <Route path= "surgery/pre-op" element={<PreOpManagement/>} />
-            <Route path="surgery/intra-op" element={<IntraOpDocumentation/>} />
-            <Route path="surgery/chat" element={<SurgicalChat/>} />
-            <Route path="surgery/post-op" element={<PostOpTracking/>} />
+            <Route path="surgery/resource-allocation" element={<ResourceAllocation />} />
+            <Route path="surgery/pre-op" element={<PreOpManagement />} />
+            <Route path="surgery/intra-op" element={<IntraOpDocumentation />} />
+            <Route path="surgery/chat" element={<SurgicalChat />} />
+            <Route path="surgery/post-op" element={<PostOpTracking />} />
 
             {/* CHATUI   */}
             <Route path="chat" element={<ChatUI />} />
 
             {/* CLAIMS */}
             <Route path="claims/:id/dashboard" element={<ClaimsDashboard />} />
-            <Route path="claims/:id/mappings" element={<ICD10GDRGManager/>} />
-            <Route path="claims/:id/medications" element={<NHIAMedicationsManager/>} />
+            <Route path="claims/:id/mappings" element={<ICD10GDRGManager />} />
+            <Route path="claims/:id/medications" element={<NHIAMedicationsManager />} />
             <Route path="claims/:id/diagnosis" element={<ICD10Diagnosis />} />
 
 
