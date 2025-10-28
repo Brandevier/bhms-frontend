@@ -1,13 +1,18 @@
-// src/components/staff/layout/StaffHeader.js
+// src/components/staff/layout/StaffHeader.js (Updated)
 import React, { useEffect } from "react";
 import { Layout, Dropdown, Avatar, Badge, List, Button, message, Modal, Spin } from "antd";
-import { BellOutlined, UserOutlined, SwapOutlined } from "@ant-design/icons";
+import { BellOutlined, UserOutlined, SwapOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { logout } from "../../../redux/slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useStaffDepartmentActions } from "../../../redux/hooks/useStaffDepartment";
 import { useStaffDepartmentSwitch } from "../../../redux/hooks/useStaffDepartmentSwitch";
+
+// Import video call components
+import VideoCallButton from "./VideoCallButton";
+import VideoCallModal from "./VideoCallModal";
+import { useVideoCall } from "./useVideoCall";
 
 const { Header } = Layout;
 
@@ -22,7 +27,7 @@ const StaffHeader = () => {
     availableDepartments,
     switchDepartment,
     setDepartments,
-    loading,
+    loading: departmentLoading,
     setLoading,
     setError,
     clearError,
@@ -32,6 +37,16 @@ const StaffHeader = () => {
 
   const [departmentModalVisible, setDepartmentModalVisible] = React.useState(false);
 
+  // Video call functionality
+  const {
+    videoModalVisible,
+    pendingCalls,
+    loading: videoLoading,
+    showVideoModal,
+    hideVideoModal,
+    handleStartVideoCall,
+  } = useVideoCall();
+
   // Fetch staff departments when modal opens
   useEffect(() => {
     if (departmentModalVisible && user?.id) {
@@ -40,13 +55,13 @@ const StaffHeader = () => {
     }
   }, [departmentModalVisible, user?.id, fetchStaffDepartments, setLoading]);
 
-  // Update departments when fetched - FIXED: Use departmentType instead of name
+  // Update departments when fetched
   useEffect(() => {
     if (currentStaffDepartments && currentStaffDepartments.length > 0) {
       const departments = currentStaffDepartments.map((item) => ({
         id: item.department_id,
         name: item.department?.name,
-        type: item.department?.departmentType, // ← THIS IS THE KEY FIX
+        type: item.department?.departmentType,
         code: item.department?.department_number,
         access_type: item.access_type,
       }));
@@ -96,7 +111,7 @@ const StaffHeader = () => {
       destroyOnClose
     >
       <div className="h-64 overflow-y-auto border rounded-lg mt-3">
-        {loading ? (
+        {departmentLoading ? (
           <div className="flex justify-center items-center h-full">
             <Spin size="small" /> <span className="ml-2">Loading departments...</span>
           </div>
@@ -202,7 +217,7 @@ const StaffHeader = () => {
             icon={<SwapOutlined />}
             onClick={() => setDepartmentModalVisible(true)}
             className="flex items-center gap-2"
-            loading={loading}
+            loading={departmentLoading}
           >
             {currentDepartment ? (
               <>
@@ -217,9 +232,15 @@ const StaffHeader = () => {
           </Button>
         </div>
 
-        {/* Right: Notifications + Profile */}
+        {/* Right: Video Call + Notifications + Profile */}
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-2 md:gap-4">
+            {/* Video Call Button */}
+            <VideoCallButton 
+              onClick={showVideoModal}
+              pendingCalls={pendingCalls}
+            />
+
             <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
               <Badge count={unreadCount} overflowCount={9}>
                 <BellOutlined className="text-xl cursor-pointer text-gray-700 hover:text-gray-500" />
@@ -247,6 +268,16 @@ const StaffHeader = () => {
       </Header>
 
       {departmentModal}
+
+      {/* Video Call Modal */}
+      <VideoCallModal
+        visible={videoModalVisible}
+        onCancel={hideVideoModal}
+        availableDepartments={availableDepartments}
+        currentUser={user}
+        onStartCall={handleStartVideoCall}
+        loading={videoLoading}
+      />
     </>
   );
 };
