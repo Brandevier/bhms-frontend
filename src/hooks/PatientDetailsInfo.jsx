@@ -44,38 +44,51 @@ const PatientDetailsInfo = ({ patient_record }) => {
   return (
     <>
       {/* Header Card with Edit Button */}
-      <Card
-        style={{ 
-          borderRadius: 12,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          marginBottom: 24,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-        }}
-        bodyStyle={{ padding: '16px 24px' }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <Title level={3} style={{ color: 'white', margin: 0 }}>
-              Patient Profile
-            </Title>
-            <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>
-              Complete patient information and emergency contacts
-            </div>
-          </div>
-          <Button 
-            type="primary" 
-            icon={<EditOutlined />} 
-            onClick={showModal}
-            style={{ 
-              background: 'rgba(255,255,255,0.2)',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: 6
-            }}
-          >
-            Update Information
-          </Button>
-        </div>
-      </Card>
+     <Card
+  style={{ 
+    borderRadius: 12,
+    boxShadow: "0 4px 12px rgba(0, 225, 173, 0.25)",
+    marginBottom: 24,
+    background: 'linear-gradient(135deg, #00E1AD 0%, #00B68A 100%)',
+    border: 'none'
+  }}
+  bodyStyle={{ padding: '16px 24px' }}
+>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div>
+      <Title level={3} style={{ color: '#ffffff', margin: 0 }}>
+        Patient Profile
+      </Title>
+      <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 14 }}>
+        Complete patient information and emergency contacts
+      </div>
+    </div>
+    <Button 
+      type="primary" 
+      icon={<EditOutlined />} 
+      onClick={showModal}
+      style={{ 
+        background: 'rgba(255,255,255,0.15)',
+        border: '1px solid rgba(255,255,255,0.3)',
+        borderRadius: 6,
+        color: '#fff',
+        fontWeight: 500,
+        transition: 'all 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
+    >
+      Update Information
+    </Button>
+  </div>
+</Card>
+
 
       {/* Component Sections */}
       <PatientPersonalInfo patient={patient_record?.patient} />
