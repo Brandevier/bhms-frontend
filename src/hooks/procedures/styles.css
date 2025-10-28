@@ -1,0 +1,15 @@
+.procedure-card {
+  margin-bottom: 16px;
+}
+
+.procedure-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.procedure-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}

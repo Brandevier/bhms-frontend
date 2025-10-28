@@ -1,0 +1,79 @@
+import Homepage from "./pages/landing/Homepage";
+import Login from "./pages/auth/Login";
+import PublicRoutes from "./routes/PublicRoutes";
+import SharedRoutes from "./routes/SharedRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
+import Dashboard from "./pages/admin/Dashbaord";
+import StaffLogin from "./pages/auth/StaffLogin";
+import EmailVerification from "./pages/auth/EmailVerification";
+import PageNotFound from "./pages/404/PageNotFound";
+import StaffList from "./pages/admin/staff_pages/StaffList";
+import DepartmentsList from "./pages/admin/DepartmentsList";
+import CalendarComponent from "./pages/admin/components/CalendarComponent";
+import StaffDetails from "./pages/admin/StaffDetails";
+import PatientRecords from "./pages/departments/opd/patientRecords";
+import PatientLayout from "./layout/PatientLayout";
+import Records from "./pages/departments/records/active_patients/Records";
+import PuzzleAuthentication from "./pages/auth/PuzzleAuthentication";
+import Service from "./pages/admin/Service";
+import Store from "./pages/departments/store/Store";
+import ConsultationDepartment from "./pages/departments/consultation/ConsultationDepartment";
+import RecordsStats from "./pages/departments/records/RecordsStats";
+import StockItems from "./pages/departments/store/stock_items/StockItems";
+import IssuedItems from "./pages/departments/store/IssuedItems";
+import ExpiredItems from "./pages/departments/store/ExpiredItems";
+import DepartmentStore from "./pages/departments/store/department_stores/DepartmentStore";
+import PendingRequests from "./pages/departments/store/PendingRequests";
+import HMSStaffShiftSchedule from "./hooks/HMSStaffShiftSchedule";
+import PatientReport from "./hooks/PatientReport";
+import ChatUI from "./pages/chat/ChatUI";
+import Pharmacy from "./pages/departments/pharmacy/Pharmacy";
+import InstitutionAccounts from "./pages/departments/accounts/Accounts";
+import PatientBillHistory from "./pages/departments/accounts/PatientBillHistory";
+import QrAttendance from "./pages/attendance/QrAttendance";
+import InstitutionAdmissions from "./pages/departments/ward/InstitutionAdmissions";
+import BedManagement from "./pages/admin/components/BedManagement";
+import ANCRegistration from "./pages/departments/maternity/A&C/ANCRegistration";
+
+
+
+
+// Export all imports
+export {
+  Homepage,
+  Login,
+  PublicRoutes,
+  SharedRoutes,
+  AdminRoutes,
+  Dashboard,
+  StaffLogin,
+  EmailVerification,
+  PageNotFound,
+  StaffList,
+  DepartmentsList,
+  CalendarComponent,
+  StaffDetails,
+  PatientRecords,
+  PatientLayout,
+  InstitutionAdmissions,
+  Records,
+  PuzzleAuthentication,
+  Service,
+  Store,
+  ConsultationDepartment,
+  RecordsStats,
+  StockItems,
+  IssuedItems,
+  ExpiredItems,
+  DepartmentStore,
+  PendingRequests,
+  HMSStaffShiftSchedule,
+  ANCRegistration,
+  PatientReport,
+  ChatUI,
+  BedManagement,
+  Pharmacy,
+  InstitutionAccounts,
+  PatientBillHistory,
+  QrAttendance
+};

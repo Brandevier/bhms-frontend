@@ -1,0 +1,14 @@
+/* Add to your CSS file */
+.advanced-search-form .ant-form-item {
+  margin-bottom: 12px;
+}
+
+.advanced-search-form .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+.advanced-search-form .ant-select,
+.advanced-search-form .ant-input,
+.advanced-search-form .ant-picker {
+  width: 100%;
+}

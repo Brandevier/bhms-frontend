@@ -1,0 +1,47 @@
+.minor-procedure-page {
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.medication-search {
+  margin-bottom: 20px;
+}
+
+.medication-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.medication-display {
+  margin: 16px 0;
+}
+
+.payment-summary {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.procedure-notes .note-item {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+}
+
+.procedure-notes .note-time {
+  font-weight: bold;
+  min-width: 80px;
+}
+
+.add-note {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -1,0 +1,1484 @@
+[
+    {
+      "Drug Name": "halothane",
+      "Dosage": "",
+      "Form": "Inhalation",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoflurane",
+      "Dosage": "",
+      "Form": "Inhalation",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "nitrous oxide",
+      "Dosage": "",
+      "Form": "Inhalation",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "oxygen",
+      "Dosage": "",
+      "Form": "Inhalation (medical gas)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "sevoflurane",
+      "Dosage": "",
+      "Form": "Inhalation",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ketamine",
+      "Dosage": "50 mg/mL (as hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 10 mL vial"
+    },
+    {
+      "Drug Name": "propofol",
+      "Dosage": "10 mg/mL; 20 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "bupivacaine",
+      "Dosage": "0.25%; 0.5% (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "lidocaine",
+      "Dosage": "1%; 2% (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "lidocaine + epinephrine (adrenaline)",
+      "Dosage": "2% (hydrochloride) + epinephrine 1:80 000",
+      "Form": "Dental cartridge",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ephedrine",
+      "Dosage": "30 mg/mL (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule (For use in spinal anaesthesia during delivery, to prevent hypotension)"
+    },
+    {
+      "Drug Name": "atropine",
+      "Dosage": "1 mg (sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "midazolam",
+      "Dosage": "1 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "morphine",
+      "Dosage": "10 mg (sulfate or hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "oxygen",
+      "Dosage": "",
+      "Form": "Inhalation",
+      "Administration Cautions": "For use in the management of hypoxaemia. *No more than 30% oxygen should be used to initiate resuscitation of neonates less than or equal to 32 weeks of gestation."
+    },
+    {
+      "Drug Name": "acetylsalicylic acid",
+      "Dosage": "50 mg to 150 mg",
+      "Form": "Suppository",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ibuprofen",
+      "Dosage": "100 mg/5 mL [c], 200 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": "Not in children less than 3 months."
+    },
+    {
+      "Drug Name": "paracetamol (acetaminophen)",
+      "Dosage": "120 mg/5 mL or 125 mg/5 mL**, 250 mg/5 mL [c]",
+      "Form": "Oral liquid",
+      "Administration Cautions": "**The presence of both 120 mg/5 mL and 125 mg/5 mL strengths on the same market would cause confusion in prescribing and dispensing and should be avoided. *Not recommended for anti-inflammatory use due to lack of proven benefit to that effect."
+    },
+    {
+      "Drug Name": "codeine",
+      "Dosage": "30 mg (phosphate)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "fentanyl",
+      "Dosage": "12 micrograms/hr; 25 micrograms/hr; 50 micrograms/hr; 75 micrograms/hr; 100 micrograms/hr",
+      "Form": "Transdermal patch",
+      "Administration Cautions": "*For the management of cancer pain."
+    },
+    {
+      "Drug Name": "morphine",
+      "Dosage": "20 mg to 200 mg (morphine sulfate)",
+      "Form": "Granules (slow release; to mix with water)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "amitriptyline",
+      "Dosage": "10 mg; 25 mg; 75 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cyclizine",
+      "Dosage": "50 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "dexamethasone",
+      "Dosage": "4 mg/mL (as disodium phosphate salt)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "diazepam",
+      "Dosage": "5 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "docusate sodium",
+      "Dosage": "100 mg",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "fluoxetine",
+      "Dosage": "20 mg (as hydrochloride)",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "haloperidol",
+      "Dosage": "5 mg",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "hyoscine butylbromide",
+      "Dosage": "20 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "hyoscine hydrobromide",
+      "Dosage": "400 micrograms/mL; 600 micrograms/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "lactulose",
+      "Dosage": "3.1 to 3.7 g/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "loperamide",
+      "Dosage": "2 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "metoclopramide",
+      "Dosage": "5 mg/mL (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL ampoule"
+    },
+    {
+      "Drug Name": "midazolam",
+      "Dosage": "1 mg/mL; 5 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ondansetron",
+      "Dosage": "2 mg base/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL ampoule (as hydrochloride)"
+    },
+    {
+      "Drug Name": "senna",
+      "Dosage": "7.5 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "dexamethasone",
+      "Dosage": "4 mg/mL (as disodium phosphate salt)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "epinephrine (adrenaline)",
+      "Dosage": "1 mg/mL (as hydrochloride or hydrogen tartrate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "hydrocortisone",
+      "Dosage": "100 mg (as sodium succinate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "loratadine",
+      "Dosage": "1 mg/mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": "*There may be a role for sedating antihistamines for limited indications (EMLC)."
+    },
+    {
+      "Drug Name": "prednisolone",
+      "Dosage": "5 mg/mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "charcoal, activated",
+      "Dosage": "",
+      "Form": "Powder",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "acetylcysteine",
+      "Dosage": "200 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 10 mL ampoule"
+    },
+    {
+      "Drug Name": "atropine",
+      "Dosage": "1 mg (sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "calcium gluconate",
+      "Dosage": "100 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 10 mL ampoule"
+    },
+    {
+      "Drug Name": "methylthioninium chloride (methylene blue)",
+      "Dosage": "10 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 10 mL ampoule"
+    },
+    {
+      "Drug Name": "naloxone",
+      "Dosage": "400 micrograms (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "penicillamine",
+      "Dosage": "250 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "potassium ferric hexacyanoferrate(II)-2H2O (Prussian blue)",
+      "Dosage": "",
+      "Form": "Powder for oral administration",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "sodium nitrite",
+      "Dosage": "30 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 10 mL ampoule"
+    },
+    {
+      "Drug Name": "sodium thiosulfate",
+      "Dosage": "250 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 50 mL ampoule"
+    },
+    {
+      "Drug Name": "deferoxamine",
+      "Dosage": "500 mg (mesilate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "dimercaprol",
+      "Dosage": "50 mg/mL",
+      "Form": "Injection in oil",
+      "Administration Cautions": "in 2 mL ampoule"
+    },
+    {
+      "Drug Name": "fomepizole",
+      "Dosage": "5 mg/mL (sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 20 mL ampoule or 1 g/mL (base) in 1.5 mL ampoule"
+    },
+    {
+      "Drug Name": "sodium calcium edetate",
+      "Dosage": "200 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 5 mL ampoule"
+    },
+    {
+      "Drug Name": "succimer",
+      "Dosage": "100 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "carbamazepine",
+      "Dosage": "100 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "diazepam",
+      "Dosage": "5 mg/mL",
+      "Form": "Rectal gel",
+      "Administration Cautions": "in 0.5 mL, 2 mL, 4 mL rectal delivery system"
+    },
+    {
+      "Drug Name": "lamotrigine",
+      "Dosage": "25 mg; 50 mg; 100 mg; 200 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*For use as adjunctive therapy for treatment-resistant partial or generalized seizures."
+    },
+    {
+      "Drug Name": "levetiracetam",
+      "Dosage": "100 mg/mL",
+      "Form": "Oral solution",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "lorazepam",
+      "Dosage": "2 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule; 4 mg/mL in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "magnesium sulfate",
+      "Dosage": "0.5 g/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL ampoule (equivalent to 1 g in 2 mL; 50% weight/volume); 0.5 g/mL in 10 mL ampoule (equivalent to 5 g in 10 mL; 50% weight/volume). *For use in eclampsia and severe pre-eclampsia and not for other convulsant disorders."
+    },
+    {
+      "Drug Name": "midazolam",
+      "Dosage": "5 mg/mL",
+      "Form": "Solution for buccomucosal administration",
+      "Administration Cautions": "in 0.5 mL, 1 mL, 1.5 mL, 2 mL pre-filled syringe; 10 mg/mL in 0.25 mL, 0.5 mL, 0.75 mL, 1 mL pre-filled syringe"
+    },
+    {
+      "Drug Name": "phenobarbital",
+      "Dosage": "30 mg/mL or 60 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "200 mg/mL (sodium)"
+    },
+    {
+      "Drug Name": "phenytoin",
+      "Dosage": "50 mg/mL (phenytoin sodium)",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "valproic acid (sodium valproate)",
+      "Dosage": "200 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethosuximide",
+      "Dosage": "250 mg",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "levetiracetam",
+      "Dosage": "500 mg/5mL",
+      "Form": "Concentrate solution for infusion",
+      "Administration Cautions": "in 5 mL vial"
+    },
+    {
+      "Drug Name": "valproic acid (sodium valproate)",
+      "Dosage": "100 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 3 mL, 4 mL, 10 mL ampoule"
+    },
+    {
+      "Drug Name": "cladribine",
+      "Dosage": "10 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "glatiramer acetate",
+      "Dosage": "20 mg/mL; 40 mg/mL",
+      "Form": "Injection (subcutaneous)",
+      "Administration Cautions": "in pre-filled syringe"
+    },
+    {
+      "Drug Name": "rituximab",
+      "Dosage": "500 mg/50 mL",
+      "Form": "Injection (intravenous)",
+      "Administration Cautions": "in 50 mL vial"
+    },
+    {
+      "Drug Name": "biperiden",
+      "Dosage": "5 mg (lactate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 1 mL ampoule"
+    },
+    {
+      "Drug Name": "levodopa + carbidopa",
+      "Dosage": "100 mg + 10 mg; 100 mg + 25 mg; 250 mg + 25 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "albendazole",
+      "Dosage": "400 mg",
+      "Form": "Tablet (chewable, scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ivermectin",
+      "Dosage": "3 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "levamisole",
+      "Dosage": "50 mg; 150 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "mebendazole",
+      "Dosage": "100 mg; 500 mg",
+      "Form": "Tablet (chewable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "niclosamide",
+      "Dosage": "500 mg",
+      "Form": "Tablet (chewable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "praziquantel",
+      "Dosage": "150 mg, 500 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "pyrantel",
+      "Dosage": "250 mg (as embonate or pamoate)",
+      "Form": "Tablet (chewable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "albendazole",
+      "Dosage": "400 mg",
+      "Form": "Tablet (chewable, scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "diethylcarbamazine",
+      "Dosage": "50 mg; 100 mg (dihydrogen citrate)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ivermectin",
+      "Dosage": "3 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "praziquantel",
+      "Dosage": "150 mg, 500 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "triclabendazole",
+      "Dosage": "250 mg",
+      "Form": "Tablet (scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "oxamniquine",
+      "Dosage": "250 mg",
+      "Form": "Capsule",
+      "Administration Cautions": "*For use when praziquantel treatment fails."
+    },
+    {
+      "Drug Name": "albendazole",
+      "Dosage": "200 mg",
+      "Form": "Tablet (chewable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "mebendazole",
+      "Dosage": "100 mg",
+      "Form": "Tablet (chewable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "praziquantel",
+      "Dosage": "150 mg, 500 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "amikacin",
+      "Dosage": "50 mg/mL (as sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "250 mg/mL (as sulfate) in 2 mL vial"
+    },
+    {
+      "Drug Name": "amoxicillin",
+      "Dosage": "250 mg; 500 mg; 1 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "amoxicillin + clavulanic acid",
+      "Dosage": "500 mg (as sodium) + 100 mg (as potassium salt); 1000 mg (as sodium) + 200 mg (as potassium salt)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "ampicillin",
+      "Dosage": "500 mg; 1 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "benzathine benzylpenicillin",
+      "Dosage": "1.2 million IU (= 900 mg)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "benzylpenicillin",
+      "Dosage": "600 mg (= 1 million IU); 3 g (= 5 million IU) (sodium or potassium salt)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "cefalexin",
+      "Dosage": "125 mg/5 mL; 250 mg/5 mL (anhydrous)",
+      "Form": "Powder for oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cefazolin",
+      "Dosage": "1 g (as sodium salt)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "chloramphenicol",
+      "Dosage": "0.5 g/mL (as sodium succinate)",
+      "Form": "Oily suspension for injection",
+      "Administration Cautions": "in 2 mL ampoule. *Only for the presumptive treatment of epidemic meningitis in children older than 2 years and in adults."
+    },
+    {
+      "Drug Name": "clindamycin",
+      "Dosage": "150 mg (as hydrochloride)",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cloxacillin",
+      "Dosage": "250 mg",
+      "Form": "Capsule",
+      "Administration Cautions": "*cloxacillin, dicloxacillin and flucloxacillin are preferred for oral administration due to better bioavailability."
+    },
+    {
+      "Drug Name": "doxycycline",
+      "Dosage": "50 mg",
+      "Form": "Oral liquid",
+      "Administration Cautions": "Use in children <8 years only for life-threatening infections when no alternative exists."
+    },
+    {
+      "Drug Name": "gentamicin",
+      "Dosage": "10 mg/mL (as sulfate); 40 mg/mL (as sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL vial"
+    },
+    {
+      "Drug Name": "metronidazole",
+      "Dosage": "500 mg",
+      "Form": "Injection",
+      "Administration Cautions": "in 100 mL vial"
+    },
+    {
+      "Drug Name": "nitrofurantoin",
+      "Dosage": "25 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "phenoxymethylpenicillin",
+      "Dosage": "250 mg/5 mL (as potassium)",
+      "Form": "Powder for oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "procaine benzylpenicillin",
+      "Dosage": "1 g (=1 million IU); 3 g (=3 million IU)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *Procaine benzylpenicillin is not recommended as first-line treatment for neonatal sepsis except in settings with high neonatal mortality, when given by trained health workers in cases where hospital care is not achievable."
+    },
+    {
+      "Drug Name": "spectinomycin",
+      "Dosage": "2 g (as hydrochloride)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "sulfamethoxazole + trimethoprim",
+      "Dosage": "80 mg + 16 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 5 mL ampoule; 80 mg + 16 mg/mL in 10 mL ampoule"
+    },
+    {
+      "Drug Name": "trimethoprim",
+      "Dosage": "100 mg; 200 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "azithromycin",
+      "Dosage": "250 mg; 500 mg (anhydrous)",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cefixime",
+      "Dosage": "100 mg/5 mL",
+      "Form": "Powder for oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cefotaxime",
+      "Dosage": "250 mg; 500 mg; 1 g; 2 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *3rd generation cephalosporin of choice for use in hospitalized neonates."
+    },
+    {
+      "Drug Name": "ceftriaxone",
+      "Dosage": "250 mg; 500 mg; 1 g; 2 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *Do not administer with calcium and avoid in infants with hyperbilirubinaemia."
+    },
+    {
+      "Drug Name": "cefuroxime",
+      "Dosage": "250 mg; 750 mg; 1.5 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "ciprofloxacin",
+      "Dosage": "250 mg/5 mL (anhydrous)",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "clarithromycin",
+      "Dosage": "125 mg/5 mL; 250 mg/5 mL",
+      "Form": "Powder for oral liquid",
+      "Administration Cautions": "†clarithromycin is also listed for use in combination regimens for eradication of H. pylori in adults."
+    },
+    {
+      "Drug Name": "piperacillin + tazobactam",
+      "Dosage": "2 g (as sodium) + 250 mg (as sodium); 4 g (as sodium) + 500 mg (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "vancomycin",
+      "Dosage": "125 mg; 250 mg (as hydrochloride)",
+      "Form": "Capsule",
+      "Administration Cautions": "*vancomycin powder for injection may also be used for oral administration"
+    },
+    {
+      "Drug Name": "ceftazidime",
+      "Dosage": "250 mg; 1 g (as pentahydrate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "meropenem",
+      "Dosage": "500 mg (as trihydrate); 1 g (as trihydrate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "vancomycin",
+      "Dosage": "250 mg; 500 mg; 1 g (as hydrochloride)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "cefiderocol",
+      "Dosage": "1 g (as sulfate tosylate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "ceftazidime + avibactam",
+      "Dosage": "2 g + 0.5 g",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "ceftolozane + tazobactam",
+      "Dosage": "1 g + 0.5 g",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "colistin",
+      "Dosage": "1 million IU (as colistimethate sodium) (equivalent to 34 mg colistin base activity)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "fosfomycin",
+      "Dosage": "2 g; 4 g (as sodium)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "linezolid",
+      "Dosage": "2 mg/mL",
+      "Form": "Injection for intravenous administration",
+      "Administration Cautions": "in 300 mL bag"
+    },
+    {
+      "Drug Name": "meropenem + vaborbactam",
+      "Dosage": "1 g (as trihydrate) + 1 g",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "plazomicin",
+      "Dosage": "500 mg/10 mL",
+      "Form": "Injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "polymyxin B",
+      "Dosage": "500 000 IU (equivalent to 50 mg polymyxin B base)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "clofazimine",
+      "Dosage": "50 mg; 100 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "dapsone",
+      "Dosage": "25 mg; 50 mg; 100 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "rifampicin",
+      "Dosage": "20 mg/mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethambutol",
+      "Dosage": "100 mg; 400 mg (hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethambutol + isoniazid + pyrazinamide + rifampicin",
+      "Dosage": "275 mg + 75 mg + 400 mg + 150 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethambutol + isoniazid + rifampicin",
+      "Dosage": "275 mg + 75 mg + 150 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethionamide",
+      "Dosage": "250 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoniazid",
+      "Dosage": "100 mg; 300 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoniazid + pyrazinamide + rifampicin",
+      "Dosage": "50 mg + 150 mg + 75 mg",
+      "Form": "Tablet (dispersible)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoniazid + rifampicin",
+      "Dosage": "75 mg + 150 mg; 150 mg + 300 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoniazid + rifapentine",
+      "Dosage": "300 mg + 300 mg",
+      "Form": "Tablet (scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "moxifloxacin",
+      "Dosage": "400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "pyrazinamide",
+      "Dosage": "400 mg; 500 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "rifabutin",
+      "Dosage": "150 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": "*For use only in patients with HIV receiving protease inhibitors."
+    },
+    {
+      "Drug Name": "rifampicin",
+      "Dosage": "20 mg/mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "rifapentine",
+      "Dosage": "150 mg; 300 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "amikacin",
+      "Dosage": "250 mg/mL (as sulfate)",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL vial"
+    },
+    {
+      "Drug Name": "amoxicillin + clavulanic acid",
+      "Dosage": "250 mg (as trihydrate) + 62.5 mg (as potassium salt)/5mL",
+      "Form": "Powder for oral liquid",
+      "Administration Cautions": "*For use only in combination with meropenem or imipenem+cilastatin."
+    },
+    {
+      "Drug Name": "bedaquiline",
+      "Dosage": "20 mg; 100 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "clofazimine",
+      "Dosage": "50 mg; 100 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "cycloserine",
+      "Dosage": "125 mg; 250 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "delamanid",
+      "Dosage": "250 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ethionamide",
+      "Dosage": "250 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "levofloxacin",
+      "Dosage": "600 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "linezolid",
+      "Dosage": "400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "meropenem",
+      "Dosage": "500 mg (as trihydrate); 1 g (as trihydrate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "moxifloxacin",
+      "Dosage": "400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "p-aminosalicylate sodium",
+      "Dosage": "5.52 g",
+      "Form": "Powder for oral solution",
+      "Administration Cautions": "in sachet (equivalent to 4 g p-aminosalicylic acid)"
+    },
+    {
+      "Drug Name": "pretomanid",
+      "Dosage": "200 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "streptomycin",
+      "Dosage": "1 g (as sulfate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "amphotericin B",
+      "Dosage": "50 mg (liposomal complex); 50 mg (as sodium deoxycholate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *Liposomal amphotericin B has a better safety profile than the sodium deoxycholate formulation and should be prioritized for selection and use depending on local availability and cost."
+    },
+    {
+      "Drug Name": "clotrimazole",
+      "Dosage": "1%; 10%",
+      "Form": "Vaginal cream",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "fluconazole",
+      "Dosage": "50 mg",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "flucytosine",
+      "Dosage": "250 mg",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "griseofulvin",
+      "Dosage": "125 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "itraconazole",
+      "Dosage": "100 mg",
+      "Form": "Capsule",
+      "Administration Cautions": "*For treatment of chronic pulmonary aspergillosis, histoplasmosis, sporotrichosis, paracoccidiodomycosis, mycoses caused by T. marnefrei and chromoblastomycosis; and prophylaxis of histoplasmosis and infections caused by T. marnefrei in AIDS patients."
+    },
+    {
+      "Drug Name": "nystatin",
+      "Dosage": "100 000 IU",
+      "Form": "Lozenge",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "voriconazole",
+      "Dosage": "50 mg; 200 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*For treatment of chronic pulmonary aspergillosis and acute invasive aspergillosis."
+    },
+    {
+      "Drug Name": "micafungin",
+      "Dosage": "50 mg (as sodium); 100 mg (as sodium)",
+      "Form": "Powder for Injection",
+      "Administration Cautions": "in vial"
+    },
+    {
+      "Drug Name": "potassium iodide",
+      "Dosage": "",
+      "Form": "Saturated solution",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "aciclovir",
+      "Dosage": "200 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "abacavir",
+      "Dosage": "300 mg (as sulfate)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "lamivudine",
+      "Dosage": "50 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "tenofovir disoproxil fumarate",
+      "Dosage": "300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": "†also indicated for pre-exposure prophylaxis."
+    },
+    {
+      "Drug Name": "zidovudine",
+      "Dosage": "250 mg",
+      "Form": "Capsule",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "efavirenz",
+      "Dosage": "600 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "nevirapine",
+      "Dosage": "50 mg/5 mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": "> 6 weeks"
+    },
+    {
+      "Drug Name": "atazanavir + ritonavir",
+      "Dosage": "300 mg (as sulfate) + 100 mg",
+      "Form": "Tablet (heat stable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "darunavir",
+      "Dosage": "75 mg; 400 mg; 600 mg; 800 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "> 3 years"
+    },
+    {
+      "Drug Name": "lopinavir + ritonavir",
+      "Dosage": "40 mg + 10 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ritonavir",
+      "Dosage": "25 mg; 100 mg",
+      "Form": "Tablet (heat stable)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "raltegravir",
+      "Dosage": "10 mg",
+      "Form": "Tablet (dispersible, scored)",
+      "Administration Cautions": "≥ 4 weeks and ≥ 3 kg"
+    },
+    {
+      "Drug Name": "dolutegravir",
+      "Dosage": "50 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "≥ 25 kg"
+    },
+    {
+      "Drug Name": "abacavir + lamivudine",
+      "Dosage": "120 mg (as sulfate) + 60 mg",
+      "Form": "Tablet (dispersible, scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "dolutegravir + lamivudine + tenofovir",
+      "Dosage": "50 mg + 300 mg + 300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "efavirenz + emtricitabine + tenofovir",
+      "Dosage": "600 mg + 200 mg + 300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "efavirenz + lamivudine + tenofovir",
+      "Dosage": "400 mg + 300 mg + 300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "emtricitabine + tenofovir",
+      "Dosage": "200 mg + 300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": "† combination also indicated for pre-exposure prophylaxis"
+    },
+    {
+      "Drug Name": "lamivudine + zidovudine",
+      "Dosage": "30 mg + 60 mg; 150 mg + 300 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "isoniazid + pyridoxine + sulfamethoxazole + trimethoprim",
+      "Dosage": "300 mg + 25 mg + 800 mg + 160 mg",
+      "Form": "Tablet (scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ribavirin",
+      "Dosage": "800 mg and 1 g",
+      "Form": "Injection for intravenous administration",
+      "Administration Cautions": "in 10 mL phosphate buffer solution. *For the treatment of viral haemorrhagic fevers"
+    },
+    {
+      "Drug Name": "valganciclovir",
+      "Dosage": "450 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*For the treatment of cytomegalovirus retinitis (CMVr)."
+    },
+    {
+      "Drug Name": "oseltamivir",
+      "Dosage": "30 mg; 45 mg; 75 mg (as phosphate)",
+      "Form": "Capsule",
+      "Administration Cautions": "*Severe illness due to confirmed or suspected influenza virus infection in critically ill hospitalized patients"
+    },
+    {
+      "Drug Name": "valganciclovir",
+      "Dosage": "450 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*For the treatment of cytomegalovirus retinitis (CMVr)."
+    },
+    {
+      "Drug Name": "entecavir",
+      "Dosage": "0.05 mg/mL",
+      "Form": "Oral liquid",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "tenofovir disoproxil fumarate",
+      "Dosage": "300 mg (tenofovir disoproxil fumarate – equivalent to 245 mg tenofovir disoproxil)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "daclatasvir",
+      "Dosage": "30 mg; 60 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": "*Pangenotypic when used in combination with sofosbuvir"
+    },
+    {
+      "Drug Name": "daclatasvir + sofosbuvir",
+      "Dosage": "60 mg + 400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "glecaprevir + pibrentasvir",
+      "Dosage": "100 mg + 40 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ravidasvir",
+      "Dosage": "200 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*Pangenotypic when used in combination with sofosbuvir"
+    },
+    {
+      "Drug Name": "sofosbuvir",
+      "Dosage": "200 mg; 400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*Pangenotypic when used in combination with daclatasvir or ravidasvir"
+    },
+    {
+      "Drug Name": "sofosbuvir + velpatasvir",
+      "Dosage": "200 mg + 50 mg; 400 mg + 100 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ledipasvir + sofosbuvir",
+      "Dosage": "90 mg + 400 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ribavirin",
+      "Dosage": "200 mg; 400 mg; 600 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": "*For the treatment of hepatitis C, in combination with direct acting anti-viral medicines"
+    },
+    {
+      "Drug Name": "diloxanide",
+      "Dosage": "500 mg (furoate)",
+      "Form": "Tablet",
+      "Administration Cautions": "> 25 kg"
+    },
+    {
+      "Drug Name": "metronidazole",
+      "Dosage": "500 mg",
+      "Form": "Injection",
+      "Administration Cautions": "in 100 mL vial"
+    },
+    {
+      "Drug Name": "amphotericin B",
+      "Dosage": "50 mg (liposomal complex); 50 mg (as sodium deoxycholate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *Liposomal amphotericin B has a better safety profile than the sodium deoxycholate formulation and should be prioritized for selection and use depending on local availability and cost."
+    },
+    {
+      "Drug Name": "meglumine antimoniate",
+      "Dosage": "1.5 g/5 mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 5 mL ampoule"
+    },
+    {
+      "Drug Name": "miltefosine",
+      "Dosage": "10 mg; 50 mg",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "paromomycin",
+      "Dosage": "750 mg of paromomycin base (as sulfate)",
+      "Form": "Solution for intramuscular injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "sodium stibogluconate",
+      "Dosage": "100 mg/mL",
+      "Form": "Injection",
+      "Administration Cautions": "in 30 mL vial"
+    },
+    {
+      "Drug Name": "amodiaquine",
+      "Dosage": "153 mg or 200 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": "*To be used in combination with artesunate 50 mg."
+    },
+    {
+      "Drug Name": "artemether",
+      "Dosage": "80 mg/mL",
+      "Form": "Oily injection",
+      "Administration Cautions": "in 1 mL ampoule. *For use in the management of severe malaria."
+    },
+    {
+      "Drug Name": "artemether + lumefantrine",
+      "Dosage": "20 mg + 120 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*Not recommended in the first trimester of pregnancy or in children below 5 kg."
+    },
+    {
+      "Drug Name": "artesunate",
+      "Dosage": "60 mg anhydrous artesunic acid",
+      "Form": "Injection",
+      "Administration Cautions": "ampoules, containing 60 mg anhydrous artesunic acid with a separate ampoule of 5% sodium bicarbonate solution. For use in the management of severe malaria."
+    },
+    {
+      "Drug Name": "artesunate + amodiaquine",
+      "Dosage": "25 mg + 67.5 mg; 50 mg + 135 mg; 100 mg + 270 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*Other combinations that deliver the target doses required such as 153 mg or 200 mg (as hydrochloride) with 50 mg artesunate can be alternatives."
+    },
+    {
+      "Drug Name": "artesunate + mefloquine",
+      "Dosage": "25 mg + 55 mg; 100 mg + 220 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "artesunate + pyronaridine tetraphosphate",
+      "Dosage": "20 mg + 60 mg; 60 mg + 180 mg",
+      "Form": "Granules; Tablet",
+      "Administration Cautions": "> 5 kg"
+    },
+    {
+      "Drug Name": "chloroquine",
+      "Dosage": "50 mg/5 mL (as phosphate or sulfate)",
+      "Form": "Oral liquid",
+      "Administration Cautions": "*For use only for the treatment of Plasmodium vivax infection."
+    },
+    {
+      "Drug Name": "dihydroartemisinin + piperaquine phosphate",
+      "Dosage": "20 mg + 160 mg; 40 mg + 320 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "> 5 kg"
+    },
+    {
+      "Drug Name": "doxycycline",
+      "Dosage": "100 mg (as hydrochloride or hydate)",
+      "Form": "Capsule",
+      "Administration Cautions": "*For use only in combination with quinine."
+    },
+    {
+      "Drug Name": "mefloquine",
+      "Dosage": "250 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": "*To be used in combination with artesunate 50 mg."
+    },
+    {
+      "Drug Name": "primaquine",
+      "Dosage": "7.5 mg; 15 mg (as diphosphate)",
+      "Form": "Tablet",
+      "Administration Cautions": "*Only for use to achieve radical cure of Plasmodium vivax and Plasmodium ovale infections, given for 14 days."
+    },
+    {
+      "Drug Name": "quinine",
+      "Dosage": "300 mg/mL (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 2 mL ampoule. *For use only in the management of severe malaria and should be used in combination with doxycycline."
+    },
+    {
+      "Drug Name": "sulfadoxine + pyrimethamine",
+      "Dosage": "500 mg + 25 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*Only in combination with artesunate 50 mg."
+    },
+    {
+      "Drug Name": "amodiaquine – sulfadoxine + pyrimethamine",
+      "Dosage": "amodiaquine 76.5 mg (as hydrochloride) [3] and sulfadoxine + pyrimethamine 250 mg + 12.5 mg [1]; amodiaquine 153 mg (as hydrochloride) [3] and sulfadoxine + pyrimethamine 500 mg + 25 mg [1]",
+      "Form": "Co-packaged dispersible tablets",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "chloroquine",
+      "Dosage": "50 mg/5 mL (as phosphate or sulfate); 150 mg (as phosphate or sulfate)",
+      "Form": "Oral liquid; Tablet",
+      "Administration Cautions": "*For use only in central American regions, for Plasmodium vivax infections."
+    },
+    {
+      "Drug Name": "doxycycline",
+      "Dosage": "100 mg (as hydrochloride or hydate)",
+      "Form": "Solid oral dosage form",
+      "Administration Cautions": "> 8 years."
+    },
+    {
+      "Drug Name": "mefloquine",
+      "Dosage": "250 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": "> 5 kg or > 3 months."
+    },
+    {
+      "Drug Name": "proguanil",
+      "Dosage": "100 mg (as hydrochloride)",
+      "Form": "Tablet",
+      "Administration Cautions": "*For use only in combination with chloroquine."
+    },
+    {
+      "Drug Name": "sulfadoxine + pyrimethamine",
+      "Dosage": "250 mg + 12.5 mg; 500 mg + 25 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "pyrimethamine",
+      "Dosage": "25 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "sulfadiazine",
+      "Dosage": "500 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "sulfamethoxazole + trimethoprim",
+      "Dosage": "80 mg + 16 mg/mL; 200 mg + 40 mg/5 mL; 100 mg + 20 mg; 400 mg + 80 mg; 800 mg + 160 mg; 100 mg + 20 mg",
+      "Form": "Injection; Oral liquid; Tablet; Tablet (dispersible)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "pentamidine",
+      "Dosage": "200 mg; 300 mg (as isethionate)",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "fexinidazole",
+      "Dosage": "600 mg",
+      "Form": "Tablet",
+      "Administration Cautions": "*For the treatment of 1st and 2nd stage of human African trypanosomiasis due to Trypanosoma brucei gambiense infection."
+    },
+    {
+      "Drug Name": "pentamidine",
+      "Dosage": "300 mg (as isetionate)",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *To be used for the treatment of Trypanosoma brucei gambiense infection."
+    },
+    {
+      "Drug Name": "suramin sodium",
+      "Dosage": "1 g",
+      "Form": "Powder for injection",
+      "Administration Cautions": "in vial. *To be used for the treatment of the initial phase of Trypanosoma brucei rhodesiense infection."
+    },
+    {
+      "Drug Name": "melarsoprol",
+      "Dosage": "200 mg/mL (hydrochloride)",
+      "Form": "Injection",
+      "Administration Cautions": "in 50 mL bottle. *To be used for the treatment of Trypanosoma brucei gambiense infection."
+    },
+    {
+      "Drug Name": "eflornithine",
+      "Dosage": "180 mg/5 mL (3.6% solution)",
+      "Form": "Injection",
+      "Administration Cautions": "in 5 mL ampoule"
+    },
+    {
+      "Drug Name": "nifurtimox",
+      "Dosage": "30 mg; 120 mg",
+      "Form": "Tablet (scored)",
+      "Administration Cautions": "*Only to be used in combination with eflornithine, for the treatment of Trypanosoma brucei gambiense infection."
+    },
+    {
+      "Drug Name": "benznidazole",
+      "Dosage": "12.5 mg; 50 mg; 100 mg",
+      "Form": "Tablet; Tablet (scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "nifurtimox",
+      "Dosage": "30 mg; 120 mg",
+      "Form": "Tablet (scored)",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ivermectin",
+      "Dosage": "3 mg",
+      "Form": "Tablet",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "ansuvimab",
+      "Dosage": "400 mg",
+      "Form": "Powder for injection",
+      "Administration Cautions": ""
+    },
+    {
+      "Drug Name": "atolitivimab + mafitivimab + odesivimab",
+      "Dosage": "241.7 mg + 241.7 mg + 241.7 mg",
+      "Form": "Injection",
+      "Administration Cautions": "in 14.5 mL vial"
+    }
+  ]
