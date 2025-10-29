@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../middleware/apiClient';
+import FileSaver from 'file-saver';
 
 
 // Async thunks
@@ -63,6 +64,29 @@ export const approveClaimsInBatch = createAsyncThunk(
   }
 );
 
+export const generateClaimXML = createAsyncThunk(
+  'claims/generateClaimXML',
+  async (batchId, { rejectWithValue }) => {
+    try {
+      // Hit your backend endpoint that generates XML for the claim batch
+      const response = await apiClient.get(`/claims/batch/${batchId}/xml`, {
+        responseType: 'blob', // important to get actual file
+      });
+
+      // Create filename (e.g. NHIS_Claim_2025-10-29.xml)
+      const filename = `NHIS_Claim_${new Date().toISOString().split('T')[0]}.xml`;
+
+      // Save file to user
+      FileSaver.saveAs(response.data, filename);
+
+      return { message: 'XML generated successfully', filename };
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
 const claimsSlice = createSlice({
   name: 'claims',
   initialState: {
@@ -70,6 +94,7 @@ const claimsSlice = createSlice({
     currentClaim: null,
     claimsByVisit: [],
     loading: false,
+    generateXMLLoading: false,
     error: null,
     success: false,
     operation: null, // 'fetch', 'update', 'batch-approve'
@@ -225,7 +250,23 @@ const claimsSlice = createSlice({
         state.error = action.payload;
         state.success = false;
         state.operation = null;
+      })
+      // Generate Claim XML
+      .addCase(generateClaimXML.pending, (state) => {
+        state.generateXMLLoading = true;
+        state.error = null;
+        state.operation = 'generate-xml';
+      })
+      .addCase(generateClaimXML.fulfilled, (state) => {
+        state.generateXMLLoading = false;
+        state.operation = null;
+      })
+      .addCase(generateClaimXML.rejected, (state, action) => {
+        state.generateXMLLoading = false;
+        state.error = action.payload;
+        state.operation = null;
       });
+      
   },
 });
 

@@ -8,6 +8,7 @@ import InvoiceTable from './common/InvoiceTable';
 import PrintTemplate from './common/PrintTemplate';
 import InvoiceDetailModal from './common/InvoiceDetailModal';
 import PaymentModal from './common/PaymentModal';
+import TonitelButton from '../../components/common/TonitelButton';
 
 const PatientInvoice = ({ visitId }) => {
   const { data, loading, refetch } = usePatientBills(visitId);
@@ -58,14 +59,14 @@ const PatientInvoice = ({ visitId }) => {
     <div style={{ padding: '24px' }}>
       {/* Print Button */}
       <div style={{ marginBottom: 24, textAlign: 'right' }} className="no-print">
-        <Button
+        <TonitelButton
           type="primary"
           icon={<PrinterOutlined />}
           onClick={handlePrint}
-          size="large"
+          size="lg"
         >
           Print Invoice
-        </Button>
+        </TonitelButton>
       </div>
 
       <InvoiceHeader 
