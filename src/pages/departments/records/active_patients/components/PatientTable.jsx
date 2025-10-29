@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import TonitelButton from '../../../../../components/common/TonitelButton';
 
 const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
   const navigate = useNavigate();
@@ -159,15 +160,14 @@ const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
             </Tooltip>
           ) : (
             <Tooltip title="Initiate New Visit">
-              <Button
-                type="primary"
-                size="small"
+              <TonitelButton
+                size="sm"
                 onClick={() => onInitiateVisit(record)}
-                className="bg-blue-500 border-blue-500 hover:bg-blue-600 text-xs h-7"
+                icon={   <PlusCircleOutlined  />}
               >
-                <PlusCircleOutlined className="mr-1" />
+             
                 Visit
-              </Button>
+              </TonitelButton>
             </Tooltip>
           )}
         </Space>

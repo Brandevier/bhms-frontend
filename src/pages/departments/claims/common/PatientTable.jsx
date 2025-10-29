@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Space, Typography, Tag, Badge, Button, Avatar } from 'antd';
 import { UserOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-
+import TonitelButton from '../../../../components/common/TonitelButton';
 const { Text } = Typography;
 
 const PatientTable = ({ data, loading, expandedRowRender, getStatusTag }) => {
@@ -69,14 +69,14 @@ const PatientTable = ({ data, loading, expandedRowRender, getStatusTag }) => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <Button
-          type="primary"
+        <TonitelButton
+         
           onClick={() => navigate(`/shared/records/folder/${record.visit?.patient?.id}`, { 
             state: { id: record.visit?.patient?.id } 
           })}
         >
           View Patient Folder
-        </Button>
+        </TonitelButton>
       ),
     },
   ];

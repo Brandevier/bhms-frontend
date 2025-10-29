@@ -43,7 +43,7 @@ export const updateClaimStatus = createAsyncThunk(
   'claims/updateClaimStatus',
   async ({ claim_id, claim_status }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put('/claims/status', { claim_id, claim_status });
+      const response = await apiClient.put('/claims/update-claim-status', { claim_id, claim_status });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to update claim status');

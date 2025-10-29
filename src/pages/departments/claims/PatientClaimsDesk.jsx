@@ -8,6 +8,8 @@ import AdvancedSearchModal from './common/AdvancedSearchModal';
 import SearchBar from './common/SearchBar';
 import XMLGenerationModal from './common/XMLGenerationModal';
 import { getAllClaims } from '../../../redux/slice/claimSlice';
+import TonitelButton from '../../../components/common/TonitelButton';
+
 
 const { Title, Text } = Typography;
 
@@ -314,16 +316,15 @@ const PatientClaimsDesk = () => {
               >
                 Advanced Filters
               </Button>
-              <Button
-                type="primary"
+              <TonitelButton
                 icon={<DownloadOutlined />}
                 onClick={() => setShowXMLModal(true)}
-                className="bg-blue-600 border-blue-600 hover:bg-blue-700 h-10 px-6"
+               
                 disabled={filteredClaims.length === 0}
-                size="large"
+                size="lg"
               >
                 Generate Report
-              </Button>
+              </TonitelButton>
             </Space>
           </div>
         </Card>

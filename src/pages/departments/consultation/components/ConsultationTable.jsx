@@ -9,6 +9,9 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import TonitelButton from '../../../../components/common/TonitelButton';
+
+
 
 const ConsultationTable = ({ data, loading }) => {
   const navigate = useNavigate();
@@ -161,15 +164,13 @@ const ConsultationTable = ({ data, loading }) => {
       fixed: 'right',
       render: (_, record) => (
         <Tooltip title="View Patient Details">
-          <Button
-            type="primary"
+          <TonitelButton
             icon={<EyeOutlined />}
-            size="small"
+            size="sm"
             onClick={() => handleViewPatient(record)}
-            className="bg-blue-500 border-blue-500 hover:bg-blue-600"
           >
             View
-          </Button>
+          </TonitelButton>
         </Tooltip>
       )
     }

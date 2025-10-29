@@ -6,6 +6,8 @@ import {
   UserAddOutlined,
   SearchOutlined 
 } from '@ant-design/icons';
+import TonitelButton from '../../../../../components/common/TonitelButton';
+
 
 const { Search } = Input;
 
@@ -71,15 +73,13 @@ const SearchHeader = ({
           </Tooltip>
         )}
 
-        <Button
-          type="primary"
+        <TonitelButton
           icon={<UserAddOutlined />}
-          size="large"
+          size="lg"
           onClick={onRegisterPatient}
-          className="bg-gradient-to-r from-green-500 to-teal-500 border-0 hover:from-green-600 hover:to-teal-600 h-10"
         >
           Register Patient
-        </Button>
+        </TonitelButton>
       </Space>
     </div>
   );
