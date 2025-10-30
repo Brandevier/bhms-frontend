@@ -10,7 +10,7 @@ import {
   fetchMonthlyVisits,
   fetchVisitsByDepartment,
 } from "../../../redux/slice/patientAnalysisSlice";
-import { Row, Col, Spin, Alert, Card, Typography, Statistic } from "antd";
+import { Row, Col, Spin, Alert, Card, Typography, Statistic,Tag } from "antd";
 import { DashboardOutlined } from "@ant-design/icons";
 import TotalVisitsCard from "./components/TotalVisitsCard";
 import VisitsByTypeChart from "./components/VisitsByTypeChart";

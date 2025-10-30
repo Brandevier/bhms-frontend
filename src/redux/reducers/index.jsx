@@ -59,11 +59,12 @@ import sessionManagerReducer from '../slice/sessionSlice'
 import nurseHandoverReducers from '../slice/nurseHandoverSlice'
 import claimsReducers from  '../slice/claimSlice'
 import theatreReducer from '../slice/theatreSlice';
-
+import meetingReducers from '../slice/meetingSlice'
 
 export {
     authReducer,
     claimsReducers,
+    meetingReducers,
     sessionManagerReducer,
     nurseHandoverReducers,
     staffDepartmentSwitchReducer,
