@@ -66,22 +66,46 @@ export const approveClaimsInBatch = createAsyncThunk(
 
 export const generateClaimXML = createAsyncThunk(
   'claims/generateClaimXML',
-  async (batchId, { rejectWithValue }) => {
-    try {
-      // Hit your backend endpoint that generates XML for the claim batch
-      const response = await apiClient.get(`/claims/batch/${batchId}/xml`, {
-        responseType: 'blob', // important to get actual file
-      });
+  async (payload, { rejectWithValue, getState }) => {
+    const user = getState().auth.user || getState().auth.admin;
+    const institution_id = user?.institution?.id;
 
-      // Create filename (e.g. NHIS_Claim_2025-10-29.xml)
+    try {
+      // ✅ FIXED: Include institution_id in the payload and fix axios config
+      const fullPayload = {
+        ...payload,
+        institution_id // Add institution_id to the request body
+      };
+
+      const response = await apiClient.post(
+        `/claims/xml/generate`,
+        fullPayload, // Send the complete payload as request body
+        {
+          responseType: 'blob', // ✅ Correct axios config position
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      // 💾 Create filename (e.g., NHIS_Claim_2025-10-29.xml)
       const filename = `NHIS_Claim_${new Date().toISOString().split('T')[0]}.xml`;
 
-      // Save file to user
-      FileSaver.saveAs(response.data, filename);
+      // 🧠 Trigger download
+      const blob = new Blob([response.data], { type: 'application/xml' });
+      FileSaver.saveAs(blob, filename);
 
-      return { message: 'XML generated successfully', filename };
+      return { 
+        message: 'XML generated successfully', 
+        filename,
+        blob: response.data // Return the blob data for the modal state
+      };
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      console.error('Error generating claim XML:', error);
+      if (error.response?.status === 404) {
+        return rejectWithValue('No claims found for the selected filters');
+      }
+      return rejectWithValue(error.response?.data?.message || 'Generation failed');
     }
   }
 );
@@ -193,24 +217,24 @@ const claimsSlice = createSlice({
       .addCase(updateClaimStatus.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        
+
         // Update in claims list
         const claimIndex = state.claims.findIndex(claim => claim.id === action.payload.claim.id);
         if (claimIndex !== -1) {
           state.claims[claimIndex] = action.payload.claim;
         }
-        
+
         // Update current claim if it's the same
         if (state.currentClaim && state.currentClaim.id === action.payload.claim.id) {
           state.currentClaim = action.payload.claim;
         }
-        
+
         // Update in claimsByVisit list
         const visitClaimIndex = state.claimsByVisit.findIndex(claim => claim.id === action.payload.claim.id);
         if (visitClaimIndex !== -1) {
           state.claimsByVisit[visitClaimIndex] = action.payload.claim;
         }
-        
+
         state.operation = null;
       })
       .addCase(updateClaimStatus.rejected, (state, action) => {
@@ -229,20 +253,20 @@ const claimsSlice = createSlice({
       .addCase(approveClaimsInBatch.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        
+
         // Update all claims in the batch to "Approved"
-        state.claims = state.claims.map(claim => 
-          claim.batch_id === action.meta.arg 
+        state.claims = state.claims.map(claim =>
+          claim.batch_id === action.meta.arg
             ? { ...claim, claim_status: 'Approved' }
             : claim
         );
-        
+
         state.claimsByVisit = state.claimsByVisit.map(claim =>
           claim.batch_id === action.meta.arg
             ? { ...claim, claim_status: 'Approved' }
             : claim
         );
-        
+
         state.operation = null;
       })
       .addCase(approveClaimsInBatch.rejected, (state, action) => {
@@ -266,14 +290,14 @@ const claimsSlice = createSlice({
         state.error = action.payload;
         state.operation = null;
       });
-      
+
   },
 });
 
-export const { 
-  clearError, 
-  clearSuccess, 
-  clearCurrentClaim, 
+export const {
+  clearError,
+  clearSuccess,
+  clearCurrentClaim,
   clearClaimsByVisit,
   setOperation,
   updateClaimInList,
