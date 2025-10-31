@@ -105,6 +105,10 @@ import VisitLabTests from "./pages/departments/lab/form_templates/VisitlabTest";
 import PrescriptionDispenseHistory from "./pages/departments/pharmacy/PrescriptionDispenseHistory/PrescriptionDispenseHistory";
 import WardBedAllocation from "./pages/departments/ward/WardBedAllocation";
 import HandOverNote from "./pages/departments/hand_over_note/HandOverNote";
+import LabAnalytics from "./pages/departments/information_manager/labAnalytics/LabAnalytics";
+import MaternityAnalytics from "./pages/departments/information_manager/maternity_analytics/MaternityAnalytics";
+
+
 
  
 const App = () => {
@@ -247,6 +251,8 @@ const App = () => {
             <Route path="information-manager/diagnosis-analysis" element={<DiagnosisAnalysis />} />
             <Route path="information-manager/visualization/beds-analytics" element={<BedStatisticsDashboard />} />
              <Route path="information-manager/visualization/patient-summary" element={<PatientSummaryDashboard />} />
+            <Route path="information-manager/lab/analytics" element={<LabAnalytics />} />
+            <Route path="information-manager/maternity/analytics" element={<MaternityAnalytics />} />
           </Route>
 
           {/* Admin-Only Routes */}

@@ -66,12 +66,25 @@ export const getPregnancyTimeline = createAsyncThunk(
     }
 );
 
+export const fetchMaternityAnalytics = createAsyncThunk(
+  'maternity/fetchMaternityAnalytics',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/info/maternity-data');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 // Slice
 const ancSlice = createSlice({
     name: 'anc',
     initialState: {
         currentANC: null,
         pregnancyTimeline: null,
+         analytics: null,
         loading: false,
         error: null,
         success: false
@@ -163,7 +176,21 @@ const ancSlice = createSlice({
             .addCase(getPregnancyTimeline.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || 'Failed to fetch pregnancy timeline';
+            })
+            // Fetch Maternity Analytics
+            .addCase(fetchMaternityAnalytics.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchMaternityAnalytics.fulfilled, (state, action) => {
+                state.loading = false;
+                state.analytics = action.payload.data;
+            })
+            .addCase(fetchMaternityAnalytics.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || 'Failed to fetch maternity analytics';
             });
+            
     }
 });
 

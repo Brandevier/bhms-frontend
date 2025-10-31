@@ -2,8 +2,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../middleware/apiClient";
 
-
-// Async thunk to fetch diagnosis analysis
 export const fetchDiagnosisAnalysis = createAsyncThunk(
   "diagnosisAnalysis/fetchDiagnosisAnalysis",
   async (_, { rejectWithValue }) => {
@@ -19,9 +17,9 @@ export const fetchDiagnosisAnalysis = createAsyncThunk(
 const diagnosisAnalysisSlice = createSlice({
   name: "diagnosisAnalysis",
   initialState: {
-    topDiseases: [],
-    genderDistribution: [],
-    statusSummary: [],
+    topDiseases: { data: [], interpretation: [] },
+    genderDistribution: { data: [], interpretation: [] },
+    statusSummary: { data: [], interpretation: [] },
     loading: false,
     error: null,
   },
@@ -34,9 +32,22 @@ const diagnosisAnalysisSlice = createSlice({
       })
       .addCase(fetchDiagnosisAnalysis.fulfilled, (state, action) => {
         state.loading = false;
-        state.topDiseases = action.payload.topDiseases;
-        state.genderDistribution = action.payload.genderDistribution;
-        state.statusSummary = action.payload.statusSummary;
+        
+        // Handle the nested structure from your API response
+        state.topDiseases = {
+          data: action.payload.topDiseases?.data || [],
+          interpretation: action.payload.topDiseases?.interpretation || []
+        };
+        
+        state.genderDistribution = {
+          data: action.payload.genderDistribution?.data || [],
+          interpretation: action.payload.genderDistribution?.interpretation || []
+        };
+        
+        state.statusSummary = {
+          data: action.payload.statusSummary?.data || [],
+          interpretation: action.payload.statusSummary?.interpretation || []
+        };
       })
       .addCase(fetchDiagnosisAnalysis.rejected, (state, action) => {
         state.loading = false;

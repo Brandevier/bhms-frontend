@@ -5,12 +5,26 @@ import {
   WechatOutlined,
   BarChartOutlined,
   BankOutlined,
-  BookOutlined
+  BookOutlined,
+  LineChartOutlined,
+  EyeOutlined
 } from "@ant-design/icons";
 
 const recordsMenu = [
   { key: "records-2", label: "Registration", icon: <UserSwitchOutlined />, path: "/shared/records" },
   { key: "records-10", label: "Active Visits", icon: <UserSwitchOutlined />, path: "/shared/records/registration" },
+  {
+    key: "im-2-1",
+    label: "Patients Analysis",
+    icon: <LineChartOutlined />,
+    path: "/shared/information-manager/visualization/patient-analysis"
+  },
+  {
+    key: "im-2-4",
+    label: "Patient Summary",
+    icon: <EyeOutlined />,
+    path: "/shared/information-manager/visualization/patient-summary"
+  },
   { key: "records-4", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
   // { key: "records-7", label: "Reports & Statistics", icon: <BarChartOutlined />, path: "/shared/records/statistics" },
   { key: "ward-6", label: "handover notes", icon: <BookOutlined />, path: "/shared/wards/hand-over-notes" },

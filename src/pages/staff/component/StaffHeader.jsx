@@ -126,8 +126,9 @@ const StaffHeader = () => {
         {/* Right: Messages + Video Call + Notifications + Profile */}
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-2 md:gap-4">
-            <MessageDropdown />
+           
             <VideoCallSection />
+             <MessageDropdown />
             <NotificationDropdown />
             <UserDropdown />
           </div>

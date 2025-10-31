@@ -217,13 +217,27 @@ export const getRecentLabTestsByVisitId = createAsyncThunk(
   }
 );
 
+
+// lab analysis thunks
+export const fetchLabAnalytics = createAsyncThunk(
+  'lab/fetchLabAnalytics',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/lab/analytics');
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || { message: 'Failed to fetch lab analytics' });
+    }
+  }
+);
+
+
+
 // Initial State
-
-
-
 const initialState = {
   templates: [],
   results: [],
+  analytics: {},
   testStats:null,
   currentResult: null,
   statistics: null,
@@ -499,6 +513,19 @@ const labSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || 'Failed to fetch recent lab tests for the visit';
       })
+      // Lab Analytics
+      .addCase(fetchLabAnalytics.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLabAnalytics.fulfilled, (state, action) => {
+        state.loading = false;
+        state.analytics = action.payload || {};
+      })
+      .addCase(fetchLabAnalytics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Failed to fetch lab analytics';
+      });
 
   }
 });

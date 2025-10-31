@@ -34,36 +34,35 @@ const PatientRecordsTable = ({ data, loading }) => {
       width: 280,
       fixed: 'left',
       render: (_, record) => (
-        <div className="flex items-center space-x-3">
+        <div className="flex items-start space-x-3">
           <Avatar 
             size="large" 
             src={record.patient?.photo} 
             icon={<UserOutlined />}
-            className="bg-gradient-to-r from-blue-500 to-purple-500"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 flex-shrink-0"
           />
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-800 text-sm">
-              {record.patient?.first_name || 'N/A'} {record.patient?.last_name || ''}
-            </span>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className="text-xs text-gray-500">
+          {/* <div className="flex flex-col min-w-0">
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-gray-800 text-sm truncate">
+                {record.patient?.first_name || 'N/A'} {record.patient?.last_name || ''}
+              </span>
+              <span className="text-xs text-gray-500 flex-shrink-0">
                 {record.patient?.date_of_birth ? 
-                  `${moment().diff(moment(record.patient.date_of_birth), 'years')} years` : 
-                  'Age N/A'
+                  `${moment().diff(moment(record.patient.date_of_birth), 'years')}y` : 
+                  'N/A'
                 }
               </span>
-              <span className="text-gray-300">•</span>
-              <span className="text-xs text-gray-500 capitalize">
+              <span className="text-xs text-gray-500 capitalize flex-shrink-0">
                 {record.patient?.gender || 'N/A'}
               </span>
             </div>
             {record.patient?.folder_number && (
               <div className="flex items-center mt-1">
                 <IdcardOutlined className="text-gray-400 text-xs mr-1" />
-                <span className="text-xs text-gray-500">{record.patient.folder_number}</span>
+                <span className="text-xs text-gray-500 font-medium">{record.patient.folder_number}</span>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       )
     },
