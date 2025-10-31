@@ -58,30 +58,30 @@ const informationManagerMenu = [
     icon: <BarChartOutlined />, 
     path: "/shared/information-manager/maternity/analytics" 
   },
-  {
-    key: "im-6-1",
-    label: "Custom Reports", 
-    icon: <FileTextOutlined />,
-    path: "/information-manager/reports/custom" 
-  },
-  {
-    key: "im-7-1",
-    label: "Data Quality", 
-    icon: <SafetyCertificateOutlined />,
-    path: "/information-manager/governance/quality" 
-  },
-    {
-    key: "im-9", 
-    label: "Attendance", 
-    icon: <UserSwitchOutlined />, 
-    path: "/shared/attendance" 
-  },
-  {
-    key: "im-8",
-    label: "System Settings",
-    icon: <SettingOutlined />,
-    path: "/information-manager/settings"
-  }
+  // {
+  //   key: "im-6-1",
+  //   label: "Custom Reports", 
+  //   icon: <FileTextOutlined />,
+  //   path: "/information-manager/reports/custom" 
+  // },
+  // {
+  //   key: "im-7-1",
+  //   label: "Data Quality", 
+  //   icon: <SafetyCertificateOutlined />,
+  //   path: "/information-manager/governance/quality" 
+  // },
+  //   {
+  //   key: "im-9", 
+  //   label: "Attendance", 
+  //   icon: <UserSwitchOutlined />, 
+  //   path: "/shared/attendance" 
+  // },
+  // {
+  //   key: "im-8",
+  //   label: "System Settings",
+  //   icon: <SettingOutlined />,
+  //   path: "/information-manager/settings"
+  // }
 ];
 
 export default informationManagerMenu;
