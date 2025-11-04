@@ -20,14 +20,32 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
     searchLoading = false,
     error,
   } = useSelector((state) => state.icd10);
-  
+
   const [selectedTheatre, setSelectedTheatre] = useState(null);
   const [isEmergency, setIsEmergency] = useState(false);
   const [selectedProcedures, setSelectedProcedures] = useState([]);
   const [diagnosisSearch, setDiagnosisSearch] = useState('');
+  const [selectedDiagnoses, setSelectedDiagnoses] = useState([]);
+
+  const handleDiagnosisSelect = (diagnosisId) => {
+    if (!diagnosisId) return;
+
+    const diagnosis = diagnoses?.find(d => d.id === diagnosisId);
+    if (diagnosis && !selectedDiagnoses.find(d => d.id === diagnosisId)) {
+      setSelectedDiagnoses(prev => [...prev, diagnosis]);
+    }
+
+    // Clear the select input after selection
+    form.setFieldsValue({ diagnosis_select: undefined });
+    setDiagnosisSearch(''); // Clear search
+  };
+
+  const removeDiagnosis = (diagnosisId) => {
+    setSelectedDiagnoses(prev => prev.filter(d => d.id !== diagnosisId));
+  };
 
   // Get theatre departments
-  const theatreDepartments = departments?.filter((dept) => 
+  const theatreDepartments = departments?.filter((dept) =>
     dept.departmentType === "Theatre" || dept.name.toLowerCase().includes("theatre")
   ) || [];
 
@@ -67,9 +85,9 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
       scheduled_time: values.scheduled_time?.format('HH:mm'),
       is_emergency_surgery: isEmergency,
       procedure_ids: selectedProcedures.map(proc => proc.id), // Only send procedure IDs
-      diagnosis_id: values.diagnosis_id // Include diagnosis ID
+      diagnosis_id:selectedDiagnoses.map(d => d.id) // Now an array
     };
-    
+
     console.log('Data to be submitted:', formattedValues);
     onSubmit(formattedValues);
   };
@@ -92,12 +110,12 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
 
   const handleProcedureSelect = (procedureId) => {
     if (!procedureId) return;
-    
+
     const procedure = codes?.find(proc => proc.id === procedureId);
     if (procedure && !selectedProcedures.find(p => p.id === procedureId)) {
       setSelectedProcedures(prev => [...prev, procedure]);
     }
-    
+
     // Clear the select input after selection
     form.setFieldsValue({ procedure_select: undefined });
   };
@@ -109,7 +127,7 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
   // Safe filter function that handles non-string values
   const filterOption = (input, option) => {
     if (!option || !option.children) return false;
-    
+
     const children = String(option.children);
     return children.toLowerCase().includes(input.toLowerCase());
   };
@@ -130,9 +148,9 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
     <Form form={form} layout="vertical" onFinish={handleFinish}>
       {/* Theatre Selection */}
       <Card title="Theatre Information" size="small" style={{ marginBottom: 16 }}>
-        <Form.Item 
-          label="Select Theatre" 
-          name="theatre_id" 
+        <Form.Item
+          label="Select Theatre"
+          name="theatre_id"
           rules={[{ required: true, message: "Please select a theatre" }]}
         >
           <Select placeholder="Choose operating theatre" onChange={handleTheatreChange} size="large">
@@ -157,10 +175,10 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
 
       {/* Diagnosis Selection */}
       <Card title="Diagnosis" size="small" style={{ marginBottom: 16 }}>
-        <Form.Item 
-          label="Primary Diagnosis" 
-          name="diagnosis_id"
-          rules={[{ required: true, message: "Please select a diagnosis" }]}
+        <Form.Item
+          label="Primary Diagnosis"
+          name="diagnosis_select"
+          rules={[{ required: selectedDiagnoses.length === 0, message: "Please select at least one diagnosis" }]}
         >
           <Select
             placeholder="Search for diagnosis (type at least 3 characters)..."
@@ -168,6 +186,7 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
             showSearch
             filterOption={false}
             onSearch={setDiagnosisSearch}
+            onSelect={handleDiagnosisSelect}
             loading={searchLoading}
             notFoundContent={
               searchLoading ? (
@@ -206,6 +225,37 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
           </Select>
         </Form.Item>
 
+        {/* Selected Diagnoses Display */}
+        {selectedDiagnoses.length > 0 && (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ marginBottom: 8, fontWeight: 500 }}>
+              Selected Diagnoses ({selectedDiagnoses.length}):
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {selectedDiagnoses.map((diagnosis) => (
+                <Tag
+                  key={diagnosis.id}
+                  closable
+                  onClose={() => removeDiagnosis(diagnosis.id)}
+                  closeIcon={<CloseOutlined />}
+                  style={{
+                    padding: '4px 8px',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                >
+                  <Tag color="blue" style={{ margin: 0, fontSize: '10px' }}>
+                    {diagnosis.icd_10_code}
+                  </Tag>
+                  {diagnosis.diagnosis_name}
+                </Tag>
+              ))}
+            </div>
+          </div>
+        )}
+
         {diagnosisSearch.length > 0 && diagnoses.length > 0 && (
           <div style={{ padding: '8px 12px', backgroundColor: '#f6ffed', borderRadius: 6 }}>
             <small style={{ color: '#52c41a' }}>
@@ -231,7 +281,7 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
           >
             {codes?.map((procedure) => (
               <Option key={procedure.id} value={procedure.id}>
-                {procedure.description} 
+                {procedure.description}
                 {procedure.code && ` (${procedure.code})`}
               </Option>
             ))}
@@ -251,8 +301,8 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
                   closable
                   onClose={() => removeProcedure(procedure.id)}
                   closeIcon={<CloseOutlined />}
-                  style={{ 
-                    padding: '4px 8px', 
+                  style={{
+                    padding: '4px 8px',
                     fontSize: '12px',
                     display: 'flex',
                     alignItems: 'center',
@@ -292,13 +342,13 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
         {/* Surgery Schedule */}
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item 
-              label="Scheduled Date" 
+            <Form.Item
+              label="Scheduled Date"
               name="scheduled_date"
               rules={[{ required: true, message: "Please select surgery date" }]}
             >
-              <DatePicker 
-                style={{ width: '100%' }} 
+              <DatePicker
+                style={{ width: '100%' }}
                 size="large"
                 disabled={isEmergency}
                 disabledDate={(current) => current && current < dayjs().startOf('day')}
@@ -306,13 +356,13 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item 
-              label="Scheduled Time" 
+            <Form.Item
+              label="Scheduled Time"
               name="scheduled_time"
               rules={[{ required: true, message: "Please select surgery time" }]}
             >
-              <TimePicker 
-                style={{ width: '100%' }} 
+              <TimePicker
+                style={{ width: '100%' }}
                 format="HH:mm"
                 minuteStep={15}
                 size="large"
@@ -335,9 +385,9 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
         </Form.Item>
 
         {isEmergency && (
-          <div style={{ 
-            padding: '12px', 
-            backgroundColor: '#fff2f0', 
+          <div style={{
+            padding: '12px',
+            backgroundColor: '#fff2f0',
             border: '1px solid #ffccc7',
             borderRadius: 6,
             marginBottom: 16
@@ -346,21 +396,21 @@ const TheatreAdmissionForm = ({ onSubmit }) => {
               ⚠️ Emergency Protocol Activated
             </div>
             <div style={{ color: '#d4380d', fontSize: '12px' }}>
-              • Patient will be prioritized for immediate surgery<br/>
-              • Theatre team will be notified immediately<br/>
+              • Patient will be prioritized for immediate surgery<br />
+              • Theatre team will be notified immediately<br />
               • Scheduled for current date/time automatically
             </div>
           </div>
         )}
 
         {/* Surgery Notes */}
-        <Form.Item 
-          label="Surgery Notes & Instructions" 
+        <Form.Item
+          label="Surgery Notes & Instructions"
           name="surgery_notes"
           rules={[{ required: true, message: "Please provide surgery notes" }]}
         >
-          <TextArea 
-            rows={4} 
+          <TextArea
+            rows={4}
             placeholder="Enter detailed surgery notes, patient preparation instructions, anesthesia requirements, post-op care instructions, and any special considerations..."
             showCount
             maxLength={1000}

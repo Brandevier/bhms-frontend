@@ -107,7 +107,8 @@ import WardBedAllocation from "./pages/departments/ward/WardBedAllocation";
 import HandOverNote from "./pages/departments/hand_over_note/HandOverNote";
 import LabAnalytics from "./pages/departments/information_manager/labAnalytics/LabAnalytics";
 import MaternityAnalytics from "./pages/departments/information_manager/maternity_analytics/MaternityAnalytics";
-
+import ClaimsExportHistory from "./pages/departments/claims/History/ClaimsExportHistory";
+import XmlViewerPage from "./pages/departments/claims/History/components/XmlViewerPage";
 
 
  
@@ -232,6 +233,8 @@ const App = () => {
             <Route path="claims/lab-tarrifs" element={<LabInvestigationTarrifs />} />
             <Route path="claims/patient-claims-desk" element={<PatientClaimsDesk />} />
             <Route path="claims/vetting" element={<NHIAVettingModule />} />
+            <Route path="claims/history" element={<ClaimsExportHistory />} />
+            <Route path="claims/history/xml-viewer" element={<XmlViewerPage />} />
 
             {/* ACCOUNTS DEPARTMENT */}
             <Route path="accounts/statistics" element={<AccountStatistics />} />

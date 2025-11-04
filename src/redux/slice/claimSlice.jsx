@@ -110,12 +110,26 @@ export const generateClaimXML = createAsyncThunk(
   }
 );
 
+// listExportBatches
+export const listExportBatches = createAsyncThunk(
+  'claims/listExportBatches',
+  async (params = {}, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/claims/export-history', { params });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch export batches');
+    }
+  }
+);
+
 
 const claimsSlice = createSlice({
   name: 'claims',
   initialState: {
     claims: [],
     currentClaim: null,
+    exportBatches: [],
     claimsByVisit: [],
     loading: false,
     generateXMLLoading: false,
@@ -289,7 +303,25 @@ const claimsSlice = createSlice({
         state.generateXMLLoading = false;
         state.error = action.payload;
         state.operation = null;
+      })
+      // List Export Batches
+      .addCase(listExportBatches.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.operation = 'fetch-exports';
+      })
+      .addCase(listExportBatches.fulfilled, (state, action) => {
+        state.loading = false;
+        // Assuming we want to store export batches in claims state for now
+        state.exportBatches = action.payload.data;
+        state.operation = null;
+      })
+      .addCase(listExportBatches.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.operation = null;
       });
+
 
   },
 });

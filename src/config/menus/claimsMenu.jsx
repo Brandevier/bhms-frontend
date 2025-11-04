@@ -9,7 +9,8 @@ import {
   ToolOutlined,
   SyncOutlined,
   UserSwitchOutlined,
-  CalendarOutlined
+  CalendarOutlined,
+  HistoryOutlined
 } from "@ant-design/icons";
 
 const claimsMenu = [
@@ -25,6 +26,7 @@ const claimsMenu = [
   { key: "claims-6", label: "Lab Tarrifs", icon: <ExperimentOutlined />, path: "/shared/claims/lab-tarrifs" },
   { key: "claims-7", label: "Procedures", icon: <ToolOutlined />, path: "/shared/claims/procedures" },
   { key: "claims-8", label: "Vetting Module", icon: <SyncOutlined />, path: "/shared/claims/vetting" },
+  { key: "record-8", label: "Claims History", icon: <HistoryOutlined />, path: "/shared/claims/history" },
   { key: "record-9", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },
 ];
 

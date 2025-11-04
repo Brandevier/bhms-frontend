@@ -489,6 +489,7 @@ const handlePrescriptionSubmit = (data) => {
         visible={admitModalVisible}
         onClose={() => setAdmitModalVisible(false)}
         onSubmit={handleAdmit}
+        visit_id={patient_id}
       />
 
       <DischargePatientModal

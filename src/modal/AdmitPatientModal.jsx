@@ -10,7 +10,7 @@ import RegularAdmissionForm from "./components/RegularAdmissionForm";
 import TheatreAdmissionForm from "./components/TheatreAdmissionForm";
 import TransferDepartmentForm from "./components/TransferDepartmentForm";
 
-const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
+const AdmitPatientModal = ({ visible, onClose, onSubmit,visit_id }) => {
   const dispatch = useDispatch();
   const { loading: admissionLoading } = useSelector((state) => state.admission);
   const { loading: theatreLoading, error: theatreError, success: theatreSuccess } = useSelector((state) => state.theatre);
@@ -49,7 +49,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
       } else if (activeTab === "2") {
         // Theatre Admission - Use the theatre slice
         const theatreData = {
-          visit_id: values.visit_id, // You'll need to pass this from parent
+          visit_id: visit_id, // You'll need to pass this from parent
           procedure_ids: values.procedure_ids,
           scheduled_date: values.scheduled_date,
           scheduled_time: values.scheduled_time,
@@ -58,6 +58,7 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit }) => {
           is_emergency: values.is_emergency_surgery,
           // Add other required fields for theatre booking
         };
+        console.log('Submitting theatre booking data:', theatreData);
         
         await dispatch(createTheatreBooking(theatreData)).unwrap();
         // Success message is handled in the useEffect above
