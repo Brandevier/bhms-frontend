@@ -59,9 +59,9 @@ const PreOpManagement = () => {
                 <TabPane tab="Patient Education" key="4">
                   <PatientEducation patient={selectedPatient} />
                 </TabPane>
-                <TabPane tab="Medications" key="5">
+                {/* <TabPane tab="Medications" key="5">
                   <MedicationReconciliation patient={selectedPatient} />
-                </TabPane>
+                </TabPane> */}
                 <TabPane tab="Nursing Docs" key="6">
                   <NursingDocumentation patient={selectedPatient} />
                 </TabPane>
