@@ -59,7 +59,8 @@ import sessionManagerReducer from '../slice/sessionSlice'
 import nurseHandoverReducers from '../slice/nurseHandoverSlice'
 import claimsReducers from  '../slice/claimSlice'
 import theatreReducer from '../slice/theatreSlice';
-import meetingReducers from '../slice/meetingSlice'
+import meetingReducers from '../slice/meetingSlice';
+import preOpChecklistReducers from '../slice/theatre/preOpChecklistSlice';
 
 export {
     authReducer,
@@ -71,6 +72,7 @@ export {
     patientSummaryReducer,
     bedStatisticsReducers,
     diagnosisAnalysisReducers,
+    preOpChecklistReducers,
     patientAnalysisReducers,
     ancReducer,
     partographReducer,

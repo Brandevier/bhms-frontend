@@ -77,6 +77,7 @@ const rootReducer = combineReducers({
   claims:reducers.claimsReducers,
   theatre: reducers.theatreReducer,
   meeting:reducers.meetingReducers,
+  preOpChecklist:reducers.preOpChecklistReducers,
 
 });
 
