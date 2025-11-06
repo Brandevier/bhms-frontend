@@ -40,30 +40,30 @@ const surgeryMenu = [
         icon: <FileSyncOutlined />,
         path: "/shared/surgery/post-op"
       },
-      {
-        key: "surgery-7",
-        label: "Surgical Team",
-        icon: <TeamOutlined />,
-        path: "/surgery/team"
-      },
-      {
-        key: "surgery-8",
-        label: "Instrument Tracking",
-        icon: <ControlOutlined />,
-        path: "/surgery/instruments"
-      },
-      {
-        key: "surgery-9",
-        label: "Safety Systems",
-        icon: <SafetyOutlined />,
-        path: "/surgery/safety"
-      },
-      {
-        key: "surgery-10",
-        label: "Surgical Reports",
-        icon: <BarChartOutlined />,
-        path: "/surgery/reports"
-      },
+      // {
+      //   key: "surgery-7",
+      //   label: "Surgical Team",
+      //   icon: <TeamOutlined />,
+      //   path: "/surgery/team"
+      // },
+      // {
+      //   key: "surgery-8",
+      //   label: "Instrument Tracking",
+      //   icon: <ControlOutlined />,
+      //   path: "/surgery/instruments"
+      // },
+      // {
+      //   key: "surgery-9",
+      //   label: "Safety Systems",
+      //   icon: <SafetyOutlined />,
+      //   path: "/surgery/safety"
+      // },
+      // {
+      //   key: "surgery-10",
+      //   label: "Surgical Reports",
+      //   icon: <BarChartOutlined />,
+      //   path: "/surgery/reports"
+      // },
       {
         key: "surgery-11",
         label: "Message",
