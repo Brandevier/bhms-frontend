@@ -32,18 +32,13 @@ export const fetchChecklistTemplate = createAsyncThunk(
 
 // 🟢 Update checklist progress or completion
 export const updateChecklist = createAsyncThunk(
-  'preOpChecklist/update',
-  async ({ id, checklist_data, status, completed_by }, { rejectWithValue }) => {
-    try {
-      const res = await apiClient.put(`/theatre/pre-op-checklist/${id}`, {
-        checklist_data,
-        status,
-        completed_by
-      });
-      return res.data.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
+  'preOpChecklist/updateChecklist',
+  async ({ id, checklist_data, status }) => {
+    const res = await apiClient.put(`/theatre/preop/checklist/${id}`, {
+      checklist_data,
+      status,
+    });
+    return res.data.data; // 👈 Important: return only the checklist object
   }
 );
 
@@ -73,7 +68,7 @@ const preOpChecklistSlice = createSlice({
       })
       .addCase(fetchOrCreateChecklist.fulfilled, (state, action) => {
         state.loading = false;
-        state.checklist = action.payload;
+        state.checklist = action.payload.checklist;
       })
       .addCase(fetchOrCreateChecklist.rejected, (state, action) => {
         state.loading = false;
@@ -91,7 +86,7 @@ const preOpChecklistSlice = createSlice({
       .addCase(updateChecklist.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.checklist = action.payload;
+        state.checklist = action.payload.checklist;
       })
       .addCase(updateChecklist.rejected, (state, action) => {
         state.loading = false;
