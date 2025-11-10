@@ -264,7 +264,7 @@ const AllPatientBills = () => {
                             View
                         </Button>
                     </Tooltip>
-                    <Tooltip title="Download Invoice">
+                    {/* <Tooltip title="Download Invoice">
                         <Button
                             type="link"
                             icon={<DownloadOutlined />}
@@ -272,7 +272,7 @@ const AllPatientBills = () => {
                         >
                             PDF
                         </Button>
-                    </Tooltip>
+                    </Tooltip> */}
                 </Space>
             ),
         },

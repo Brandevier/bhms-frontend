@@ -1,5 +1,5 @@
-import React from 'react';
-import { Card, Space, Button, Dropdown, Menu, Badge, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { Card, Space, Button, Dropdown, Menu, Badge, Tooltip, message, Modal } from 'antd';
 import { 
   DollarOutlined,
   FilePdfOutlined,
@@ -9,24 +9,74 @@ import {
   EyeOutlined,
   CopyOutlined,
   HistoryOutlined,
-  MailOutlined
+  MailOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
 
-const ActionButtons = ({ invoice, onPaymentClick, onReceiptClick }) => {
-  const handlePrint = () => {
-    window.print();
-  };
+// Import PDF generation functions
+import { generateInvoicePDF, generateReceiptPDF, printPDF } from '../utils/pdfGenerator';
 
-  const handleDownloadPDF = () => {
-    // Implement PDF download logic
-    console.log('Download PDF for invoice:', invoice.id);
-  };
+const ActionButtons = ({ invoice, onPaymentClick, onReceiptClick }) => {
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [printLoading, setPrintLoading] = useState(false);
 
   // Improved condition checks
   const hasBalanceDue = invoice.balance_due > 0;
   const hasPayments = invoice.amount_paid > 0;
   const isFullyPaid = invoice.balance_due === 0 && invoice.amount_paid > 0;
   const isPartiallyPaid = invoice.amount_paid > 0 && invoice.balance_due > 0;
+
+  const handleDownloadPDF = async () => {
+    setPdfLoading(true);
+    try {
+      const success = await generateInvoicePDF(invoice);
+      if (success) {
+        message.success('PDF downloaded successfully!');
+      } else {
+        message.error('Failed to download PDF. Please try again.');
+      }
+    } catch (error) {
+      message.error('Error generating PDF. Please try again.');
+      console.error('PDF download error:', error);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
+  const handleDownloadReceipt = async () => {
+    setPdfLoading(true);
+    try {
+      const success = await generateReceiptPDF(invoice);
+      if (success) {
+        message.success('Receipt downloaded successfully!');
+      } else {
+        message.error('Failed to download receipt. Please try again.');
+      }
+    } catch (error) {
+      message.error('Error generating receipt. Please try again.');
+      console.error('Receipt download error:', error);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
+  const handlePrint = async (type = 'invoice') => {
+    setPrintLoading(true);
+    try {
+      const success = await printPDF(invoice, type);
+      if (!success) {
+        message.error('Failed to open print dialog. Please try again.');
+      }
+    } catch (error) {
+      message.error('Error preparing document for printing.');
+      console.error('Print error:', error);
+    } finally {
+      setPrintLoading(false);
+    }
+  };
+
+  const handlePrintInvoice = () => handlePrint('invoice');
+  const handlePrintReceipt = () => handlePrint('receipt');
 
   const moreMenu = (
     <Menu
@@ -35,21 +85,25 @@ const ActionButtons = ({ invoice, onPaymentClick, onReceiptClick }) => {
           key: '1',
           label: 'Send Email',
           icon: <MailOutlined />,
+          onClick: () => message.info('Email feature coming soon!'),
         },
         {
           key: '2',
           label: 'Duplicate Invoice',
           icon: <CopyOutlined />,
+          onClick: () => message.info('Duplicate invoice feature coming soon!'),
         },
         {
           key: '3',
           label: 'Payment History',
           icon: <HistoryOutlined />,
+          onClick: () => message.info('Payment history feature coming soon!'),
         },
         {
           key: '4',
           label: 'View Audit Trail',
           icon: <EyeOutlined />,
+          onClick: () => message.info('Audit trail feature coming soon!'),
         },
       ]}
     />
@@ -111,25 +165,57 @@ const ActionButtons = ({ invoice, onPaymentClick, onReceiptClick }) => {
 
         {/* Print & Download - Always available */}
         <Space.Compact block>
-          <Tooltip title="Print invoice">
+          <Tooltip title="Print invoice document">
             <Button
-              icon={<PrinterOutlined />}
-              onClick={handlePrint}
+              icon={printLoading ? <LoadingOutlined /> : <PrinterOutlined />}
+              onClick={handlePrintInvoice}
               block
+              loading={printLoading}
+              disabled={printLoading}
             >
               Print
             </Button>
           </Tooltip>
           <Tooltip title="Download as PDF">
             <Button
-              icon={<DownloadOutlined />}
+              icon={pdfLoading ? <LoadingOutlined /> : <DownloadOutlined />}
               onClick={handleDownloadPDF}
               block
+              loading={pdfLoading}
+              disabled={pdfLoading}
             >
               PDF
             </Button>
           </Tooltip>
         </Space.Compact>
+
+        {/* Additional Actions for Paid Invoices */}
+        {hasPayments && (
+          <Space.Compact block>
+            <Tooltip title="Print receipt">
+              <Button
+                icon={printLoading ? <LoadingOutlined /> : <PrinterOutlined />}
+                onClick={handlePrintReceipt}
+                block
+                loading={printLoading}
+                disabled={printLoading}
+              >
+                Print Receipt
+              </Button>
+            </Tooltip>
+            <Tooltip title="Download receipt PDF">
+              <Button
+                icon={pdfLoading ? <LoadingOutlined /> : <FilePdfOutlined />}
+                onClick={handleDownloadReceipt}
+                block
+                loading={pdfLoading}
+                disabled={pdfLoading}
+              >
+                Receipt PDF
+              </Button>
+            </Tooltip>
+          </Space.Compact>
+        )}
 
         {/* More Actions */}
         <Dropdown overlay={moreMenu} placement="topCenter" trigger={['click']}>
@@ -169,16 +255,11 @@ const ActionButtons = ({ invoice, onPaymentClick, onReceiptClick }) => {
           </Space>
         </div>
 
-        {/* Debug info - remove in production */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="p-2 bg-yellow-50 rounded text-xs text-gray-600">
-            <div>Debug Info:</div>
-            <div>balance_due: {invoice.balance_due}</div>
-            <div>amount_paid: {invoice.amount_paid}</div>
-            <div>hasBalanceDue: {hasBalanceDue.toString()}</div>
-            <div>hasPayments: {hasPayments.toString()}</div>
-          </div>
-        )}
+        {/* PDF Generation Info */}
+        <div className="p-2 bg-blue-50 rounded text-xs text-gray-600 text-center">
+          <div>📄 Professional PDF documents with institutional branding</div>
+          <div className="text-xxs mt-1">Includes all invoice details and payment information</div>
+        </div>
       </Space>
     </Card>
   );
