@@ -104,6 +104,9 @@ const DepartmentsList = () => {
 
             case "Surgery":
                 return "/assets/surgery.jpg";
+            
+            case "Clerk":
+                return "/assets/clerk.webp";
 
 
             case "Claims":
