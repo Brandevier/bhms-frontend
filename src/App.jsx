@@ -109,6 +109,9 @@ import LabAnalytics from "./pages/departments/information_manager/labAnalytics/L
 import MaternityAnalytics from "./pages/departments/information_manager/maternity_analytics/MaternityAnalytics";
 import ClaimsExportHistory from "./pages/departments/claims/History/ClaimsExportHistory";
 import XmlViewerPage from "./pages/departments/claims/History/components/XmlViewerPage";
+import AllPatientBills from "./pages/departments/clerk/Invoices/AllPatientBills";
+import PatientBillDetails from "./pages/departments/clerk/Invoices/PatientBillDetails";
+import NHIA_Claims_Services from "./pages/departments/clerk/Invoices/NHIA_Bills/NHIA_Claims_Services";
 
 
  
@@ -239,6 +242,9 @@ const App = () => {
             {/* ACCOUNTS DEPARTMENT */}
             <Route path="accounts/statistics" element={<AccountStatistics />} />
             <Route path="accounts/billing-invoicing" element={<BillingInvoicing />} />
+            <Route path="clerk/patient-bills" element={<AllPatientBills />} />
+            <Route path="clerk/invoices/:visit_id" element={<PatientBillDetails />} />
+            <Route path="clerk/nhia-claims-services" element={<NHIA_Claims_Services />} />
 
 
             {/* DYNAMIC WARDS */}

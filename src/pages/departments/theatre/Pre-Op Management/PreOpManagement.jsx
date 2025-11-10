@@ -7,7 +7,7 @@ import AnesthesiaEvaluation from './components/AnesthesiaEvaluation';
 import RiskAssessment from './components/RiskAssessment';
 import PatientEducation from './components/PatientEducation';
 import MedicationReconciliation from './components/MedicationReconciliation';
-import NursingDocumentation from './components/NursingDocumentation';
+import NursingDocumentation from './components/nurseDocs/NursingDocumentation';
 import { useDispatch,useSelector } from 'react-redux';
 import { getAllTheatreBookings } from '../../../../redux/slice/theatreSlice'; 
 

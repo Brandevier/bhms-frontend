@@ -28,7 +28,7 @@ export const fetchVitalSignsRecordByPatientId = createAsyncThunk(
     'vitalSigns/fetchVitalSignsRecordById',
     async (id, { rejectWithValue }) => {
         try {
-            const response = await apiClient.get(`/api/vital-signs/${id}`);
+            const response = await apiClient.get(`/vital-signs/${id}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

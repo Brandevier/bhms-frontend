@@ -11,33 +11,33 @@ const MessageDropdown = () => {
   // Mock message data - will be replaced with backend later
   useEffect(() => {
     const mockMessages = [
-      {
-        id: 1,
-        sender: "Dr. Smith",
-        senderAvatar: "https://example.com/avatar1.jpg",
-        content: "Please review the patient case files for tomorrow's meeting.",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-        isRead: false,
-        type: "direct"
-      },
-      {
-        id: 2,
-        sender: "Nursing Team",
-        senderAvatar: "https://example.com/avatar2.jpg",
-        content: "Shift change reminder: Please complete your handover notes.",
-        timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
-        isRead: false,
-        type: "group"
-      },
-      {
-        id: 3,
-        sender: "Admin",
-        senderAvatar: "https://example.com/avatar3.jpg",
-        content: "Your quarterly performance review is scheduled for next week.",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        isRead: true,
-        type: "announcement"
-      }
+      // {
+      //   id: 1,
+      //   sender: "Dr. Smith",
+      //   senderAvatar: "https://example.com/avatar1.jpg",
+      //   content: "Please review the patient case files for tomorrow's meeting.",
+      //   timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+      //   isRead: false,
+      //   type: "direct"
+      // },
+      // {
+      //   id: 2,
+      //   sender: "Nursing Team",
+      //   senderAvatar: "https://example.com/avatar2.jpg",
+      //   content: "Shift change reminder: Please complete your handover notes.",
+      //   timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
+      //   isRead: false,
+      //   type: "group"
+      // },
+      // {
+      //   id: 3,
+      //   sender: "Admin",
+      //   senderAvatar: "https://example.com/avatar3.jpg",
+      //   content: "Your quarterly performance review is scheduled for next week.",
+      //   timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+      //   isRead: true,
+      //   type: "announcement"
+      // }
     ];
 
     setMessages(mockMessages);

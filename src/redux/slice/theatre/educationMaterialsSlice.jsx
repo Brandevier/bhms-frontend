@@ -40,6 +40,55 @@ export const updateEducation = createAsyncThunk(
   }
 );
 
+// Create allergies
+export const createAllergy = createAsyncThunk(
+  'allergies/create',
+  async (allergyData, { rejectWithValue }) => {
+    try {
+      const { data } = await apiClient.post('/theatre/education-materials/allergies', allergyData);
+      return data.data;
+    }
+    catch (error) {
+      console.error('❌ Error creating allergy record:', error);
+      return rejectWithValue(error.response?.data || { message: 'Failed to create allergy record' });
+    }
+  }
+);
+
+// get allergies
+export const fetchAllergies = createAsyncThunk(
+  'allergies/fetch',
+  async ({ visit_id }, { rejectWithValue }) => {
+    try {
+      const { data } = await apiClient.get('/theatre/education-materials/allergies', {
+        params: { visit_id }
+      });
+      return data.data;
+    }
+    catch (error) {
+      console.error('❌ Error fetching allergy records:', error);
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch allergy records' });
+    }
+  }
+);
+
+// delete allergy
+export const deleteAllergy = createAsyncThunk(
+  'allergies/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await apiClient.delete(`/theatre/education-materials/allergies/${id}`);
+      return data.data;
+    }
+    catch (error) {
+      console.error('❌ Error deleting allergy record:', error);
+      return rejectWithValue(error.response?.data || { message: 'Failed to delete allergy record' });
+    }
+  }
+);
+
+
+
 // ======================================================
 // 🧩 3️⃣ SLICE DEFINITION
 // ======================================================
@@ -47,6 +96,8 @@ const educationMaterialsSlice = createSlice({
   name: 'education',
   initialState: {
     materials: null,      // holds the education record (materials_data + meta)
+    allergies: null,     // holds allergy records
+
     loading: false,
     error: null,
     updateSuccess: false,
@@ -90,7 +141,60 @@ const educationMaterialsSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || 'Failed to update education materials';
         state.updateSuccess = false;
-      });
+      })
+    // ---- CREATE ALLERGY ----
+    builder
+      .addCase(createAllergy.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      }
+      )
+      .addCase(createAllergy.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.allergies) {
+          state.allergies.push(action.payload);
+        } else {
+          state.allergies = [action.payload];
+        }
+      }
+      )
+      .addCase(createAllergy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Failed to create allergy record';
+      }
+      )
+    // ---- FETCH ALLERGIES ----
+      .addCase(fetchAllergies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      }
+      )
+      .addCase(fetchAllergies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allergies = action.payload;
+      }
+      )
+      .addCase(fetchAllergies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Failed to fetch allergy records';
+      }
+      )
+    // ---- DELETE ALLERGY ----
+      .addCase(deleteAllergy.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      }
+      )
+      .addCase(deleteAllergy.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allergies = state.allergies.filter(allergy => allergy.id !== action.payload.id);
+      }
+      )
+      .addCase(deleteAllergy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Failed to delete allergy record';
+      }
+      );
   },
 });
 

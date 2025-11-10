@@ -166,7 +166,7 @@ const ORscheduling = () => {
     
     return {
       id: booking.id,
-      patientName: patient.name || 'Unknown Patient',
+      patientName: patient.firstName || 'Unknown Patient',
       patientId: patient.id,
       folderNumber: patient.folderNumber,
       age: patient.age,

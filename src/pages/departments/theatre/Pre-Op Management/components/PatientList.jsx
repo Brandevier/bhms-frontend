@@ -72,6 +72,9 @@ const PatientList = ({ onSelectPatient, selectedPatient }) => {
         type: booking.visit?.visit_type,
         status: booking.visit?.admission_status
       },
+      vitals:{
+        records: booking.visit?.vital_signs_records || []
+      },
       procedure: {
         primary: primaryProcedure.description,
         all: procedures,

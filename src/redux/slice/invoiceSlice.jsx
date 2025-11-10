@@ -20,7 +20,7 @@ export const fetchInvoiceById = createAsyncThunk(
   'invoices/fetchInvoiceById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`/invoices/${id}`);
+      const response = await apiClient.get(`/invoices/visit`, { params: { visit_id: id } });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -64,10 +64,25 @@ export const deleteInvoice = createAsyncThunk(
   }
 );
 
+// getNHIAClaims
+export const getNHIAClaims = createAsyncThunk(
+  'invoices/getNHIAClaims',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/accounts/nhia-claims');
+      return response.data;
+    }
+    catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const initialState = {
   invoices: [],
   currentInvoice: null,
   loading: false,
+  nhiaClaims: [],
   error: null,
   pagination: {
     page: 1,
@@ -167,7 +182,22 @@ const invoiceSlice = createSlice({
       .addCase(deleteInvoice.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Get NHIA Claims
+      .addCase(getNHIAClaims.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getNHIAClaims.fulfilled, (state, action) => {
+        state.loading = false;
+        // You can store NHIA claims data in state if needed
+        state.nhiaClaims = action.payload.data;
+      })
+      .addCase(getNHIAClaims.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+
   }
 });
 

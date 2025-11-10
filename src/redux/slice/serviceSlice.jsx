@@ -135,6 +135,21 @@ export const makePatientPayment = createAsyncThunk(
   }
 );
 
+// getPaidHistoryByPatient
+export const getPaidHistoryByPatient = createAsyncThunk(
+  'service/getPaidHistoryByPatient',
+  async ({ patient_id }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/accounts/paid-history-by-patient`, {
+        params: { patient_id }
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+); 
+
 // Initial State
 const initialState = {
   services: [],
@@ -256,7 +271,21 @@ const serviceSlice = createSlice({
       .addCase(makePatientPayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Get Paid History By Patient
+      .addCase(getPaidHistoryByPatient.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPaidHistoryByPatient.fulfilled, (state, action) => {
+        state.loading = false;
+        // Assuming you want to store paid history in invoices for simplicity
+        state.invoices = action.payload;
+      })
+      .addCase(getPaidHistoryByPatient.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+      
   },
 });
 
