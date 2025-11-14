@@ -64,7 +64,7 @@ import InstitutionRegistration from "./components/InstitutionRegistration";
 import TimeTable from "./pages/departments/shared/TimeTable";
 import ClaimsDashboard from "./pages/departments/claims/ClaimsDashboard";
 import ICD10GDRGManager from "./pages/departments/claims/ICD10GDRGManager";
-import NHIAMedicationsManager from "./pages/departments/claims/NHIAMedicationsManager";
+import NHIAMedicationsManager from "./pages/departments/claims/nhia_medication/NHIAMedicationsManager";
 import ICD10Diagnosis from "./pages/departments/claims/icd_10/ICD10Diangosis";
 import AllPatientsRecords from "./pages/departments/records/new_patients/AllPatientsRecords";
 import CreateTemplatePage from "./pages/departments/lab/form_templates/CreateTemplatePage";

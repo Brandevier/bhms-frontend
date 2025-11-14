@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { fetchInvoiceById } from '../../../../redux/slice/invoiceSlice';
-import { 
-  Card, 
-  Row, 
-  Col, 
-  Spin, 
-  Alert, 
+import { useOutstandingPayments } from '../../../../redux/hooks/useAccountHooks';
+
+import {
+  Card,
+  Row,
+  Col,
+  Spin,
+  Alert,
   Divider,
   Space,
   notification
@@ -27,7 +29,8 @@ const PatientBillDetails = () => {
   const dispatch = useDispatch();
   const { visit_id } = useParams();
   const { currentInvoice, loading, error } = useSelector((state) => state.invoices);
-  
+  const { payBill } = useOutstandingPayments();
+
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [receiptModalVisible, setReceiptModalVisible] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -39,32 +42,41 @@ const PatientBillDetails = () => {
   }, [dispatch, visit_id]);
 
   const handlePayment = async (paymentData) => {
+    console.log(paymentData);
+
+    if (!currentInvoice?.id) return;
+
+    const data = {
+      bill_id: currentInvoice.id,
+      payment_method: paymentData.method,
+      paid_amount: parseFloat(paymentData.amount)
+    };
+
     setPaymentLoading(true);
     try {
-      // await dispatch(processPayment({
-      //   invoice_id: currentInvoice.id,
-      //   ...paymentData
-      // })).unwrap();
-      
+      payBill(currentInvoice.id, {
+        payment_method: paymentData.method,
+        paid_amount: parseFloat(paymentData.amount)
+      }).unwrap();
+
       // notification.success({
       //   message: 'Payment Successful',
-      //   description: 'Payment has been processed successfully.',
+      //   description: 'The payment has been processed successfully.'
       // });
-      
-      // setPaymentModalVisible(false);
-      // setReceiptModalVisible(true);
-      
-      // // Refresh invoice data
-      // dispatch(fetchInvoiceById(visit_id));
+
+      dispatch(fetchInvoiceById(visit_id));
+      setPaymentModalVisible(false);
+
     } catch (error) {
       notification.error({
         message: 'Payment Failed',
-        description: error.message || 'Failed to process payment.',
+        description: 'Failed to process payment: ' + (error.message || 'Unknown error')
       });
     } finally {
       setPaymentLoading(false);
     }
   };
+
 
   if (loading) {
     return (
@@ -101,15 +113,15 @@ const PatientBillDetails = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <BillHeader invoice={currentInvoice} />
-      
+
       <Divider />
-      
+
       <Row gutter={[16, 16]}>
         {/* Left Column - Patient Info & Services */}
         <Col xs={24} lg={16}>
           <PatientInfoCard invoice={currentInvoice} />
-          
-          <Card 
+
+          <Card
             title={
               <Space>
                 <FileTextOutlined />
@@ -121,12 +133,12 @@ const PatientBillDetails = () => {
             <ServicesTable services={currentInvoice.service_bills} />
           </Card>
         </Col>
-        
+
         {/* Right Column - Payment Summary & Actions */}
         <Col xs={24} lg={8}>
           <PaymentSummary invoice={currentInvoice} />
-          
-          <ActionButtons 
+
+          <ActionButtons
             invoice={currentInvoice}
             onPaymentClick={() => setPaymentModalVisible(true)}
             onReceiptClick={() => setReceiptModalVisible(true)}

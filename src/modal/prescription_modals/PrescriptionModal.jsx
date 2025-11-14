@@ -42,7 +42,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
       setSearchLoading(true);
       const result = await dispatch(fetchMedicationByCode(value));
       const medications = result.payload || [];
-      
+
       setMedicationOptions(medications);
     } finally {
       setSearchLoading(false);
@@ -53,7 +53,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
   const handleDrugSelect = (value, option) => {
     const drug = option.data;
     setSelectedDrug(drug);
-    
+
     // Auto-fill form fields
     form.setFieldsValue({
       dosage: "",
@@ -61,7 +61,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
       duration: "",
       notes: ''
     });
-    
+
     updatePrescriptionText();
   };
 
@@ -74,42 +74,55 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
   const updatePrescriptionText = () => {
     const values = form.getFieldsValue();
     const { dosage, frequency, duration, notes } = values;
-    
+
     if (!selectedDrug) {
       setCurrentPrescriptionText("");
       return;
     }
 
     let prescriptionText = selectedDrug.generic_name || selectedDrug.name || "Unknown Medication";
-    
+
     if (dosage) {
       prescriptionText += `\n${dosage}`;
     }
-    
+    // frequencyMap
     if (frequency) {
       const frequencyMap = {
-        'once': 'Once daily',
-        'twice': 'Twice daily', 
-        'three_times': 'Three times daily',
-        'four_times': 'Four times daily',
-        'every_four_hours': 'Every 4 hours',
-        'every_six_hours': 'Every 6 hours',
-        'every_eight_hours': 'Every 8 hours',
-        'every_twelve_hours': 'Every 12 hours',
-        'as_needed': 'As needed',
-        'bedtime': 'At bedtime'
+        OD: "Once daily",
+        BD: "Twice daily",
+        TDS: "Three times daily",
+        QID: "Four times daily",
+        Q4H: "Every 4 hours",
+        Q6H: "Every 6 hours",
+        Q8H: "Every 8 hours",
+        Q12H: "Every 12 hours",
+
+        PRN: "As needed",
+        STAT: "Immediately",
+        HS: "At bedtime",
+        AM: "Morning",
+        PM: "Evening",
+        AC: "Before meals",
+        PC: "After meals",
+
+        Q1H: "Every 1 hour",
+        Q2H: "Every 2 hours",
+        Q3H: "Every 3 hours",
+        QW: "Once weekly",
+        QM: "Once monthly"
       };
+
       prescriptionText += ` ${frequencyMap[frequency] || frequency}`;
     }
-    
+
     if (duration) {
       prescriptionText += ` for ${duration}`;
     }
-    
+
     if (notes) {
       prescriptionText += `\n${notes}`;
     }
-    
+
     setCurrentPrescriptionText(prescriptionText);
   };
 
@@ -132,7 +145,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
 
       if (editingItem) {
         // Update existing item
-        setPrescriptionItems(prev => 
+        setPrescriptionItems(prev =>
           prev.map(item => item.id === editingItem.id ? prescriptionData : item)
         );
         setEditingItem(null);
@@ -159,7 +172,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
   const editPrescriptionItem = (item) => {
     setSelectedDrug(item.medication_data);
     setEditingItem(item);
-    
+
     // Populate form with item data
     form.setFieldsValue({
       dosage: item.dosage,
@@ -167,7 +180,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
       duration: item.duration,
       notes: item.notes
     });
-    
+
     setCurrentPrescriptionText(item.prescription_text);
   };
 
@@ -214,13 +227,13 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
         <EmergencyToggle isEmergency={isEmergency} onChange={setIsEmergency} />
 
         {/* Current Prescription Form */}
-        <Card 
+        <Card
           title={
             <div className="flex justify-between items-center">
               <span>{editingItem ? "Edit Prescription" : "Add New Prescription"}</span>
               {editingItem && (
-                <Button 
-                  size="small" 
+                <Button
+                  size="small"
                   onClick={() => {
                     setEditingItem(null);
                     resetForm();
@@ -312,16 +325,16 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
               renderItem={(item) => (
                 <List.Item
                   actions={[
-                    <Button 
-                      type="link" 
-                      icon={<EditOutlined />} 
+                    <Button
+                      type="link"
+                      icon={<EditOutlined />}
                       onClick={() => editPrescriptionItem(item)}
                     >
                       Edit
                     </Button>,
-                    <Button 
-                      type="link" 
-                      danger 
+                    <Button
+                      type="link"
+                      danger
                       icon={<DeleteOutlined />}
                       onClick={() => removePrescriptionItem(item.id)}
                     >
@@ -372,9 +385,8 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
             </button>
             <button
               type="button"
-              className={`px-4 py-2 text-white rounded ${
-                isEmergency ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
-              }`}
+              className={`px-4 py-2 text-white rounded ${isEmergency ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
+                }`}
               onClick={handleSubmit}
               disabled={prescriptionItems.length === 0}
             >

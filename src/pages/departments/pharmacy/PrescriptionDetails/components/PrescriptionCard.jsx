@@ -119,13 +119,13 @@ const PrescriptionCard = ({ prescription, index, onIssueMedication, onInterventi
                     <Descriptions.Item label="Dosage Instructions" span={3}>
                         <Space direction="vertical">
                             <Text>
-                                <Text strong>Dosage:</Text> {prescription?.dosage || 'N/A'} mg
+                                <Text strong>Dosage:</Text> {prescription?.dosage || 'N/A'} 
                             </Text>
                             <Text>
-                                <Text strong>Frequency:</Text> {prescription?.frequency || 'N/A'} times daily
+                                <Text strong>Frequency:</Text> {prescription?.frequency || 'N/A'} 
                             </Text>
                             <Text>
-                                <Text strong>Duration:</Text> {prescription?.duration || 'N/A'} days
+                                <Text strong>Duration:</Text> {prescription?.duration || 'N/A'} 
                             </Text>
                             <Text>
                                 <Text strong>Period:</Text> {moment(prescription?.start_date).format('LLL')} - {moment(prescription.end_date).format('LLL')}

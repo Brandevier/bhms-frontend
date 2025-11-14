@@ -27,30 +27,30 @@ const consultationMenu = [
     icon: <WechatOutlined />, 
     path: "/shared/chat" 
   },
-  { 
-    key: "consult-7", 
-    label: "Admissions", 
-    icon: <UsergroupAddOutlined />, 
-    path: "/shared/admissions/all" 
-  },
-  { 
-    key: "consult-6", 
-    label: "Statistics", 
-    icon: <BarChartOutlined />, 
-    path: "/shared/departments/consultation/stats" 
-  },
-  { 
-    key: "consult-9", 
-    label: "Attendance", 
-    icon: <UserSwitchOutlined />, 
-    path: "/shared/attendance" 
-  },
-  { 
-    key: "opd-5", 
-    label: "Time Table", 
-    icon: <CalendarOutlined />, 
-    path: "/shared/departments/time-table" 
-  },
+  // { 
+  //   key: "consult-7", 
+  //   label: "Admissions", 
+  //   icon: <UsergroupAddOutlined />, 
+  //   path: "/shared/admissions/all" 
+  // },
+  // { 
+  //   key: "consult-6", 
+  //   label: "Statistics", 
+  //   icon: <BarChartOutlined />, 
+  //   path: "/shared/departments/consultation/stats" 
+  // },
+  // { 
+  //   key: "consult-9", 
+  //   label: "Attendance", 
+  //   icon: <UserSwitchOutlined />, 
+  //   path: "/shared/attendance" 
+  // },
+  // { 
+  //   key: "opd-5", 
+  //   label: "Time Table", 
+  //   icon: <CalendarOutlined />, 
+  //   path: "/shared/departments/time-table" 
+  // },
 ];
 
 export default consultationMenu;

@@ -122,13 +122,13 @@ const PaymentModal = ({ visible, invoice, loading, onCancel, onPay }) => {
             </Select>
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="reference"
             label="Payment Reference"
             rules={[{ required: true, message: 'Please enter payment reference' }]}
           >
             <Input placeholder="Enter reference number" />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             name="payment_date"

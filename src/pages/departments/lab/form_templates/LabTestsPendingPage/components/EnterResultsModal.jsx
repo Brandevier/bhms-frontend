@@ -79,7 +79,7 @@ const EnterResultsModal = ({ visible, currentTest, onCancel, onSubmit }) => {
             title={
                 <div className="flex items-center space-x-2">
                     <PaperClipOutlined className="text-blue-500" />
-                    <span>Enter Laboratory Results</span>
+                    <span onClick={()=>console.log(currentTest)}>Enter Laboratory Results</span>
                 </div>
             }
             visible={visible}
@@ -120,7 +120,7 @@ const EnterResultsModal = ({ visible, currentTest, onCancel, onSubmit }) => {
                                     ?.map((field) => (
                                         <Form.Item
                                             key={field.id}
-                                            name={field.id}
+                                            name={field.label}
                                             label={
                                                 <span className="font-medium text-gray-700">
                                                     {field.label}
