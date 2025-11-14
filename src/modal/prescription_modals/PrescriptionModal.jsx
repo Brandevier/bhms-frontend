@@ -180,6 +180,7 @@ export default function PrescriptionModal({ visible, onClose, onSave, isBulk = f
       duration: item.duration,
       notes: item.notes
     });
+    console.log(item)
 
     setCurrentPrescriptionText(item.prescription_text);
   };
