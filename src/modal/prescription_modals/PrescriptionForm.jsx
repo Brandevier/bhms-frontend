@@ -9,17 +9,40 @@ const PrescriptionForm = ({
   onValuesChange 
 }) => {
   const frequencyOptions = [
-    { value: 'once', label: 'Once daily' },
-    { value: 'twice', label: 'Twice daily' },
-    { value: 'three_times', label: 'Three times daily' },
-    { value: 'four_times', label: 'Four times daily' },
-    { value: 'every_four_hours', label: 'Every 4 hours' },
-    { value: 'every_six_hours', label: 'Every 6 hours' },
-    { value: 'every_eight_hours', label: 'Every 8 hours' },
-    { value: 'every_twelve_hours', label: 'Every 12 hours' },
-    { value: 'as_needed', label: 'As needed' },
-    { value: 'bedtime', label: 'At bedtime' },
-  ];
+  // Daily frequencies
+  { value: 'OD', label: 'Once daily' },
+  { value: 'BD', label: 'Twice daily' },
+  { value: 'TDS', label: 'Three times daily' },
+  { value: 'QID', label: 'Four times daily' },
+  { value: 'QHS', label: 'At bedtime (once nightly)' },
+
+  // Hourly intervals
+  { value: 'Q4H', label: 'Every 4 hours' },
+  { value: 'Q6H', label: 'Every 6 hours' },
+  { value: 'Q8H', label: 'Every 8 hours' },
+  { value: 'Q12H', label: 'Every 12 hours' },
+  { value: 'Q1H', label: 'Every 1 hour' },
+  { value: 'Q2H', label: 'Every 2 hours' },
+  { value: 'Q3H', label: 'Every 3 hours' },
+
+  // Meal-related
+  { value: 'AC', label: 'Before meals' },
+  { value: 'PC', label: 'After meals' },
+  { value: 'BPC', label: 'Before and after meals' },
+
+  // Weekly / Monthly
+  { value: 'QW', label: 'Once weekly' },
+  { value: 'QM', label: 'Once monthly' },
+
+  // As-needed / conditional
+  { value: 'PRN', label: 'As needed' },
+  { value: 'STAT', label: 'Immediately' },
+
+  // Special times
+  { value: 'AM', label: 'Every morning' },
+  { value: 'PM', label: 'Every evening' },
+];
+
 
   return (
     <Form
