@@ -181,7 +181,7 @@ const UserDropdown = () => {
           <span className="menu-text">Settings</span>
         </div>
 
-        <div className="menu-item" onClick={() => handleMenuClick('notifications')}>
+        {/* <div className="menu-item" onClick={() => handleMenuClick('notifications')}>
           <BellOutlined className="menu-icon" />
           <span className="menu-text">Notifications</span>
           <Badge size="small" count={3} className="notification-badge" />
@@ -199,7 +199,7 @@ const UserDropdown = () => {
           <HistoryOutlined className="menu-icon" />
           <span className="menu-text">Activity Log</span>
         </div>
-
+ */}
         {user.permissions && user.permissions.length > 0 && (
           <div className="menu-item" onClick={() => handleMenuClick('switch-role')}>
             <KeyOutlined className="menu-icon" />

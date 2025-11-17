@@ -1,102 +1,121 @@
-import React from 'react';
-import { Descriptions, Tag, Badge } from 'antd';
-import { PhoneOutlined, HomeOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Card, Tabs, Tag, Badge, Button, Space, Typography } from 'antd';
+import { 
+  UserOutlined, 
+  EditOutlined,
+} from '@ant-design/icons';
+import EditPatientModal from './EditPatientModal';
+import BasicInfoTab from './BasicInfoTab';
+import ContactInfoTab from './ContactInfoTab';
+import AdditionalInfoTab from './AdditionalInfoTab';
 
-const PatientInfoTabs = ({ patient }) => {
+const { Title, Text } = Typography;
+
+const PatientInfoTabs = ({ patient, onPatientUpdate }) => {
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('1');
+
   const { 
     first_name, 
     middle_name, 
     last_name, 
-    gender, 
-    date_of_birth,
     folder_number,
     status,
-    institution,
-    metadata
   } = patient;
 
-  const age = date_of_birth ? 
-    new Date().getFullYear() - new Date(date_of_birth).getFullYear() : 'N/A';
+  const handleEditClick = () => {
+    setIsEditModalVisible(true);
+  };
 
-  const items = [
+  const handleModalClose = () => {
+    setIsEditModalVisible(false);
+  };
+
+  const handlePatientUpdate = (updatedPatient) => {
+    onPatientUpdate?.(updatedPatient);
+    setIsEditModalVisible(false);
+  };
+
+  const fullName = `${first_name} ${middle_name || ''} ${last_name}`.trim();
+
+  const tabItems = [
     {
       key: '1',
       label: 'Basic Info',
-      children: (
-        <Descriptions bordered column={2}>
-          <Descriptions.Item label="Full Name">
-            {`${first_name} ${middle_name || ''} ${last_name}`}
-          </Descriptions.Item>
-          <Descriptions.Item label="Gender">
-            <Tag color={gender === 'M' ? 'blue' : 'pink'}>
-              {gender === 'M' ? 'Male' : 'Female'}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Age">{age}</Descriptions.Item>
-          <Descriptions.Item label="Date of Birth">
-            {date_of_birth ? new Date(date_of_birth).toLocaleDateString() : 'N/A'}
-          </Descriptions.Item>
-          <Descriptions.Item label="Folder Number">
-            <Tag color="geekblue">{folder_number}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <Badge 
-              status={status === 'active' ? 'success' : 'error'} 
-              text={status} 
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="Institution" span={2}>
-            <div className="flex items-center">
-              <HomeOutlined className="mr-2" />
-              {institution?.name || 'N/A'}
-            </div>
-          </Descriptions.Item>
-        </Descriptions>
-      ),
+      children: <BasicInfoTab patient={patient} />,
     },
     {
       key: '2',
-      label: 'Contact Info',
-      children: (
-        <Descriptions bordered column={2}>
-          {metadata?.relatives?.next_of_kin && (
-            <>
-              <Descriptions.Item label="Next of Kin">
-                {metadata.relatives.next_of_kin.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Relationship">
-                {metadata.relatives.next_of_kin.relationship}
-              </Descriptions.Item>
-              <Descriptions.Item label="Contact">
-                <div className="flex items-center">
-                  <PhoneOutlined className="mr-2" />
-                  {metadata.relatives.next_of_kin.phone}
-                </div>
-              </Descriptions.Item>
-            </>
-          )}
-          {metadata?.relatives?.emergency_contact && (
-            <>
-              <Descriptions.Item label="Emergency Contact">
-                {metadata.relatives.emergency_contact.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Relationship">
-                {metadata.relatives.emergency_contact.relationship}
-              </Descriptions.Item>
-              <Descriptions.Item label="Contact">
-                <div className="flex items-center">
-                  <PhoneOutlined className="mr-2" />
-                  {metadata.relatives.emergency_contact.phone}
-                </div>
-              </Descriptions.Item>
-            </>
-          )}
-        </Descriptions>
-      ),
+      label: 'Contact & Emergency',
+      children: <ContactInfoTab patient={patient} />,
+    },
+    {
+      key: '3',
+      label: 'Additional Info',
+      children: <AdditionalInfoTab patient={patient} />,
     },
   ];
 
-  return <Descriptions items={items} />;
+  return (
+    <>
+      <Card 
+        className="shadow-lg border-0 rounded-lg"
+        bodyStyle={{ padding: 0 }}
+      >
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <div className="bg-white p-3 rounded-full shadow-sm">
+                <UserOutlined className="text-2xl text-blue-600" />
+              </div>
+              <div>
+                <Title level={4} className="mb-1 !text-gray-900">
+                  {fullName}
+                </Title>
+                <Space>
+                  <Tag color="geekblue" className="font-mono">
+                    {folder_number}
+                  </Tag>
+                  <Badge 
+                    status={status === 'active' ? 'success' : 'error'} 
+                    text={
+                      <Text className="capitalize">
+                        {status}
+                      </Text>
+                    } 
+                  />
+                </Space>
+              </div>
+            </div>
+            <Button 
+              type="primary" 
+              icon={<EditOutlined />}
+              onClick={handleEditClick}
+              className="bg-blue-600 hover:bg-blue-700 border-blue-600 shadow-sm"
+            >
+              Edit Information
+            </Button>
+          </div>
+        </div>
+
+        {/* Tabs Section */}
+        <Tabs 
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className="px-6"
+          items={tabItems}
+        />
+      </Card>
+
+      <EditPatientModal
+        visible={isEditModalVisible}
+        patient={patient}
+        onClose={handleModalClose}
+        onUpdate={handlePatientUpdate}
+      />
+    </>
+  );
 };
 
 export default PatientInfoTabs;
