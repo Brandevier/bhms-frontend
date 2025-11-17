@@ -1,12 +1,12 @@
 // src/components/staff/layout/StaffHeader.js
 import React, { useEffect } from "react";
 import { Layout, Dropdown, Avatar, Badge, List, Button, message, Modal, Spin, Tag } from "antd";
-import { 
-  BellOutlined, 
-  UserOutlined, 
-  SwapOutlined, 
+import {
+  BellOutlined,
+  UserOutlined,
+  SwapOutlined,
   VideoCameraOutlined,
-  MessageOutlined 
+  MessageOutlined
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
@@ -126,13 +126,19 @@ const StaffHeader = () => {
         {/* Right: Messages + Video Call + Notifications + Profile */}
         <div className="flex-1 flex justify-end">
           <div className="flex items-center gap-2 md:gap-4">
-           
-            <VideoCallSection />
-             <MessageDropdown />
-            <NotificationDropdown />
+
+            {/* Hidden on small screens, visible on md+ */}
+            <div className="hidden md:flex items-center gap-2 md:gap-4">
+              <VideoCallSection />
+              <MessageDropdown />
+              <NotificationDropdown />
+            </div>
+
+            {/* Always visible */}
             <UserDropdown />
           </div>
         </div>
+
       </Header>
 
       <DepartmentModal
