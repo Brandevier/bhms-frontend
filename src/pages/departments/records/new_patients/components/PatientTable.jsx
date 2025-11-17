@@ -136,62 +136,71 @@ const PatientTable = ({
       key: 'status',
       width: 120,
       sorter: (a, b) => (a.status || '').localeCompare(b.status || ''),
-      render: (status) => (
-        <Badge
-          status={status === 'active' ? 'success' : 'default'}
-          text={
-            <span className={`text-xs font-medium ${
-              status === 'active' ? 'text-green-600' : 'text-gray-500'
-            }`}>
-              {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown'}
-            </span>
-          }
-        />
-      )
+      render: (status) => {
+        // Normalize status to lowercase for comparison
+        const normalizedStatus = status?.toLowerCase();
+        return (
+          <Badge
+            status={normalizedStatus === 'active' ? 'success' : 'default'}
+            text={
+              <span className={`text-xs font-medium ${
+                normalizedStatus === 'active' ? 'text-green-600' : 'text-gray-500'
+              }`}>
+                {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown'}
+              </span>
+            }
+          />
+        );
+      }
     },
     {
       title: 'Actions',
       key: 'actions',
       width: 180,
       fixed: 'right',
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="View Patient Details">
-            <Button
-              icon={<FileSearchOutlined />}
-              size="small"
-              className="border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600"
-              onClick={() => navigate(`/shared/records/folder/${record.id}`, { id: record.id })}
-            />
-          </Tooltip>
+      render: (_, record) => {
+        // Normalize status to lowercase for comparison
+        const normalizedStatus = record.status?.toLowerCase();
+        
+        return (
+          <Space size="small">
+            <Tooltip title="View Patient Details">
+              <Button
+                icon={<FileSearchOutlined />}
+                size="small"
+                className="border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600"
+                onClick={() => navigate(`/shared/records/folder/${record.id}`, { id: record.id })}
+              />
+            </Tooltip>
 
-          {record.status === 'active' ? (
-            <Tooltip title="Visit In Progress">
-              <Button
-                type="dashed"
-                size="small"
-                disabled
-                className="text-orange-500 border-orange-200 text-xs"
-              >
-                <HistoryOutlined className="mr-1" />
-                In Visit
-              </Button>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Initiate New Visit">
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => onInitiateVisit(record)}
-                className="bg-blue-500 border-blue-500 hover:bg-blue-600 text-xs h-7"
-              >
-                <PlusCircleOutlined className="mr-1" />
-                Visit
-              </Button>
-            </Tooltip>
-          )}
-        </Space>
-      )
+            {normalizedStatus === 'active' ? (
+              <Tooltip title="Visit In Progress">
+                <Button
+                  type="dashed"
+                  size="small"
+                  disabled
+                  className="text-orange-500 border-orange-200 text-xs"
+                >
+                  <HistoryOutlined className="mr-1" />
+                  In Visit
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Initiate New Visit">
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => onInitiateVisit(record)}
+                  className="bg-blue-500 border-blue-500 hover:bg-blue-600 text-xs h-7"
+                >
+                  <PlusCircleOutlined className="mr-1" />
+                  Visit
+                </Button>
+              </Tooltip>
+            )}
+          </Space>
+        );
+      }
     }
   ];
 

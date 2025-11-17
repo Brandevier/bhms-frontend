@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Badge, Button, Space, Tooltip, Tag, Avatar,Card } from 'antd';
+import { Table, Badge, Button, Space, Tooltip, Tag, Avatar, Card } from 'antd';
 import { 
   FileSearchOutlined, 
   HistoryOutlined, 
@@ -42,7 +42,7 @@ const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
               {record.patient?.first_name} {record.patient?.middle_name || ''} {record.patient?.last_name}
             </span>
             <div className="flex items-center space-x-2 mt-1">
-              <span className="text-xs text-gray-500 capitalize">{record.gender}</span>
+              <span className="text-xs text-gray-500 capitalize">{record.patient?.gender}</span>
               <span className="text-gray-300">•</span>
               <span className="text-xs text-gray-500">
                 {record.patient?.date_of_birth ? dayjs(record.patient?.date_of_birth).format('MMM DD, YYYY') : 'N/A'}
@@ -70,14 +70,17 @@ const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
       key: 'gender',
       width: 100,
       sorter: (a, b) => a.patient?.gender?.localeCompare(b.patient?.gender),
-      render: (gender) => (
-        <Tag 
-          color={gender === 'M' ? 'blue' : gender === 'F' ? 'pink' : 'default'}
-          className="capitalize font-medium text-xs"
-        >
-          {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'Other'}
-        </Tag>
-      )
+      render: (_, record) => {
+        const gender = record.patient?.gender;
+        return (
+          <Tag 
+            color={gender === 'M' ? 'blue' : gender === 'F' ? 'pink' : 'default'}
+            className="capitalize font-medium text-xs"
+          >
+            {gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : 'Other'}
+          </Tag>
+        );
+      }
     },
     {
       title: 'Insurance',
@@ -85,13 +88,13 @@ const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
       key: 'insurance',
       width: 120,
       sorter: (a, b) => (a.patient?.has_insurance ? 1 : 0) - (b.patient?.has_insurance ? 1 : 0),
-      render: (hasInsurance, record) => (
+      render: (_, record) => (
         <div className="flex items-center space-x-2">
-          <IdcardOutlined className={hasInsurance ? "text-green-500 text-sm" : "text-gray-400 text-sm"} />
-          <span className={`text-xs font-medium ${record?.patient?.has_insurance ? 'text-green-600' : 'text-gray-500'}`}>
-            {record?.patient?.has_insurance ? 'Insured' : 'Not Insured'}
+          <IdcardOutlined className={record.patient?.has_insurance ? "text-green-500 text-sm" : "text-gray-400 text-sm"} />
+          <span className={`text-xs font-medium ${record.patient?.has_insurance ? 'text-green-600' : 'text-gray-500'}`}>
+            {record.patient?.has_insurance ? 'Insured' : 'Not Insured'}
           </span>
-          {record?.patient?.has_insurance && record.insurance?.insurance_provider && (
+          {record.patient?.has_insurance && record.insurance?.insurance_provider && (
             <Tag color="green" className="text-xs">
               {record.insurance.insurance_provider}
             </Tag>
@@ -117,61 +120,69 @@ const PatientTable = ({ patients, loading, onInitiateVisit, searchTerm }) => {
       key: 'status',
       width: 120,
       sorter: (a, b) => (a.status || '').localeCompare(b.status || ''),
-      render: (status) => (
-        <Badge
-          status={status === 'active' ? 'success' : 'default'}
-          text={
-            <span className={`text-xs font-medium ${
-              status === 'active' ? 'text-green-600' : 'text-gray-500'
-            }`}>
-              {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown'}
-            </span>
-          }
-        />
-      )
+      render: (status) => {
+        // Normalize status to lowercase for comparison
+        const normalizedStatus = status?.toLowerCase();
+        return (
+          <Badge
+            status={normalizedStatus === 'active' ? 'success' : 'default'}
+            text={
+              <span className={`text-xs font-medium ${
+                normalizedStatus === 'active' ? 'text-green-600' : 'text-gray-500'
+              }`}>
+                {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown'}
+              </span>
+            }
+          />
+        );
+      }
     },
     {
       title: 'Actions',
       key: 'actions',
       width: 180,
       fixed: 'right',
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="View Patient Details">
-            <Button
-              icon={<FileSearchOutlined />}
-              size="small"
-              className="border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600"
-              onClick={() => navigate(`/shared/records/folder/${record.id}`, { id: record.id })}
-            />
-          </Tooltip>
-
-          {record.status === 'active' ? (
-            <Tooltip title="Visit In Progress">
+      render: (_, record) => {
+        // Normalize status to lowercase for comparison
+        const normalizedStatus = record.status?.toLowerCase();
+        
+        return (
+          <Space size="small">
+            <Tooltip title="View Patient Details">
               <Button
-                type="dashed"
+                icon={<FileSearchOutlined />}
                 size="small"
-                disabled
-                className="text-orange-500 border-orange-200 text-xs"
-              >
-                <HistoryOutlined className="mr-1" />
-                In Visit
-              </Button>
+                className="border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600"
+                onClick={() => navigate(`/shared/records/folder/${record.id}`, { id: record.id })}
+              />
             </Tooltip>
-          ) : (
-            <Tooltip title="Initiate New Visit">
-              <TonitelButton
-                size="sm"
-                onClick={() => onInitiateVisit(record)}
-                icon={   <PlusCircleOutlined  />}
-              >
-             
-                Visit
-              </TonitelButton>
-            </Tooltip>
-          )}
-        </Space>
-      )
+
+            {normalizedStatus === 'active' ? (
+              <Tooltip title="Visit In Progress">
+                <Button
+                  type="dashed"
+                  size="small"
+                  disabled
+                  className="text-orange-500 border-orange-200 text-xs"
+                >
+                  <HistoryOutlined className="mr-1" />
+                  In Visit
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Initiate New Visit">
+                <TonitelButton
+                  size="sm"
+                  onClick={() => onInitiateVisit(record)}
+                  icon={<PlusCircleOutlined />}
+                >
+                  Visit
+                </TonitelButton>
+              </Tooltip>
+            )}
+          </Space>
+        );
+      }
     }
   ];
 
