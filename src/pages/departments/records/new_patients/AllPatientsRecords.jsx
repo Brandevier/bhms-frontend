@@ -9,7 +9,7 @@ import { getDepartmentsByInstitution } from '../../../../redux/slice/departmentS
 import PatientTable from './components/PatientTable';
 import SearchHeader from './components/SearchHeader';
 import EmptyState from './components/EmptyState';
-import PatientRegistrationModal from "../../../../modal/PatientRegistrationModal";
+import PatientRegistrationModal from "../../../../modal/register_model/PatientRegistrationModal";
 // Hooks
 import { useVoiceSearch } from './components/VoiceSearchHandler';
 
