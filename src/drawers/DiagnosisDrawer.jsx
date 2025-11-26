@@ -83,8 +83,8 @@ const DiagnosisDrawer = ({ visible, onClose, gender, visit_id, claim_id,onFinish
     const diagnosisData = {
       visit_id,
       claim_id,
-      patient_complaint: chiefComplaint,
-      notes: doctorsEvaluation,
+      chief_complain: chiefComplaint,
+      doctor_evaluation: doctorsEvaluation,
       system_diagnosis_ids: selectedDiagnoses, // Now passing array of IDs
       
     };

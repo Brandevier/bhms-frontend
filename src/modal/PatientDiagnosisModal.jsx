@@ -231,7 +231,7 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit, data,loading }) => 
 
                 {/* Patient Complaint */}
                 <Form.Item 
-                    name="patient_complaints" 
+                    name="chief_complain" 
                     label="Patient Complaints" 
                     rules={[{ required: true, message: "Please enter patient complaints" }]}
                 >
@@ -240,7 +240,7 @@ const PatientDiagnosisModal = ({ visible, onClose, onSubmit, data,loading }) => 
 
                 {/* Clinical Summary */}
                 <Form.Item 
-                    name="doctors_observation" 
+                    name="doctor_evaluation" 
                     label={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <span>Clinical Summary</span>
