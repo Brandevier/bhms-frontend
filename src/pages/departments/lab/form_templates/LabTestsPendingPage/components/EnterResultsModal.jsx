@@ -95,9 +95,9 @@ const EnterResultsModal = ({ visible, currentTest, onCancel, onSubmit }) => {
             }}
             cancelButtonProps={{ size: 'large' }}
         >
-            <div className="flex space-x-6">
+            <div className=" space-x-6">
                 {/* Left Side - Test Details */}
-                <div className="w-1/3">
+                <div className="">
                     <TestDetailsPanel currentTest={currentTest} />
                 </div>
 

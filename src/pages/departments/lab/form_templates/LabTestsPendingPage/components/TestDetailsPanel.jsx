@@ -31,9 +31,9 @@ const TestDetailsPanel = ({ currentTest }) => {
                     </span>
                 }>
                     <div className="font-semibold text-gray-900">
-                        {currentTest.visit?.patient?.first_name} {currentTest.visit?.patient?.last_name}
+                        {currentTest.visit?.patient?.first_name} {currentTest.visit?.patient?.middle_name || ''} {currentTest.visit?.patient?.last_name}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mx-5">
                         Folder: {currentTest.visit?.patient?.folder_number || 'N/A'}
                     </div>
                 </Descriptions.Item>
@@ -47,7 +47,7 @@ const TestDetailsPanel = ({ currentTest }) => {
                     <div className="font-semibold text-blue-600">
                         {currentTest.template?.lab_tarrif?.test_description}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mx-5">
                         Code: {currentTest.template?.lab_tarrif?.code || 'N/A'}
                     </div>
                 </Descriptions.Item>
