@@ -41,6 +41,7 @@ const RegularAdmissionForm = ({ onSubmit }) => {
     onSubmit(values);
     form.resetFields();
     setSelectedDepartment(null);
+    console.log(values)
   };
 
   return (

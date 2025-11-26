@@ -42,7 +42,11 @@ const AdmitPatientModal = ({ visible, onClose, onSubmit,visit_id }) => {
     try {
       if (activeTab === "1") {
         // Regular Admission
-        await dispatch(admitPatient(values)).unwrap();
+        await dispatch(admitPatient({
+          ...values,
+          visit_id,
+          
+        })).unwrap();
         message.success('Patient admitted successfully!');
         onSubmit(values);
         onClose();
