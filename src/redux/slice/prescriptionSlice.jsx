@@ -101,6 +101,24 @@ export const fetchPharmacyDashboardStats = createAsyncThunk(
   }
 );
 
+// Add this function to your existing slice
+export const bulkUpdatePrescriptionStatus = createAsyncThunk(
+  'prescriptions/bulkUpdateStatus',
+  async (prescriptionsArray, { rejectWithValue }) => {
+    try {
+      // /prescriptions/${id}/status
+      const responses = await Promise.all(
+        prescriptionsArray.map(prescription =>
+          apiClient.put(`/prescriptions/${prescription.id}/status`, prescription)
+        )
+      );
+      return responses.map(res => res.data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 // get dispense history
 export const fetchDispenseHistory = createAsyncThunk(
   'prescriptions/fetchDispenseHistory',
