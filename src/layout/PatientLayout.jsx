@@ -14,7 +14,7 @@ import { fetchPatientNotes } from "../redux/slice/patientNotesSlice";
 import HealthReports from "../hooks/labTest/HealthReports";
 import PrescriptionList from "../hooks/prescriptions/PrescriptionList";
 import PatientProcedure from "../hooks/PatientProcedure";
-import PatientDiagnosis from "../hooks/PatientDiagnosisComponent";
+import PatientDiagnosis from "../hooks/patientDiagnosis/PatientDiagnosisComponent";
 import { fetchServices, createPatientInvoice } from "../redux/slice/serviceSlice";
 import PatientHistory from "../pages/departments/maternity/components/PatientHistory";
 import { fetchTemplates } from "../redux/slice/labSlice";

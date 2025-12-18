@@ -1,107 +1,137 @@
 import React, { useState, useEffect } from 'react';
-import { Spin, Typography } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const { Text } = Typography;
+const LoadingScreen = ({ timeout = 2500 }) => {
+  const [isVisible, setIsVisible] = useState(true);
 
-const LoadingScreen = () => {
-  const [show, setShow] = useState(true);
+  const containerVariants = {
+    initial: { opacity: 1 },
+    exit: { 
+      opacity: 0,
+      transition: { duration: 0.6, ease: "easeInOut" }
+    }
+  };
+
+  const logoVariants = {
+    initial: { scale: 0, opacity: 0 },
+    animate: { 
+      scale: 1, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+        delay: 0.1
+      }
+    }
+  };
+
+  const spinnerVariants = {
+    animate: {
+      rotate: 360,
+      transition: {
+        duration: 1.5,
+        ease: "linear",
+        repeat: Infinity
+      }
+    }
+  };
+
+  const textVariants = {
+    animate: {
+      opacity: [0.5, 1, 0.5],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShow(false);
-    }, 5000); // 5 seconds
+      setIsVisible(false);
+    }, timeout);
 
     return () => clearTimeout(timer);
-  }, []);
-
-  if (!show) return null;
+  }, [timeout]);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 9999,
-      }}
-    >
-      {/* Your Logo - Replace with your actual logo */}
-      <div
-        style={{
-          width: 120,
-          height: 120,
-          marginBottom: 24,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <img 
-          src="/assets/logo_2.png" // Replace with your logo path
-          alt="Logo" 
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit: 'contain' 
-          }}
-          onError={(e) => {
-            // Fallback if logo doesn't exist
-            e.target.style.display = 'none';
-          }}
-        />
-        {/* Fallback if no logo */}
-        
-      </div>
-
-      {/* Loading Spin */}
-      <Spin 
-        indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
-        style={{ marginBottom: 16 }}
-      />
-
-      {/* Loading Text */}
-      <Text style={{ fontSize: 16, color: '#666' }}>
-        Loading your experience...
-      </Text>
-
-      {/* Optional: Progress bar */}
-      <div
-        style={{
-          width: 200,
-          height: 4,
-          backgroundColor: '#f0f0f0',
-          borderRadius: 2,
-          marginTop: 16,
-          overflow: 'hidden',
-        }}
-      >
-        <div
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          key="loading-screen"
+          variants={containerVariants}
+          initial="initial"
+          exit="exit"
           style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: '#1890ff',
-            animation: 'progress 5s linear forwards',
+            backgroundColor: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999,
           }}
-        />
-      </div>
+        >
+          <motion.div
+            variants={logoVariants}
+            initial="initial"
+            animate="animate"
+            style={{
+              position: 'relative',
+              width: '80px',
+              height: '80px',
+              marginBottom: '2rem',
+            }}
+          >
+            <motion.div
+              variants={spinnerVariants}
+              animate="animate"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: '2px solid #e0e0e0',
+                borderTopColor: '#1890ff',
+                borderRadius: '50%',
+              }}
+            />
+            
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              fontSize: '24px',
+              color: '#1890ff',
+              fontWeight: 'bold',
+            }}>
+              L
+            </div>
+          </motion.div>
 
-      <style>
-        {`
-          @keyframes progress {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
-          }
-        `}
-      </style>
-    </div>
+          <motion.div
+            variants={textVariants}
+            animate="animate"
+            style={{
+              fontSize: '14px',
+              color: '#666',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+            }}
+          >
+            Loading
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

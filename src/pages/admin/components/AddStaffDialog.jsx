@@ -241,7 +241,6 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                                     required: true, 
                                     message: "Password is required for account access",
                                     min: 6,
-                                    message: "Password must be at least 6 characters"
                                 }]}
                                 tooltip="Default password for initial login. User will be prompted to change it."
                             >
@@ -310,7 +309,6 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                                 }
                                 rules={[{ 
                                     required: true, 
-                                    message: "At least one department must be selected",
                                     type: 'array',
                                     min: 1,
                                     message: "Please select at least one department"
