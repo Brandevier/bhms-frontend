@@ -195,42 +195,14 @@ const PatientNotes = ({ patient_notes, general_handler, visit_id }) => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span>Patient Notes</span>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title="Stop all speech">
-              <Button
-                shape="circle"
-                icon={<PauseOutlined />}
-                onClick={stopSpeaking}
-                disabled={!isSpeaking}
-                style={{ marginRight: 8 }}
-              />
-            </Tooltip>
-            <Tooltip title="Add Nurse's Note">
-              <Avatar
-                size={28}
-                icon={<PlusOutlined />}
-                style={{ backgroundColor: "#1890ff", cursor: "pointer" }}
-                onClick={() => setIsModalOpen(true)}
-              />
-            </Tooltip>
+           
+            <BhmsButton  onClick={() => setIsModalOpen(true)}>
+              Add Note
+            </BhmsButton>
           </div>
         </div>
       }
-      bordered
-      style={{ marginTop: 20 }}
-      extra={
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: 8 }}>Speed:</span>
-          <Slider
-            min={0.5}
-            max={2}
-            step={0.1}
-            value={speechRate}
-            onChange={setSpeechRate}
-            tipFormatter={value => `${value}x`}
-            style={{ width: 100 }}
-          />
-        </div>
-      }
+     
     >
       {!patient_notes || patient_notes.length === 0 ? (
         <Empty description="No Patient Notes Available" style={{ margin: "20px 0" }} />
@@ -241,7 +213,7 @@ const PatientNotes = ({ patient_notes, general_handler, visit_id }) => {
             <Card key={note.id} style={{ marginBottom: 10, padding: 10 }} bordered>
               <List.Item>
                 <List.Item.Meta
-                  avatar={<Avatar icon={<UserOutlined />} src={note.staff?.profile_pic} />}
+                  avatar={<Avatar icon={<UserOutlined />} src={note.staff?.profile_pic} onClick={()=>console.log(note)}/>}
                   title={
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={()=>console.log("Note clicked:", note) /* For future use */}>
                       <strong>{note.staff?.firstName} {note.staff?.lastName}</strong>

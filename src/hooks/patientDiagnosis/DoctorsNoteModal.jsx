@@ -1,4 +1,4 @@
-// Enhanced PatientNoteModal.js
+// DoctorsNoteModal.js
 import React, { useState } from "react";
 import {
   Modal,
@@ -13,9 +13,7 @@ import {
   Form,
   message,
   Card,
-  Divider,
-  Badge,
-  Tag
+  Divider
 } from "antd";
 import {
   BoldOutlined,
@@ -37,62 +35,51 @@ import {
   CloseOutlined,
   UndoOutlined,
   RedoOutlined,
-  FileTextOutlined,
-  ClockCircleOutlined,
-  UserOutlined,
-  CalendarOutlined,
-  ThunderboltOutlined
+ BookOutlined
 } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import BhmsButton from "../heroComponents/BhmsButton";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
-const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
+const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
   const [form] = Form.useForm();
   const [content, setContent] = useState("");
-  const [wordCount, setWordCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+      setLoading(true);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       const noteData = {
         ...values,
         content,
-        visit_id,
-        type: "patient_note",
+        type: "doctors_note",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-
+      
       onSave(noteData);
+      message.success("Doctor's note saved successfully");
+      handleClose();
     } catch (error) {
-      console.error("Validation failed:", error);
-      message.error("Please fill in all required fields");
+      console.error("Error saving note:", error);
+      message.error("Failed to save doctor's note");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleClose = () => {
     form.resetFields();
     setContent("");
-    setWordCount(0);
     onClose();
-  };
-
-  const handleAiRewrite = () => {
-    message.info("AI rewrite feature will be available when connected");
-  };
-
-  // Update word count
-  const handleContentChange = (value) => {
-    setContent(value);
-    const text = value.replace(/<[^>]*>/g, '');
-    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
-    setWordCount(words.length);
   };
 
   // Custom toolbar configuration
@@ -105,10 +92,14 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
         [{ 'color': [] }, { 'background': [] }],
         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
         [{ 'align': [] }],
-        ['link', 'image'],
+        ['link', 'image', 'video'],
         ['blockquote', 'code-block'],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
         ['clean']
       ],
+      handlers: {
+        // Add custom handlers here if needed
+      }
     }
   };
 
@@ -117,22 +108,14 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
     'bold', 'italic', 'underline', 'strike',
     'color', 'background',
     'list', 'bullet',
-    'align', 'link', 'image',
+    'align', 'link', 'image', 'video',
     'blockquote', 'code-block'
   ];
 
-  // Custom toolbar component
+  // Custom toolbar buttons
   const CustomToolbar = () => (
-    <Card 
-      size="small" 
-      style={{ 
-        marginBottom: 16,
-        backgroundColor: '#fafafa',
-        border: '1px solid #f0f0f0'
-      }}
-      bodyStyle={{ padding: '12px' }}
-    >
-      <Row gutter={[8, 8]} align="middle">
+    <div className="custom-toolbar">
+      <Row gutter={[8, 8]} style={{ marginBottom: 16, padding: "8px 0", borderBottom: "1px solid #f0f0f0" }}>
         {/* Formatting */}
         <Col>
           <Space>
@@ -181,8 +164,6 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
           </Space>
         </Col>
         
-        <Divider type="vertical" />
-        
         {/* Text formatting buttons */}
         <Col>
           <Space>
@@ -208,8 +189,6 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
           </Space>
         </Col>
         
-        <Divider type="vertical" />
-        
         {/* Alignment and lists */}
         <Col>
           <Space>
@@ -232,8 +211,6 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
           </Space>
         </Col>
         
-        <Divider type="vertical" />
-        
         {/* Insert options */}
         <Col>
           <Space>
@@ -252,20 +229,9 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
           </Space>
         </Col>
         
-        <Divider type="vertical" />
-        
-        {/* AI and Actions */}
+        {/* Undo/Redo */}
         <Col>
           <Space>
-            <Tooltip title="AI Rewrite">
-              <Button 
-                type="text" 
-                size="small" 
-                icon={<ThunderboltOutlined />}
-                onClick={handleAiRewrite}
-                style={{ color: '#1890ff' }}
-              />
-            </Tooltip>
             <Tooltip title="Undo">
               <Button type="text" size="small" icon={<UndoOutlined />} />
             </Tooltip>
@@ -274,36 +240,20 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
             </Tooltip>
           </Space>
         </Col>
-        
-        <Divider type="vertical" />
-        
-        {/* Stats */}
-        <Col>
-          <Space>
-            <Badge 
-              count={wordCount} 
-              style={{ backgroundColor: '#52c41a' }}
-              title="Word Count"
-            />
-            <Tag color="blue" style={{ fontSize: 12 }}>
-              <ClockCircleOutlined /> {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Tag>
-          </Space>
-        </Col>
       </Row>
-    </Card>
+    </div>
   );
 
   return (
     <Modal
       title={
-        <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+        <Row justify="space-between" align="middle">
           <Col>
             <Title level={4} style={{ margin: 0 }}>
-              <FileTextOutlined style={{ marginRight: 8 }} />
-              New Patient Note
+              <BookOutlined style={{ marginRight: 8 }} />
+              Add Doctor's Note
             </Title>
-            <Text type="secondary">Document patient observations and clinical notes</Text>
+            <Text type="secondary">Create a detailed medical note</Text>
           </Col>
           <Col>
             <Space>
@@ -314,7 +264,7 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
           </Col>
         </Row>
       }
-      open={visible}
+      visible={visible}
       onCancel={handleClose}
       width="90%"
       style={{ top: 20 }}
@@ -328,12 +278,10 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
         initialValues={{
           title: "",
           priority: "medium",
-          category: "general",
-          shift: "morning"
+          category: "general"
         }}
       >
         <Row gutter={[24, 16]}>
-          {/* Header Information */}
           <Col span={24}>
             <Card size="small" style={{ marginBottom: 16 }}>
               <Row gutter={16}>
@@ -346,7 +294,6 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
                     <Input 
                       placeholder="Enter note title" 
                       size="large"
-                      prefix={<FileTextOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -365,74 +312,22 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
                 </Col>
                 <Col span={6}>
                   <Form.Item
-                    label="Shift"
-                    name="shift"
-                  >
-                    <Select size="large">
-                      <Option value="morning">Morning</Option>
-                      <Option value="afternoon">Afternoon</Option>
-                      <Option value="night">Night</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
                     label="Category"
                     name="category"
                   >
                     <Select size="large">
-                      <Option value="vital_signs">Vital Signs</Option>
-                      <Option value="medication">Medication</Option>
-                      <Option value="assessment">Assessment</Option>
+                      <Option value="general">General</Option>
+                      <Option value="followup">Follow-up</Option>
+                      <Option value="consultation">Consultation</Option>
                       <Option value="procedure">Procedure</Option>
-                      <Option value="education">Patient Education</Option>
-                      <Option value="other">Other</Option>
+                      <Option value="assessment">Assessment</Option>
                     </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="Visit ID"
-                  >
-                    <Input 
-                      value={visit_id}
-                      size="large"
-                      prefix={<UserOutlined />}
-                      disabled
-                    />
                   </Form.Item>
                 </Col>
               </Row>
             </Card>
           </Col>
 
-          {/* Instructions */}
-          <Col span={24}>
-            <Card 
-              size="small" 
-              style={{ marginBottom: 16, backgroundColor: '#e6f7ff' }}
-            >
-              <Space>
-                <Text type="secondary">
-                  ✍️ Write your patient note here. Document observations, vital signs, medications, and patient responses.
-                </Text>
-                <Button 
-                  icon={<ThunderboltOutlined />} 
-                  onClick={handleAiRewrite}
-                  type="text"
-                  style={{ color: '#1890ff' }}
-                  title="Rewrite with AI"
-                >
-                  AI Rewrite
-                </Button>
-              </Space>
-            </Card>
-          </Col>
-
-          {/* Main Editor Area */}
           <Col span={24}>
             <Card 
               size="small" 
@@ -446,13 +341,8 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
               }
               extra={
                 <Space>
-                  <Badge 
-                    count={wordCount} 
-                    style={{ backgroundColor: '#52c41a' }}
-                    title="Word Count"
-                  />
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    <CalendarOutlined /> {new Date().toLocaleDateString()}
+                    Word Count: {content.replace(/<[^>]*>/g, '').length}
                   </Text>
                 </Space>
               }
@@ -468,17 +358,16 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
                 <ReactQuill
                   theme="snow"
                   value={content}
-                  onChange={handleContentChange}
+                  onChange={setContent}
                   modules={modules}
                   formats={formats}
-                  style={{ height: "25vh", marginBottom: 50 }}
-                  placeholder="Start typing your patient note here..."
+                  style={{ height: "40vh", marginBottom: 50 }}
+                  placeholder="Start typing your note here..."
                 />
               </Form.Item>
             </Card>
           </Col>
 
-          {/* Additional Information */}
           <Col span={24}>
             <Card 
               size="small" 
@@ -495,14 +384,6 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
                       style={{ width: '100%' }}
                       placeholder="Add keywords for easy search"
                       tokenSeparators={[',']}
-                      options={[
-                        { value: 'vitals', label: 'Vital Signs' },
-                        { value: 'medication', label: 'Medication' },
-                        { value: 'pain', label: 'Pain Assessment' },
-                        { value: 'wound', label: 'Wound Care' },
-                        { value: 'education', label: 'Patient Education' },
-                        { value: 'followup', label: 'Follow-up Needed' }
-                      ]}
                     />
                   </Form.Item>
                 </Col>
@@ -518,7 +399,7 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
                 </Col>
                 <Col span={24}>
                   <Form.Item
-                    label="Summary/Key Points"
+                    label="Summary"
                     name="summary"
                   >
                     <TextArea
@@ -536,29 +417,17 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
         <Row justify="space-between" style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid #f0f0f0" }}>
           <Col>
             <Space>
-              <BhmsButton 
-                block={false} 
-                size="medium" 
-                outline 
+              <Button
+                icon={<CloseOutlined />}
                 onClick={handleClose}
               >
-                <CloseOutlined /> Cancel
-              </BhmsButton>
+                Cancel
+              </Button>
               <Button
                 icon={<SaveOutlined />}
-                onClick={() => {
-                  const values = form.getFieldsValue();
-                  const noteData = {
-                    ...values,
-                    content,
-                    visit_id,
-                    status: "draft",
-                    type: "patient_note",
-                    createdAt: new Date().toISOString()
-                  };
-                  console.log("Saved as draft:", noteData);
-                  message.success("Note saved as draft");
-                }}
+                type="primary"
+                loading={loading}
+                onClick={handleSave}
               >
                 Save as Draft
               </Button>
@@ -569,14 +438,13 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
               <Button>
                 Save & Close
               </Button>
-              <BhmsButton 
-                icon={<SaveOutlined />}
-                onClick={handleSave}
-                loading={status === 'loading'}
+              <Button
                 type="primary"
+                loading={loading}
+                onClick={handleSave}
               >
                 Save & Publish
-              </BhmsButton>
+              </Button>
             </Space>
           </Col>
         </Row>
@@ -585,4 +453,4 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
   );
 };
 
-export default PatientNoteModal;
+export default DoctorsNoteModal;

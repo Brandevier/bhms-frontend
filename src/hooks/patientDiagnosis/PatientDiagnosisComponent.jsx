@@ -1,3 +1,4 @@
+// Update PatientDiagnosis.js
 import React, { useState, useEffect } from "react";
 import { 
   Card, 
@@ -9,22 +10,27 @@ import {
   Space, 
   Badge,
   Empty,
-  Divider
+  Dropdown,
+  Menu
 } from "antd";
 import { 
   FileTextOutlined,
   PlusOutlined,
   EyeOutlined,
   CheckCircleOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  BookOutlined,
+  DownOutlined
 } from "@ant-design/icons";
+
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDiagnosis } from "../../redux/slice/diagnosisSlice";
+import { deleteDiagnosis, addDiagnosis } from "../../redux/slice/diagnosisSlice";
 import { message } from "antd";
 
 // Import components
 import DiagnosisCard from "./DiagnosisCard"; 
 import DiagnosisDetailModal from "./DiagnosisDetailModal";
+import DoctorsNoteModal from "./DoctorsNoteModal"; // Add this import
 import DiagnosisStats from "./DiagnosisStats";
 import { filterDiagnosesByType, sortDiagnosesByDate } from "./utils";
 import { styles } from "./style";
@@ -37,6 +43,7 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
   const [activeTab, setActiveTab] = useState("all");
   const [loadingId, setLoadingId] = useState(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [doctorsNoteModalVisible, setDoctorsNoteModalVisible] = useState(false); // Add this state
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
   const { loading } = useSelector((state) => state.diagnosis);
 
@@ -68,6 +75,39 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
       setLoadingId(null);
     }
   };
+
+  // Add Doctor's Note handler
+  const handleAddDoctorsNote = (noteData) => {
+    console.log("Adding doctor's note:", noteData);
+    // Dispatch action to add note
+    // dispatch(addDiagnosis(noteData));
+    message.success("Doctor's note added successfully");
+    setDoctorsNoteModalVisible(false);
+    onSubmit?.();
+  };
+
+  // Create dropdown menu for "Add New" button
+  const addMenu = (
+    <Menu onClick={({ key }) => {
+      if (key === 'diagnosis') {
+        console.log("Add new diagnosis");
+      } else if (key === 'doctors_note') {
+        setDoctorsNoteModalVisible(true);
+      } else if (key === 'prescription') {
+        console.log("Add prescription");
+      }
+    }}>
+      <Menu.Item key="diagnosis" icon={<FileTextOutlined />}>
+        New Diagnosis
+      </Menu.Item>
+      <Menu.Item key="doctors_note" icon={<BookOutlined />}>
+        Doctor's Note
+      </Menu.Item>
+      <Menu.Item key="prescription" icon={<FileTextOutlined />}>
+        Prescription
+      </Menu.Item>
+    </Menu>
+  );
 
   const tabItems = [
     {
@@ -109,6 +149,19 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
           />
         </Space>
       )
+    },
+    {
+      key: "doctors_note",
+      label: (
+        <Space>
+          <BookOutlined style={{ color: '#722ed1' }} /> {/* Changed color */}
+          Doctors Note
+          <Badge 
+            count={filterDiagnosesByType(sortedDiagnoses, 'doctors_note').length}
+            style={{ backgroundColor: '#722ed1' }}
+          />
+        </Space>
+      )
     }
   ];
 
@@ -126,13 +179,20 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
             </Text>
           </Col>
           <Col>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />}
-              onClick={() => console.log("Add new diagnosis")}
+            <Dropdown 
+              overlay={addMenu} 
+              placement="bottomRight"
+              trigger={['click']}
             >
-              Add New Diagnosis
-            </Button>
+              <Button 
+                type="primary" 
+                icon={<PlusOutlined />}
+                onClick={(e) => e.preventDefault()}
+              >
+                Add New
+                <DownOutlined />
+              </Button>
+            </Dropdown>
           </Col>
         </Row>
 
@@ -169,9 +229,15 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
             <Button 
               type="primary" 
               icon={<PlusOutlined />}
-              onClick={() => console.log("Add new diagnosis")}
+              onClick={() => {
+                if (activeTab === 'doctors_note') {
+                  setDoctorsNoteModalVisible(true);
+                } else {
+                  console.log("Add new diagnosis");
+                }
+              }}
             >
-              Add First Diagnosis
+              Add {activeTab === 'doctors_note' ? 'Doctor\'s Note' : 'First Diagnosis'}
             </Button>
           </Empty>
         ) : (
@@ -195,6 +261,13 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
           diagnosis={selectedDiagnosis}
           onClose={() => setDetailModalVisible(false)}
           onEdit={handleEdit}
+        />
+
+        {/* Doctor's Note Modal */}
+        <DoctorsNoteModal
+          visible={doctorsNoteModalVisible}
+          onClose={() => setDoctorsNoteModalVisible(false)}
+          onSave={handleAddDoctorsNote}
         />
       </Card>
     </div>
