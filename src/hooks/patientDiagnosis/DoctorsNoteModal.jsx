@@ -44,22 +44,19 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
-const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
+const DoctorsNoteModal = ({ visible, onClose, onSave,loading }) => {
   const [form] = Form.useForm();
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
-      setLoading(true);
-      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const noteData = {
         ...values,
-        content,
+        note:content,
         type: "doctors_note",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -72,7 +69,7 @@ const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
       console.error("Error saving note:", error);
       message.error("Failed to save doctor's note");
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -247,7 +244,7 @@ const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
   return (
     <Modal
       title={
-        <Row justify="space-between" align="middle">
+        <Row justify="start" align="middle">
           <Col>
             <Title level={4} style={{ margin: 0 }}>
               <BookOutlined style={{ marginRight: 8 }} />
@@ -286,16 +283,7 @@ const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
             <Card size="small" style={{ marginBottom: 16 }}>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item
-                    label="Note Title"
-                    name="title"
-                    rules={[{ required: true, message: 'Please enter a title' }]}
-                  >
-                    <Input 
-                      placeholder="Enter note title" 
-                      size="large"
-                    />
-                  </Form.Item>
+                 
                 </Col>
                 <Col span={6}>
                   <Form.Item
@@ -368,49 +356,7 @@ const DoctorsNoteModal = ({ visible, onClose, onSave }) => {
             </Card>
           </Col>
 
-          <Col span={24}>
-            <Card 
-              size="small" 
-              title={<Text strong>Additional Information</Text>}
-            >
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    label="Keywords/Tags"
-                    name="tags"
-                  >
-                    <Select
-                      mode="tags"
-                      style={{ width: '100%' }}
-                      placeholder="Add keywords for easy search"
-                      tokenSeparators={[',']}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="Attachments"
-                    name="attachments"
-                  >
-                    <Button icon={<PictureOutlined />}>
-                      Add Attachments
-                    </Button>
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="Summary"
-                    name="summary"
-                  >
-                    <TextArea
-                      rows={3}
-                      placeholder="Brief summary of this note..."
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
+          
         </Row>
 
         {/* Footer Actions */}

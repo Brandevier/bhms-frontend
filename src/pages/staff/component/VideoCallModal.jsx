@@ -116,7 +116,6 @@ useEffect(() => {
       
       const meetingData = {
         title: values.title,
-        host_id: currentUser.id, // Use current user as host
         participants: values.participants || [],
         institution_id:currentUser.institution.id,
         department_id: currentUser.staff_departments?.[0]?.department?.id || null,

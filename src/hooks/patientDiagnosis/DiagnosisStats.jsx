@@ -1,87 +1,90 @@
-import React from 'react';
-import { Row, Col, Card, Statistic, Typography } from 'antd';
+// Update DiagnosisStats.js to include doctor's notes stats
+import React from "react";
+import { Row, Col, Card, Statistic, Typography } from "antd";
 import { 
   FileTextOutlined, 
   CheckCircleOutlined, 
   ClockCircleOutlined,
-  BarChartOutlined 
-} from '@ant-design/icons';
-import { DIAGNOSIS_TYPES } from './utils';
+  BookOutlined,
+  LockOutlined,
+  EditOutlined
+} from "@ant-design/icons";
 
 const { Text } = Typography;
 
-const DiagnosisStats = ({ diagnoses }) => {
-  if (!diagnoses || diagnoses.length === 0) return null;
+const DiagnosisStats = ({ diagnoses = [], doctorsNotes = [] }) => {
+  const totalDiagnoses = diagnoses.length;
+  const confirmedDiagnoses = diagnoses.filter(d => d.type === 'confirmed_diagnosis').length;
+  const provisionalDiagnoses = diagnoses.filter(d => d.type === 'provisional_diagnosis').length;
   
-  const stats = {
-    total: diagnoses.length,
-    confirmed: diagnoses.filter(d => d.diagnosis_type === 'confirmed_diagnosis').length,
-    provisional: diagnoses.filter(d => d.diagnosis_type === 'provisional_diagnosis').length,
-    active: diagnoses.filter(d => d.status === 'Active').length,
-    resolved: diagnoses.filter(d => d.status === 'Resolved').length
-  };
+  const totalNotes = doctorsNotes.length;
+  const signedNotes = doctorsNotes.filter(n => n.is_signed).length;
+  const unsignedNotes = doctorsNotes.filter(n => !n.is_signed).length;
 
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      <Col xs={24} sm={8} md={4}>
-        <Card size="small" hoverable>
+    <Card size="small" style={{ marginBottom: 24 }}>
+      <Row gutter={[16, 16]}>
+        {/* Diagnosis Stats */}
+        <Col xs={12} sm={6}>
           <Statistic
             title="Total Diagnoses"
-            value={stats.total}
+            value={totalDiagnoses}
             prefix={<FileTextOutlined />}
             valueStyle={{ color: '#1890ff' }}
           />
-        </Card>
-      </Col>
-      
-      <Col xs={24} sm={8} md={4}>
-        <Card size="small" hoverable>
+        </Col>
+        <Col xs={12} sm={6}>
           <Statistic
             title="Confirmed"
-            value={stats.confirmed}
+            value={confirmedDiagnoses}
             prefix={<CheckCircleOutlined />}
-            valueStyle={{ color: DIAGNOSIS_TYPES.confirmed_diagnosis.color }}
-          />
-          <Text type="secondary" style={{ fontSize: '12px' }}>
-            {Math.round((stats.confirmed / stats.total) * 100)}% of total
-          </Text>
-        </Card>
-      </Col>
-      
-      <Col xs={24} sm={8} md={4}>
-        <Card size="small" hoverable>
-          <Statistic
-            title="Provisional"
-            value={stats.provisional}
-            prefix={<ClockCircleOutlined />}
-            valueStyle={{ color: DIAGNOSIS_TYPES.provisional_diagnosis.color }}
-          />
-          <Text type="secondary" style={{ fontSize: '12px' }}>
-            {Math.round((stats.provisional / stats.total) * 100)}% of total
-          </Text>
-        </Card>
-      </Col>
-      
-      <Col xs={24} sm={8} md={4}>
-        <Card size="small" hoverable>
-          <Statistic
-            title="Active"
-            value={stats.active}
             valueStyle={{ color: '#52c41a' }}
           />
-        </Card>
-      </Col>
-      
-      <Col xs={24} sm={8} md={4}>
-        <Card size="small" hoverable>
+        </Col>
+        <Col xs={12} sm={6}>
           <Statistic
-            title="Resolved"
-            value={stats.resolved}
-            valueStyle={{ color: '#1890ff' }}
+            title="Provisional"
+            value={provisionalDiagnoses}
+            prefix={<ClockCircleOutlined />}
+            valueStyle={{ color: '#fa8c16' }}
           />
-        </Card>
-      </Col>
-    </Row>
+        </Col>
+        
+        {/* Doctor's Note Stats */}
+        <Col xs={12} sm={6}>
+          <Statistic
+            title="Doctor's Notes"
+            value={totalNotes}
+            prefix={<BookOutlined />}
+            valueStyle={{ color: '#722ed1' }}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <Statistic
+            title="Signed Notes"
+            value={signedNotes}
+            prefix={<LockOutlined />}
+            valueStyle={{ color: '#52c41a' }}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <Statistic
+            title="Draft Notes"
+            value={unsignedNotes}
+            prefix={<EditOutlined />}
+            valueStyle={{ color: '#faad14' }}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <Statistic
+            title="Total Records"
+            value={totalDiagnoses + totalNotes}
+            prefix={<FileTextOutlined />}
+            valueStyle={{ color: '#1890ff', fontWeight: 'bold' }}
+          />
+        </Col>
+      </Row>
+    </Card>
   );
 };
 

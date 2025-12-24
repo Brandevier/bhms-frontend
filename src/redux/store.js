@@ -21,6 +21,7 @@ const rootReducer = combineReducers({
   departments: reducers.departmentReducers,
   adminStaffManagement: reducers.staffAdminManagementSlice,
   permissions: reducers.staff_permission_slice,
+  doctorsNote:reducers.doctorsNoteReducers,
   records: reducers.recordsReducers,
   diagnosis: reducers.diagnosisReducers,
   vitals: reducers.vitalSignsReducers,

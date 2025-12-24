@@ -62,10 +62,13 @@ import theatreReducer from '../slice/theatreSlice';
 import meetingReducers from '../slice/meetingSlice';
 import preOpChecklistReducers from '../slice/theatre/preOpChecklistSlice';
 import educationMaterialReducers from '../slice/theatre/educationMaterialsSlice'
+import doctorsNoteReducers from '../slice/doctorsNoteSlice' 
+
 
 export {
     authReducer,
     claimsReducers,
+    doctorsNoteReducers,
     educationMaterialReducers,
     meetingReducers,
     sessionManagerReducer,
