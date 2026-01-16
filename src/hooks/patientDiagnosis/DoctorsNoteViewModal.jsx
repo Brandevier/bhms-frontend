@@ -138,9 +138,10 @@ const DoctorsNoteViewModal = ({ visible, note, onClose }) => {
                           size="small" 
                           src={note.staff?.profileImage}
                           icon={<UserOutlined />}
+                          onClick={()=>console.log(note)}
                         />
                         <Text strong>
-                          Dr. {note.staff?.firstName} {note.staff?.lastName}
+                          Dr. {note.Staff?.firstName} {note.Staff?.lastName}
                         </Text>
                       </Space>
                     </Space>

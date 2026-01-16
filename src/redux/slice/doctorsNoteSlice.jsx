@@ -79,7 +79,7 @@ export const signDoctorsNote = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await apiClient.post(
-        `/doctors-notes/${id}/sign`
+        `/doctor/doctors-notes/${id}/sign`
       );
       return { id, message: res.data.message };
     } catch (err) {
