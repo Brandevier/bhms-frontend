@@ -38,6 +38,7 @@ export const createPatient = createAsyncThunk(
   async (patientData, { rejectWithValue, getState }) => {
     const auth = getState().auth;
     const institutionId = auth.user?.institution?.id || auth.admin?.institution?.id;
+    const department_id = localStorage.getItem('department_id');
 
     if (!institutionId) {
       return rejectWithValue('Institution ID is required');
@@ -46,7 +47,8 @@ export const createPatient = createAsyncThunk(
     try {
       const response = await apiClient.post('/records/patient/create', {
         ...patientData,
-        institution_id: institutionId
+        institution_id: institutionId,
+        department_id:department_id
       });
       return getSafeData(response) || {};
     } catch (error) {
