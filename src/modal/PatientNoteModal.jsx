@@ -62,7 +62,7 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
       
       const noteData = {
         ...values,
-        content,
+        note:content,
         visit_id,
         type: "patient_note",
         createdAt: new Date().toISOString(),
@@ -334,80 +334,7 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
       >
         <Row gutter={[24, 16]}>
           {/* Header Information */}
-          <Col span={24}>
-            <Card size="small" style={{ marginBottom: 16 }}>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    label="Note Title"
-                    name="title"
-                    rules={[{ required: true, message: 'Please enter a title' }]}
-                  >
-                    <Input 
-                      placeholder="Enter note title" 
-                      size="large"
-                      prefix={<FileTextOutlined />}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Priority"
-                    name="priority"
-                  >
-                    <Select size="large">
-                      <Option value="low">Low</Option>
-                      <Option value="medium">Medium</Option>
-                      <Option value="high">High</Option>
-                      <Option value="critical">Critical</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    label="Shift"
-                    name="shift"
-                  >
-                    <Select size="large">
-                      <Option value="morning">Morning</Option>
-                      <Option value="afternoon">Afternoon</Option>
-                      <Option value="night">Night</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    label="Category"
-                    name="category"
-                  >
-                    <Select size="large">
-                      <Option value="vital_signs">Vital Signs</Option>
-                      <Option value="medication">Medication</Option>
-                      <Option value="assessment">Assessment</Option>
-                      <Option value="procedure">Procedure</Option>
-                      <Option value="education">Patient Education</Option>
-                      <Option value="other">Other</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="Visit ID"
-                  >
-                    <Input 
-                      value={visit_id}
-                      size="large"
-                      prefix={<UserOutlined />}
-                      disabled
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
+   
 
           {/* Instructions */}
           <Col span={24}>
@@ -478,58 +405,7 @@ const PatientNoteModal = ({ visible, onClose, visit_id, onSave, status }) => {
             </Card>
           </Col>
 
-          {/* Additional Information */}
-          <Col span={24}>
-            <Card 
-              size="small" 
-              title={<Text strong>Additional Information</Text>}
-            >
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    label="Keywords/Tags"
-                    name="tags"
-                  >
-                    <Select
-                      mode="tags"
-                      style={{ width: '100%' }}
-                      placeholder="Add keywords for easy search"
-                      tokenSeparators={[',']}
-                      options={[
-                        { value: 'vitals', label: 'Vital Signs' },
-                        { value: 'medication', label: 'Medication' },
-                        { value: 'pain', label: 'Pain Assessment' },
-                        { value: 'wound', label: 'Wound Care' },
-                        { value: 'education', label: 'Patient Education' },
-                        { value: 'followup', label: 'Follow-up Needed' }
-                      ]}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label="Attachments"
-                    name="attachments"
-                  >
-                    <Button icon={<PictureOutlined />}>
-                      Add Attachments
-                    </Button>
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item
-                    label="Summary/Key Points"
-                    name="summary"
-                  >
-                    <TextArea
-                      rows={3}
-                      placeholder="Brief summary of this note..."
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
+        
         </Row>
 
         {/* Footer Actions */}

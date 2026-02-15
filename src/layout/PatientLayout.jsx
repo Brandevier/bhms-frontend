@@ -169,7 +169,7 @@ const PatientLayout = () => {
       case 'procedures':
         return <PatientProcedure procedures={currentVisit?.procedure || []} onDelete={generalHandler} visit_id={currentVisit?.id} patient_id={currentVisit?.patient_id} claim_id={currentVisit?.claims?.[0]?.id} />;
       case 'notes':
-        return <PatientNotes patient_notes={notes || []} visit_id={currentVisit?.id} general_handler={generalHandler} />;
+        return <PatientNotes patient_notes={currentVisit?.patientNote || []} visit_id={currentVisit?.id} general_handler={generalHandler} />;
       case 'history':
         return <PatientHistory patientData={currentVisit?.patient || {}} generalSubmit={generalHandler} />;
       case 'care-plan':

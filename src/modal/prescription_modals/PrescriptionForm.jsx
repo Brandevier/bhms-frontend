@@ -1,5 +1,8 @@
 import React from 'react';
 import { Form, Input, Select, Row, Col, InputNumber } from 'antd';
+// import { getFrequencyOptions, getFrequencyOptionsByCategory } from '../../utils/pharmacyAbbreviations';
+import { getFrequencyOptions,getFrequencyOptionsByCategory } from './pharmacyAbbreviations';
+
 
 const { TextArea } = Input;
 
@@ -8,41 +11,17 @@ const PrescriptionForm = ({
   selectedDrug, 
   onValuesChange 
 }) => {
-  const frequencyOptions = [
-  // Daily frequencies
-  { value: 'OD', label: 'Once daily' },
-  { value: 'BD', label: 'Twice daily' },
-  { value: 'TDS', label: 'Three times daily' },
-  { value: 'QID', label: 'Four times daily' },
-  { value: 'QHS', label: 'At bedtime (once nightly)' },
+  // Option 1: Simple flat list
+  // const frequencyOptions = getFrequencyOptions();
 
-  // Hourly intervals
-  { value: 'Q4H', label: 'Every 4 hours' },
-  { value: 'Q6H', label: 'Every 6 hours' },
-  { value: 'Q8H', label: 'Every 8 hours' },
-  { value: 'Q12H', label: 'Every 12 hours' },
-  { value: 'Q1H', label: 'Every 1 hour' },
-  { value: 'Q2H', label: 'Every 2 hours' },
-  { value: 'Q3H', label: 'Every 3 hours' },
-
-  // Meal-related
-  { value: 'AC', label: 'Before meals' },
-  { value: 'PC', label: 'After meals' },
-  { value: 'BPC', label: 'Before and after meals' },
-
-  // Weekly / Monthly
-  { value: 'QW', label: 'Once weekly' },
-  { value: 'QM', label: 'Once monthly' },
-
-  // As-needed / conditional
-  { value: 'PRN', label: 'As needed' },
-  { value: 'STAT', label: 'Immediately' },
-
-  // Special times
-  { value: 'AM', label: 'Every morning' },
-  { value: 'PM', label: 'Every evening' },
-];
-
+  // Option 2: Grouped by category (recommended for better UX)
+  const frequencyCategories = getFrequencyOptionsByCategory();
+  
+  // Convert categories to Select options with OptGroup
+  const groupedFrequencyOptions = Object.keys(frequencyCategories).map(category => ({
+    label: category,
+    options: frequencyCategories[category]
+  }));
 
   return (
     <Form
@@ -74,8 +53,20 @@ const PrescriptionForm = ({
           >
             <Select 
               placeholder="Select frequency" 
-              options={frequencyOptions}
+              options={groupedFrequencyOptions}
               style={{ width: '100%' }}
+              showSearch
+              filterOption={(input, option) => {
+                if (option.options) {
+                  return option.options.some(
+                    opt => opt.label.toLowerCase().includes(input.toLowerCase()) ||
+                          opt.value.toLowerCase().includes(input.toLowerCase())
+                  );
+                }
+                return option.label.toLowerCase().includes(input.toLowerCase()) ||
+                       option.value.toLowerCase().includes(input.toLowerCase());
+              }}
+              optionFilterProp="children"
             />
           </Form.Item>
         </Col>
@@ -90,6 +81,44 @@ const PrescriptionForm = ({
               min={1}
               max={365}
               placeholder="e.g., 5, 7, 10"
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+
+      {/* Optional: Route of Administration */}
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item 
+            name="route" 
+            label="Route of Administration"
+          >
+            <Select 
+              placeholder="Select route (optional)"
+              options={[
+                { value: 'PO', label: 'PO - By mouth (Oral)' },
+                { value: 'SC', label: 'SC - Subcutaneous' },
+                { value: 'IM', label: 'IM - Intramuscular' },
+                { value: 'IV', label: 'IV - Intravenous' },
+                { value: 'SL', label: 'SL - Sublingual' },
+                { value: 'TOP', label: 'TOP - Topical' },
+                { value: 'INH', label: 'INH - Inhalation' },
+              ]}
+              style={{ width: '100%' }}
+              allowClear
+            />
+          </Form.Item>
+        </Col>
+        
+        <Col span={12}>
+          <Form.Item 
+            name="quantity" 
+            label="Quantity"
+          >
+            <InputNumber 
+              min={1}
+              placeholder="Total quantity"
               style={{ width: '100%' }}
             />
           </Form.Item>

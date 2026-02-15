@@ -63,11 +63,13 @@ import meetingReducers from '../slice/meetingSlice';
 import preOpChecklistReducers from '../slice/theatre/preOpChecklistSlice';
 import educationMaterialReducers from '../slice/theatre/educationMaterialsSlice'
 import doctorsNoteReducers from '../slice/doctorsNoteSlice' 
-
-
+import patientOccupationReducers from  '../slice/occupationHistorySlice'
+import drugHistoryReducers from '../slice/drugHistorySlice' 
 export {
     authReducer,
     claimsReducers,
+    drugHistoryReducers,
+    patientOccupationReducers,
     doctorsNoteReducers,
     educationMaterialReducers,
     meetingReducers,

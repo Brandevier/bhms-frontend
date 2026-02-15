@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Button,
@@ -8,105 +8,156 @@ import {
   Table,
   Tag,
   Tooltip,
-  Modal
-} from 'antd';
+  Modal,
+  message,
+  Spin
+} from "antd";
 import {
   PlusOutlined,
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   MedicineBoxOutlined
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchDrugHistories,
+  createDrugHistory,
+  updateDrugHistory,
+  deleteDrugHistory
+} from "../../redux/slice/drugHistorySlice";
+
+import DrugHistoryFormModal from "./modals/DrugHistoryFormModal";
+
+const { Text } = Typography;
 
 const DrugHistoryTab = ({ visitId }) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { drugHistories, loading, error } = useSelector(
+    (state) => state.drugHistory
+  );
 
-  const mockData = [
-    {
-      id: 1,
-      drug_name: "Amlodipine",
-      dosage: "5mg",
-      frequency: "Once daily",
-      start_date: "2018-05-20",
-      end_date: null,
-      indication: "Hypertension",
-      status: "current"
-    },
-    {
-      id: 2,
-      drug_name: "Metformin",
-      dosage: "500mg",
-      frequency: "Twice daily",
-      start_date: "2020-03-25",
-      end_date: null,
-      indication: "Type 2 Diabetes",
-      status: "current"
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+
+  // FETCH DATA
+  useEffect(() => {
+    if (visitId) {
+      dispatch(fetchDrugHistories(visitId));
     }
-  ];
+  }, [visitId, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error.message || "Something went wrong");
+    }
+  }, [error]);
+
+  // ADD / EDIT
+  const handleSubmit = (values) => {
+    if (editingRecord) {
+      dispatch(
+        updateDrugHistory({
+          id: editingRecord.id,
+          payload: values
+        })
+      ).then(() => {
+        message.success("Drug history updated");
+      });
+    } else {
+      dispatch(
+        createDrugHistory({
+          ...values,
+          visit_id: visitId
+        })
+      ).then(() => {
+        message.success("Drug history created");
+      });
+    }
+
+    setModalOpen(false);
+    setEditingRecord(null);
+  };
+
+  // DELETE
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete Drug History",
+      content: "Are you sure you want to delete this record?",
+      okType: "danger",
+      onOk: () => {
+        dispatch(deleteDrugHistory(id)).then(() => {
+          message.success("Drug history deleted");
+        });
+      }
+    });
+  };
 
   const columns = [
     {
-      title: 'Drug Name',
-      dataIndex: 'drug_name',
-      key: 'drug_name',
+      title: "Drug Name",
+      dataIndex: "drug_name",
       render: (text) => (
-        <Text strong style={{ color: '#f5222d' }}>
+        <Text strong style={{ color: "#f5222d" }}>
           {text}
         </Text>
       )
     },
     {
-      title: 'Dosage',
-      dataIndex: 'dosage',
-      key: 'dosage',
-      width: 80,
+      title: "Dosage",
+      dataIndex: "dosage"
     },
     {
-      title: 'Frequency',
-      dataIndex: 'frequency',
-      key: 'frequency',
-      width: 100,
+      title: "Frequency",
+      dataIndex: "frequency"
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: 100,
-      render: (status) => (
-        <Tag color={status === 'current' ? 'blue' : 'default'}>
-          {status.toUpperCase()}
+      title: "Status",
+      render: (_, record) => (
+        <Tag color={record.end_date ? "default" : "blue"}>
+          {record.end_date ? "PAST" : "CURRENT"}
         </Tag>
       )
     },
     {
-      title: 'Indication',
-      dataIndex: 'indication',
-      key: 'indication',
-      width: 120,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 120,
+      title: "Actions",
       render: (_, record) => (
         <Space>
-          <Tooltip title="View Details">
+          <Tooltip title="View">
             <Button
               type="text"
               icon={<EyeOutlined />}
-              onClick={() => handleView(record)}
+              onClick={() =>
+                Modal.info({
+                  title: "Drug History Details",
+                  content: (
+                    <>
+                      <p><b>Drug:</b> {record.drug_name}</p>
+                      <p><b>Dosage:</b> {record.dosage}</p>
+                      <p><b>Frequency:</b> {record.frequency}</p>
+                      <p><b>Route:</b> {record.route}</p>
+                      <p><b>Indication:</b> {record.indication}</p>
+                      <p><b>Start:</b> {record.start_date}</p>
+                      <p><b>End:</b> {record.end_date || "Ongoing"}</p>
+                    </>
+                  )
+                })
+              }
             />
           </Tooltip>
+
           <Tooltip title="Edit">
             <Button
               type="text"
               icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
+              onClick={() => {
+                setEditingRecord(record);
+                setModalOpen(true);
+              }}
             />
           </Tooltip>
+
           <Tooltip title="Delete">
             <Button
               type="text"
@@ -120,44 +171,8 @@ const DrugHistoryTab = ({ visitId }) => {
     }
   ];
 
-  const handleView = (record) => {
-    Modal.info({
-      title: 'Drug History Details',
-      content: (
-        <div>
-          <p><strong>Drug Name:</strong> {record.drug_name}</p>
-          <p><strong>Dosage:</strong> {record.dosage}</p>
-          <p><strong>Frequency:</strong> {record.frequency}</p>
-          <p><strong>Start Date:</strong> {record.start_date}</p>
-          <p><strong>End Date:</strong> {record.end_date || 'Ongoing'}</p>
-          <p><strong>Indication:</strong> {record.indication}</p>
-          <p><strong>Status:</strong> {record.status}</p>
-        </div>
-      ),
-      width: 600,
-    });
-  };
-
-  const handleAddNew = () => {
-    console.log('Add new drug history');
-  };
-
-  const handleEdit = (record) => {
-    console.log('Edit drug:', record);
-  };
-
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: 'Delete Drug History',
-      content: 'Are you sure you want to delete this drug history record?',
-      onOk: () => {
-        console.log('Delete drug:', id);
-      }
-    });
-  };
-
   return (
-    <div>
+    <>
       <Card
         title={
           <Space>
@@ -167,33 +182,53 @@ const DrugHistoryTab = ({ visitId }) => {
               type="primary"
               size="small"
               icon={<PlusOutlined />}
-              onClick={handleAddNew}
+              onClick={() => {
+                setEditingRecord(null);
+                setModalOpen(true);
+              }}
             >
               Add Drug
             </Button>
           </Space>
         }
       >
-        {mockData.length === 0 ? (
+        {loading ? (
+          <Spin />
+        ) : drugHistories.length === 0 ? (
           <Empty
             description="No drug history recorded"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           >
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalOpen(true)}
+            >
               Add First Drug Record
             </Button>
           </Empty>
         ) : (
           <Table
             columns={columns}
-            dataSource={mockData}
+            dataSource={drugHistories}
             rowKey="id"
             pagination={false}
             size="small"
           />
         )}
       </Card>
-    </div>
+
+      <DrugHistoryFormModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setEditingRecord(null);
+        }}
+        onSubmit={handleSubmit}
+        initialValues={editingRecord}
+        loading={loading}
+      />
+    </>
   );
 };
 

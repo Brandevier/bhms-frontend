@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Button,
@@ -18,38 +18,69 @@ import {
   EyeInvisibleOutlined
 } from '@ant-design/icons';
 
-const { Title, Text } = Typography;
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchOccupations,
+  createOccupation,
+  updateOccupation,
+  deleteOccupation
+} from '../../redux/slice/occupationHistorySlice';
+
+
+
+
+import OccupationFormModal from './modals/OccupationFormModal';
+
+const { Text } = Typography;
 
 const OccupationalHistoryTab = ({ visitId }) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { occupations, loading } = useSelector(
+    (state) => state.occupationHistory
+  );
 
-  const mockData = [
-    {
-      id: 1,
-      occupation: "Software Engineer",
-      employer: "Tech Corp Inc.",
-      duration: "5 years",
-      exposure: "Computer work, sedentary lifestyle",
-      hazards: "Eye strain, repetitive stress",
-      current: true
-    },
-    {
-      id: 2,
-      occupation: "Construction Worker",
-      employer: "Builders Ltd.",
-      duration: "3 years",
-      exposure: "Dust, heavy lifting",
-      hazards: "Back injuries, respiratory issues",
-      current: false
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+
+  // FETCH DATA
+  useEffect(() => {
+    if (visitId) {
+      dispatch(fetchOccupations(visitId));
     }
-  ];
+  }, [visitId, dispatch]);
+
+  // ADD / EDIT SUBMIT
+  const handleSubmit = (values) => {
+    if (editingRecord) {
+      dispatch(updateOccupation({
+        id: editingRecord.id,
+        payload: values
+      }));
+    } else {
+      dispatch(createOccupation({
+        ...values,
+        visit_id: visitId
+      }));
+    }
+
+    setModalOpen(false);
+    setEditingRecord(null);
+  };
+
+  // DELETE
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete Occupational History",
+      content: "Are you sure you want to delete this record?",
+      okType: "danger",
+      onOk: () => dispatch(deleteOccupation(id))
+    });
+  };
 
   const columns = [
     {
       title: 'Occupation',
       dataIndex: 'occupation',
-      key: 'occupation',
       render: (text) => (
         <Text strong style={{ color: '#fa8c16' }}>
           {text}
@@ -59,20 +90,18 @@ const OccupationalHistoryTab = ({ visitId }) => {
     {
       title: 'Employer',
       dataIndex: 'employer',
-      key: 'employer',
-      width: 150,
     },
     {
-      title: 'Duration',
-      dataIndex: 'duration',
-      key: 'duration',
-      width: 100,
+      title: 'Start Date',
+      dataIndex: 'start_date',
+    },
+    {
+      title: 'End Date',
+      dataIndex: 'end_date',
     },
     {
       title: 'Status',
       dataIndex: 'current',
-      key: 'current',
-      width: 80,
       render: (current) => (
         <Tag color={current ? 'green' : 'default'}>
           {current ? 'Current' : 'Past'}
@@ -80,32 +109,40 @@ const OccupationalHistoryTab = ({ visitId }) => {
       )
     },
     {
-      title: 'Exposure',
-      dataIndex: 'exposure',
-      key: 'exposure',
-      width: 150,
-      ellipsis: true,
-    },
-    {
       title: 'Actions',
-      key: 'actions',
-      width: 120,
       render: (_, record) => (
         <Space>
-          <Tooltip title="View Details">
+          <Tooltip title="View">
             <Button
               type="text"
               icon={<EyeOutlined />}
-              onClick={() => handleView(record)}
+              onClick={() =>
+                Modal.info({
+                  title: 'Occupational Details',
+                  content: (
+                    <>
+                      <p><b>Occupation:</b> {record.occupation}</p>
+                      <p><b>Employer:</b> {record.employer}</p>
+                      <p><b>Exposure:</b> {record.exposure}</p>
+                      <p><b>Hazards:</b> {record.hazards}</p>
+                    </>
+                  )
+                })
+              }
             />
           </Tooltip>
+
           <Tooltip title="Edit">
             <Button
               type="text"
               icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
+              onClick={() => {
+                setEditingRecord(record);
+                setModalOpen(true);
+              }}
             />
           </Tooltip>
+
           <Tooltip title="Delete">
             <Button
               type="text"
@@ -119,43 +156,8 @@ const OccupationalHistoryTab = ({ visitId }) => {
     }
   ];
 
-  const handleView = (record) => {
-    Modal.info({
-      title: 'Occupational History Details',
-      content: (
-        <div>
-          <p><strong>Occupation:</strong> {record.occupation}</p>
-          <p><strong>Employer:</strong> {record.employer}</p>
-          <p><strong>Duration:</strong> {record.duration}</p>
-          <p><strong>Status:</strong> {record.current ? 'Current' : 'Past'}</p>
-          <p><strong>Exposure:</strong> {record.exposure}</p>
-          <p><strong>Hazards:</strong> {record.hazards}</p>
-        </div>
-      ),
-      width: 600,
-    });
-  };
-
-  const handleAddNew = () => {
-    console.log('Add new occupational history');
-  };
-
-  const handleEdit = (record) => {
-    console.log('Edit occupational record:', record);
-  };
-
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: 'Delete Occupational History',
-      content: 'Are you sure you want to delete this occupational history record?',
-      onOk: () => {
-        console.log('Delete record:', id);
-      }
-    });
-  };
-
   return (
-    <div>
+    <>
       <Card
         title={
           <Space>
@@ -165,33 +167,52 @@ const OccupationalHistoryTab = ({ visitId }) => {
               type="primary"
               size="small"
               icon={<PlusOutlined />}
-              onClick={handleAddNew}
+              onClick={() => {
+                setEditingRecord(null);
+                setModalOpen(true);
+              }}
             >
               Add Occupation
             </Button>
           </Space>
         }
       >
-        {mockData.length === 0 ? (
+        {occupations.length === 0 ? (
           <Empty
             description="No occupational history recorded"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           >
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalOpen(true)}
+            >
               Add First Occupation
             </Button>
           </Empty>
         ) : (
           <Table
             columns={columns}
-            dataSource={mockData}
+            dataSource={occupations}
             rowKey="id"
+            loading={loading}
             pagination={false}
             size="small"
           />
         )}
       </Card>
-    </div>
+
+      <OccupationFormModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setEditingRecord(null);
+        }}
+        onSubmit={handleSubmit}
+        initialValues={editingRecord}
+        loading={loading}
+      />
+    </>
   );
 };
 
