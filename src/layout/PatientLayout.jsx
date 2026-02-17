@@ -54,6 +54,7 @@ import PatientANC from "../pages/departments/maternity/A&C/PatientANC";
 import PregnancyTimeline from "../pages/departments/maternity/timeline/PregnancyTimeLine";
 import PartographManager from "../pages/departments/maternity/partograph/Partograph";
 import UltraSoundManager from "../pages/departments/maternity/ultrasound/UltraSoundManager";
+import AdvancedPatientFeatures from "../hooks/patientDiagnosis/AdvancedPatientFeatures";
 
 const PatientLayout = () => {
   const dispatch = useDispatch();
@@ -134,6 +135,7 @@ const PatientLayout = () => {
     { key: 'care-plan', label: 'Care Plan', icon: <BulbOutlined /> },
     { key: 'fluid_monitering', label: 'Fluid Monitering', icon: <WarningOutlined /> },
     { key: 'claims', label: 'Insurance & Claims', icon: <FileProtectOutlined /> },
+    { key: 'advanced-features', label: 'Advanced Features', icon: <SmileOutlined /> },
   ];
 
 
@@ -182,6 +184,14 @@ const PatientLayout = () => {
 
       case 'claims':
         return <PatientClaims claimsData={currentVisit?.claims || []} loading={false} />
+
+      case 'advanced-features':
+        return (
+          <AdvancedPatientFeatures 
+            patientId={currentVisit?.patient_id} 
+            institutionId={currentVisit?.institution_id}
+          />
+        );
 
       default:
         return <Overview visit_id={currentVisit?.id || {}} />;

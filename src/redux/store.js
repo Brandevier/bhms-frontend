@@ -82,6 +82,10 @@ const rootReducer = combineReducers({
   meeting:reducers.meetingReducers,
   preOpChecklist:reducers.preOpChecklistReducers,
   educationMaterial: reducers.educationMaterialReducers,
+  allergy: reducers.allergyReducer,
+  chronicCondition: reducers.chronicConditionReducer,
+  riskAssessment: reducers.riskAssessmentReducer,
+  patientAdvanced: reducers.patientAdvancedReducer,
 
 });
 

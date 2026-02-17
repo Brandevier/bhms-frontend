@@ -65,7 +65,18 @@ import educationMaterialReducers from '../slice/theatre/educationMaterialsSlice'
 import doctorsNoteReducers from '../slice/doctorsNoteSlice' 
 import patientOccupationReducers from  '../slice/occupationHistorySlice'
 import drugHistoryReducers from '../slice/drugHistorySlice' 
+
+// New Advanced Patient Feature Slices
+import allergyReducer from '../slice/allergySlice'
+import chronicConditionReducer from '../slice/chronicConditionSlice'
+import riskAssessmentReducer from '../slice/riskAssessmentSlice'
+import patientAdvancedReducer from '../slice/patientAdvancedSlice'
+
 export {
+    allergyReducer,
+    chronicConditionReducer,
+    riskAssessmentReducer,
+    patientAdvancedReducer,
     authReducer,
     claimsReducers,
     drugHistoryReducers,
