@@ -13,6 +13,13 @@ import {
   ImportOutlined,
   WarningOutlined,
   DatabaseOutlined,
+  DollarOutlined,
+  FileSearchOutlined,
+  TruckOutlined,
+  UnorderedListOutlined,
+  RiseOutlined,
+  FallOutlined,
+  AuditOutlined,
 } from "@ant-design/icons";
 
 const storeMenu = [
@@ -28,6 +35,16 @@ const storeMenu = [
   { key: "store-10", label: "Inventory In", icon: <ImportOutlined />, path: "/shared/store/inventory-in" },
   { key: "store-11", label: "Inventory Out", icon: <ExportOutlined />, path: "/shared/store/inventory-out" },
   { key: "store-12", label: "Stock Transfer", icon: <DatabaseOutlined />, path: "/shared/store/stock-transfer" },
+  // ERP Additional Features
+  { key: "store-14", label: "Stock Valuation", icon: <DollarOutlined />, path: "/shared/store/stock-valuation" },
+  { key: "store-15", label: "Reorder Points", icon: <WarningOutlined />, path: "/shared/store/reorder-points" },
+  { key: "store-16", label: "Stock Reports", icon: <FileSearchOutlined />, path: "/shared/store/reports" },
+  { key: "store-17", label: "Stock Movement", icon: <UnorderedListOutlined />, path: "/shared/store/stock-movement" },
+  { key: "store-18", label: "Purchase Returns", icon: <FallOutlined />, path: "/shared/store/purchase-returns" },
+  { key: "store-19", label: "Supplier Payments", icon: <DollarOutlined />, path: "/shared/store/supplier-payments" },
+  { key: "store-20", label: "Stock Audit", icon: <AuditOutlined />, path: "/shared/store/stock-audit" },
+  { key: "store-21", label: "Department Inventory", icon: <DatabaseOutlined />, path: "/shared/store/department-inventory" },
+  { key: "store-22", label: "Asset Management", icon: <AppstoreOutlined />, path: "/shared/store/assets" },
   { key: "consult-4", label: "Message", icon: <WechatOutlined />, path: "/shared/chat" },
   { key: "record-9", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },
   { key: "store-13", label: "Settings", icon: <SettingOutlined />, path: "/shared/store/settings" },

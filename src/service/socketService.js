@@ -1,0 +1,185 @@
+import { io } from 'socket.io-client';
+import { store } from '../redux/store';
+import { setIncomingCall, setCallStatus, setCurrentCall } from '../redux/slice/callSlice';
+
+class SocketService {
+  constructor() {
+    this.socket = null;
+    this.currentUserId = null;
+    this.currentDepartmentId = null;
+  }
+
+  initialize(socketUrl) {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+
+    const url = socketUrl || process.env.VITE_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    
+    this.socket = io(url, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    this.setupEventListeners();
+    return this.socket;
+  }
+
+  setupEventListeners() {
+    if (!this.socket) return;
+
+    // Connection events
+    this.socket.on('connect', () => {
+      console.log('Socket connected:', this.socket.id);
+      if (this.currentUserId && this.currentDepartmentId) {
+        this.register(this.currentUserId, this.currentDepartmentId);
+      }
+    });
+
+    this.socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+    });
+
+    // Call events
+    this.socket.on('incoming-call', (data) => {
+      console.log('Incoming call received:', data);
+      store.dispatch(setIncomingCall(data));
+    });
+
+    this.socket.on('call-accepted', (data) => {
+      console.log('Call accepted:', data);
+      store.dispatch(setCurrentCall(data.call));
+      store.dispatch(setCallStatus('connected'));
+    });
+
+    this.socket.on('call-rejected', (data) => {
+      console.log('Call rejected:', data);
+      store.dispatch(setCallStatus('ended'));
+    });
+
+    this.socket.on('call-ended', (data) => {
+      console.log('Call ended:', data);
+      store.dispatch(setCallStatus('ended'));
+      store.dispatch(setCurrentCall(null));
+    });
+
+    this.socket.on('call-error', (data) => {
+      console.error('Call error:', data);
+      store.dispatch(setCallStatus('failed'));
+    });
+
+    // WebRTC signaling
+    this.socket.on('webrtc-signal', (data) => {
+      console.log('WebRTC signal received:', data);
+      // This event should be handled by the video call component
+      window.dispatchEvent(new CustomEvent('webrtc-signal', { detail: data }));
+    });
+
+    this.socket.on('user-joined', (data) => {
+      console.log('User joined call:', data);
+      window.dispatchEvent(new CustomEvent('user-joined', { detail: data }));
+    });
+
+    this.socket.on('user-left', (data) => {
+      console.log('User left call:', data);
+      window.dispatchEvent(new CustomEvent('user-left', { detail: data }));
+    });
+  }
+
+  register(userId, departmentId) {
+    this.currentUserId = userId;
+    this.currentDepartmentId = departmentId;
+    
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('register', { userId, departmentId });
+      console.log('Registered for calls:', { userId, departmentId });
+    }
+  }
+
+  // Department call methods
+  initiateDepartmentCall(targetDepartmentId, callData) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('initiate-department-call', {
+        targetDepartmentId,
+        ...callData
+      });
+      console.log('Initiating department call:', targetDepartmentId);
+    }
+  }
+
+  acceptCall(callId) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('accept-call', { callId });
+      console.log('Accepting call:', callId);
+    }
+  }
+
+  rejectCall(callId, reason = 'Declined') {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('reject-call', { callId, reason });
+      console.log('Rejecting call:', callId);
+    }
+  }
+
+  endCall(callId) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('end-call', { callId });
+      console.log('Ending call:', callId);
+    }
+  }
+
+  // WebRTC signaling
+  sendWebRTCSignal(callId, signal) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('webrtc-signal', { callId, signal });
+    }
+  }
+
+  // Join/leave call room
+  joinCallRoom(roomName) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('join-call-room', { roomName });
+    }
+  }
+
+  leaveCallRoom(roomName) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('leave-call-room', { roomName });
+    }
+  }
+
+  // Get online departments/staff
+  getOnlineStaff(departmentId) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('get-online-staff', { departmentId });
+    }
+  }
+
+  // Listen for online staff response
+  onOnlineStaff(callback) {
+    if (this.socket) {
+      this.socket.on('online-staff', callback);
+    }
+  }
+
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
+  }
+
+  isConnected() {
+    return this.socket && this.socket.connected;
+  }
+}
+
+export const socketService = new SocketService();
+export const getSocket = () => socketService.socket;
+export default socketService;

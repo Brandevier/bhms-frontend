@@ -5,6 +5,7 @@ import {
   ShopOutlined,
   CalendarOutlined,
   UserSwitchOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons";
 
 const labMenu = [
@@ -30,6 +31,7 @@ const labMenu = [
     ]
   },
   { key: "lab-3", label: "Message", icon: <WechatOutlined />, path: "/shared/chat" },
+  { key: "lab-dept-call", label: "Department Video Call", icon: <VideoCameraOutlined />, path: "/shared/communication/department-call" },
   { key: "lab-4", label: "Stores", icon: <ShopOutlined />, path: "/shared/departments/store" },
   { key: "lab-5", label: "Time Table", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
   { key: "lab-6", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },

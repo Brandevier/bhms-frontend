@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Card, List, Avatar, Select, Tag, Modal, Badge, Divider } from 'antd';
-import { PhoneOutlined, UserAddOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { Button, Card, List, Avatar, Select, Tag, Modal, Badge, Divider, Space } from 'antd';
+import { PhoneOutlined, UserAddOutlined, CloseOutlined, CheckOutlined, VideoCameraOutlined, TeamOutlined } from '@ant-design/icons';
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -19,9 +20,10 @@ const CallComponent = () => {
   const localStream = useRef(null);
   const remoteAudio = useRef(null);
 
-  const user = useSelector((state) => state.auth.user);
+const user = useSelector((state) => state.auth.user);
   const admin = useSelector((state) => state.auth.admin);
 
+  const navigate = useNavigate();
   const currentUser = user || admin;
   const role = user ? 'staff' : 'admin';
 
@@ -212,7 +214,11 @@ const CallComponent = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <Card title="Audio Call System" bordered={false}>
+      <Card title="Audio Call System" bordered={false} extra={
+          <Button type="primary" icon={<TeamOutlined />} onClick={() => navigate('/shared/communication/department-call')}>
+            Department Video Call
+          </Button>
+        }>
         {/* User Selection Panel */}
         <div className="mb-6">
           <div className="flex gap-4 mb-4">

@@ -1,0 +1,488 @@
+/* ERP Dashboard Styles */
+
+.erp-dashboard {
+  padding: 0;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* Loading State */
+.erp-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 16px;
+}
+
+/* Header Section */
+.erp-dashboard-header {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  padding: 24px;
+  margin-bottom: 24px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+}
+
+.header-icon {
+  font-size: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.header-title h3 {
+  color: white !important;
+  margin: 0 !important;
+}
+
+.header-title .ant-typography {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-actions .ant-select {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+}
+
+.header-actions .ant-select-selector {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white;
+}
+
+.header-actions .ant-select-arrow {
+  color: white;
+}
+
+.header-actions .ant-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.header-actions .ant-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+/* KPI Cards */
+.kpi-cards {
+  padding: 0 24px;
+}
+
+.kpi-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.revenue-card::before {
+  background: linear-gradient(90deg, #1890ff, #52c41a);
+}
+
+.patients-card::before {
+  background: linear-gradient(90deg, #722ed1, #eb2f96);
+}
+
+.appointments-card::before {
+  background: linear-gradient(90deg, #fa8c16, #faad14);
+}
+
+.beds-card::before {
+  background: linear-gradient(90deg, #13c2c2, #1890ff);
+}
+
+.kpi-card .ant-statistic-title {
+  color: #8c8c8c;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.kpi-card .ant-statistic-content {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.kpi-card .ant-statistic-content-prefix {
+  margin-right: 8px;
+  color: #1890ff;
+}
+
+.revenue-card .ant-statistic-content-prefix {
+  color: #1890ff;
+}
+
+.patients-card .ant-statistic-content-prefix {
+  color: #722ed1;
+}
+
+.appointments-card .ant-statistic-content-prefix {
+  color: #fa8c16;
+}
+
+.beds-card .ant-statistic-content-prefix {
+  color: #13c2c2;
+}
+
+/* Secondary Stats */
+.secondary-stats {
+  padding: 0 24px;
+  margin-top: 16px;
+}
+
+.mini-stat-card {
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mini-stat-card .ant-statistic-title {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.mini-stat-card .ant-statistic-content-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Quick Actions */
+.quick-actions-card {
+  margin: 24px;
+  border-radius: 12px;
+}
+
+.quick-actions-card .ant-card-head-title {
+  font-weight: 600;
+}
+
+.quick-action-btn {
+  height: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+}
+
+.quick-action-btn .anticon {
+  font-size: 20px;
+}
+
+/* Main Content */
+.main-content {
+  padding: 0 24px;
+  margin-top: 16px;
+}
+
+/* Chart Card */
+.chart-card,
+.department-card,
+.appointments-card,
+.activity-card {
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.chart-card .ant-card-head-title,
+.department-card .ant-card-head-title,
+.appointments-card .ant-card-head-title,
+.activity-card .ant-card-head-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Chart Placeholder */
+.chart-placeholder {
+  padding: 16px 0;
+}
+
+.chart-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 200px;
+}
+
+.chart-bar-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 160px;
+  width: 100%;
+  justify-content: center;
+}
+
+.chart-bar {
+  width: 24px;
+  min-height: 20px;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.chart-bar:hover {
+  opacity: 0.8;
+}
+
+.revenue-bar {
+  background: linear-gradient(180deg, #1890ff 0%, #69c0ff 100%);
+}
+
+.expense-bar {
+  background: linear-gradient(180deg, #ff7875 0%, #ffa39e 100%);
+}
+
+.bar-value {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  white-space: nowrap;
+  color: #595959;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.chart-bar:hover .bar-value {
+  opacity: 1;
+}
+
+.chart-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.chart-legend {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-color.revenue {
+  background: #1890ff;
+}
+
+.legend-color.expense {
+  background: #ff7875;
+}
+
+/* System Health & Backup */
+.system-row {
+  padding: 0 24px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.system-health-card,
+.backup-card {
+  border-radius: 12px;
+}
+
+.health-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.health-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.backup-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.backup-item .anticon {
+  font-size: 20px;
+  color: #1890ff;
+  margin-top: 2px;
+}
+
+.backup-item > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .kpi-cards {
+    padding: 0 12px;
+  }
+  
+  .quick-actions-card,
+  .main-content,
+  .system-row {
+    padding: 0 12px;
+  }
+  
+  .chart-bar {
+    width: 16px;
+  }
+  
+  .chart-bar-wrapper {
+    height: 120px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-card,
+.quick-actions-card,
+.chart-card,
+.department-card,
+.appointments-card,
+.activity-card,
+.system-health-card,
+.backup-card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card:nth-child(2) { animation-delay: 0.15s; }
+.kpi-card:nth-child(3) { animation-delay: 0.2s; }
+.kpi-card:nth-child(4) { animation-delay: 0.25s; }
+
+/* Custom Scrollbar */
+.erp-dashboard::-webkit-scrollbar {
+  width: 8px;
+}
+
+.erp-dashboard::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.erp-dashboard::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.erp-dashboard::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Ant Design Overrides */
+.ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ant-card-head-title {
+  font-weight: 600;
+}
+
+.ant-table-thead > tr > th {
+  background: #fafafa !important;
+  font-weight: 600;
+}
+
+.ant-tag {
+  border-radius: 4px;
+}
+
+.ant-progress-text {
+  font-size: 12px;
+}
+
+/* Add icon from ExperimentOutlined */
+.anticon-experiment {
+  font-family: 'Ant Design Icons';
+}
+
+.anticon-experiment:before {
+  content: "\e91f";
+}
+

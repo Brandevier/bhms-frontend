@@ -51,6 +51,7 @@ import DepartmentalStats from "./pages/staff/component/DepartmentalStats";
 import SmsManagement from "./pages/admin/components/SmsManagement";
 import CallComponent from "./pages/admin/components/Call";
 import DepartmentCallHandler from "./components/DepartmentCallHandler"
+import DepartmentCallPage from "./pages/departments/common/DepartmentCallPage";
 import ORscheduling from "./pages/departments/theatre/ORscheduling";
 import PreOpManagement from "./pages/departments/theatre/Pre-Op Management/PreOpManagement";
 import RoomStatus from "./pages/departments/theatre/roomstatus_page/RoomStatus";
@@ -112,6 +113,10 @@ import XmlViewerPage from "./pages/departments/claims/History/components/XmlView
 import AllPatientBills from "./pages/departments/clerk/Invoices/AllPatientBills";
 import PatientBillDetails from "./pages/departments/clerk/Invoices/PatientBillDetails";
 import NHIA_Claims_Services from "./pages/departments/clerk/Invoices/NHIA_Bills/NHIA_Claims_Services";
+import BackupsSettings from "./pages/admin/settings/BackupsSettings";
+import SystemConfigSettings from "./pages/admin/settings/SystemConfigSettings";
+import AuditLogsSettings from "./pages/admin/settings/AuditLogsSettings";
+import DataManagementSettings from "./pages/admin/settings/DataManagementSettings";
 
 
  
@@ -161,7 +166,8 @@ const App = () => {
             <Route path="departments" element={<DepartmentsList />} />
             <Route path="department/details/:id" element={<DepartmentDetails />} />
             <Route path="departments/store" element={<DepartmentStore />} />
-            <Route path="communication/call-chat" element={<CallComponent />} />
+<Route path="communication/call-chat" element={<CallComponent />} />
+            <Route path="communication/department-call" element={<DepartmentCallPage />} />
             <Route path="departments/accounts" element={<InstitutionAccounts />} />
             <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
             <Route path="attendance" element={<FaceScanAttendance />} />
@@ -264,7 +270,7 @@ const App = () => {
             <Route path="information-manager/maternity/analytics" element={<MaternityAnalytics />} />
           </Route>
 
-          {/* Admin-Only Routes */}
+{/* Admin-Only Routes */}
           <Route path="/admin/*" element={<AdminRoutes />}>
             <Route path="" element={<Dashboard />} />
             <Route path="staffs" element={<StaffList />} />
@@ -277,6 +283,10 @@ const App = () => {
             <Route path="wards" element={<BedManagement />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="insurance" element={<InsuranceClaims />} />
+            <Route path="settings/backups" element={<BackupsSettings />} />
+            <Route path="settings/system" element={<SystemConfigSettings />} />
+            <Route path="settings/audit-logs" element={<AuditLogsSettings />} />
+            <Route path="settings/data" element={<DataManagementSettings />} />
           </Route>
 
 

@@ -7,7 +7,8 @@ import {
   ExportOutlined,
   ImportOutlined,
   WechatOutlined,
-  BookOutlined
+  BookOutlined,
+  VideoCameraOutlined
 } from "@ant-design/icons";
 
 const wardMenu = [
@@ -17,7 +18,8 @@ const wardMenu = [
   { key: "ward-4", label: "Bed Allocation", icon: <BedOutlined />, path: "/shared/wards/beds" },
   { key: "ward-6", label: "handover notes", icon: <BookOutlined />, path: "/shared/wards/hand-over-notes" },
   { key: "ward-7", label: "Duty Schedule", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
-    { key: "lab-3", label: "Message", icon: <WechatOutlined />, path: "/shared/chat" },
+  { key: "lab-3", label: "Message", icon: <WechatOutlined />, path: "/shared/chat" },
+  { key: "ward-dept-call", label: "Department Video Call", icon: <VideoCameraOutlined />, path: "/shared/communication/department-call" },
   
 ];
 

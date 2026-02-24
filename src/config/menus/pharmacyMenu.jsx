@@ -5,7 +5,8 @@ import {
   WechatOutlined,
   UserSwitchOutlined,
   SafetyCertificateOutlined,
-  CalendarOutlined
+  CalendarOutlined,
+  VideoCameraOutlined
 } from "@ant-design/icons";
 
 const pharmacyMenu = [
@@ -38,6 +39,7 @@ const pharmacyMenu = [
     ]
   },
   { key: "pharmacy-5", label: "Communication", icon: <WechatOutlined />, path: "/shared/chat" },
+  { key: "pharmacy-dept-call", label: "Department Video Call", icon: <VideoCameraOutlined />, path: "/shared/communication/department-call" },
   { key: "pharm-9", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },
     { key: "ward-7", label: "Duty Schedule", icon: <CalendarOutlined />, path: "/shared/departments/time-table" },
 

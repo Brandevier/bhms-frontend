@@ -8,6 +8,13 @@ import {
   MessageOutlined,
   FileTextOutlined,
   CalendarOutlined,
+  SettingOutlined,
+  DatabaseOutlined,
+  SafetyCertificateOutlined,
+  CloudUploadOutlined,
+  ApiOutlined,
+  LockOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 
 const adminMenu = [
@@ -64,6 +71,7 @@ const adminMenu = [
     children: [
       { key: "messaging", label: "Messaging", path: "/shared/chat" },
       { key: "chat", label: "Call Chat", path: "/shared/communication/call-chat" },
+      { key: "departmentCall", label: "Department Video Call", path: "/shared/communication/department-call" },
       { key: "notifications", label: "Notifications", path: "/admin/notifications" },
     ],
   },
@@ -75,6 +83,19 @@ const adminMenu = [
       { key: "financialReports", label: "Financial", path: "/admin/reports/financial" },
       { key: "medicalReports", label: "Medical", path: "/admin/reports/medical" },
       { key: "operationalReports", label: "Operational", path: "/admin/reports/operational" },
+    ],
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    icon: <SettingOutlined />,
+    children: [
+      { key: "backups", label: "Backups", icon: <CloudUploadOutlined />, path: "/admin/settings/backups" },
+      { key: "systemConfig", label: "System Configuration", icon: <SettingOutlined />, path: "/admin/settings/system" },
+      { key: "userRoles", label: "User Roles & Permissions", icon: <LockOutlined />, path: "/admin/settings/roles" },
+      { key: "auditLogs", label: "Audit Logs", icon: <SafetyCertificateOutlined />, path: "/admin/settings/audit-logs" },
+      { key: "dataManagement", label: "Data Management", icon: <DatabaseOutlined />, path: "/admin/settings/data" },
+      { key: "integrations", label: "Integration Settings", icon: <ApiOutlined />, path: "/admin/settings/integrations" },
     ],
   },
   {

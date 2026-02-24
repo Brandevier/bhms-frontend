@@ -6,6 +6,7 @@ import {
   BarChartOutlined,
   UserSwitchOutlined,
   CalendarOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons";
 
 const consultationMenu = [
@@ -26,6 +27,12 @@ const consultationMenu = [
     label: "Message", 
     icon: <WechatOutlined />, 
     path: "/shared/chat" 
+  },
+  { 
+    key: "consult-dept-call", 
+    label: "Department Video Call", 
+    icon: <VideoCameraOutlined />, 
+    path: "/shared/communication/department-call" 
   },
   // { 
   //   key: "consult-7", 

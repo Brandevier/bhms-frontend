@@ -1,10 +1,9 @@
 import React from "react";
 import AppLayout from "../../layout/layout";
-import BhmsAdminDashboardLayout from "./components/BhmsAdminDashboardLayout";
-import RecordsStats from "../departments/records/RecordsStats";
+import ErpDashboard from "./components/ErpDashboard/ErpDashboard";
 
 const Dashboard = () => {
-  return <RecordsStats/>;
+  return <ErpDashboard />;
 };
 
 export default Dashboard;

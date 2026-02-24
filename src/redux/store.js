@@ -85,7 +85,8 @@ const rootReducer = combineReducers({
   allergy: reducers.allergyReducer,
   chronicCondition: reducers.chronicConditionReducer,
   riskAssessment: reducers.riskAssessmentReducer,
-  patientAdvanced: reducers.patientAdvancedReducer,
+patientAdvanced: reducers.patientAdvancedReducer,
+  dashboard: reducers.dashboardReducer,
 
 });
 
