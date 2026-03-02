@@ -35,6 +35,7 @@ const storeMenu = [
   { key: "store-10", label: "Inventory In", icon: <ImportOutlined />, path: "/shared/store/inventory-in" },
   { key: "store-11", label: "Inventory Out", icon: <ExportOutlined />, path: "/shared/store/inventory-out" },
   { key: "store-12", label: "Stock Transfer", icon: <DatabaseOutlined />, path: "/shared/store/stock-transfer" },
+  { key: "store-23", label: "Stock Adjustment", icon: <RiseOutlined />, path: "/shared/store/stock-adjustment" },
   // ERP Additional Features
   { key: "store-14", label: "Stock Valuation", icon: <DollarOutlined />, path: "/shared/store/stock-valuation" },
   { key: "store-15", label: "Reorder Points", icon: <WarningOutlined />, path: "/shared/store/reorder-points" },

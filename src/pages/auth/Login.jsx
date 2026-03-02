@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Typography, Spin, message, Divider } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Typography, Spin, Divider } from "antd";
 import { LeftOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BhmsButton from "../../heroComponents/BhmsButton";
 import { loginAdmin } from "../../redux/slice/authSlice";
+import LoginErrorModal from "../../modal/LoginErrorModal";
 
 
 const { Title, Text } = Typography;
@@ -13,6 +14,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const { loading, error, admin } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  
+  // Error modal state
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (admin) {
@@ -29,13 +34,18 @@ const Login = () => {
     dispatch(loginAdmin(trimmedValues))
       .unwrap()
       .then(() => {
-        message.success("Login successful!");
         localStorage.setItem("email", trimmedValues.email);
         navigate("/admin");
       })
       .catch((err) => {
-        message.error(err.error || "Login failed. Please try again.");
+        setErrorMessage(err.error || "Login failed. Please try again.");
+        setErrorModalVisible(true);
       });
+  };
+
+  const handleCloseErrorModal = () => {
+    setErrorModalVisible(false);
+    setErrorMessage("");
   };
 
   return (
@@ -149,23 +159,24 @@ const Login = () => {
 
             <Divider plain className="text-gray-400">or</Divider>
 
-            <div className="text-center">
+          <div className="text-center">
               <Text className="text-gray-600">Need an account? </Text>
               <Button type="link" className="p-0">Contact administrator</Button>
             </div>
           </Form>
-
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 rounded-lg">
-              <Text type="danger">{error.error || 'Invalid credentials'}</Text>
-            </div>
-          )}
         </div>
 
         <div className="mt-auto pt-8 text-center text-gray-500 text-sm">
           © {new Date().getFullYear()} Tonitel. All rights reserved.
         </div>
       </div>
+
+      {/* Login Error Modal */}
+      <LoginErrorModal 
+        visible={errorModalVisible} 
+        error={errorMessage} 
+        onClose={handleCloseErrorModal}
+      />
     </div>
   );
 };

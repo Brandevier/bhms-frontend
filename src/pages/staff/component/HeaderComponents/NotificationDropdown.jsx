@@ -15,9 +15,9 @@ const NotificationDropdown = () => {
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
 
-  useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchNotifications());
+  // }, [dispatch]);
 
   // Count unread notifications
   const unreadCount = list?.filter((item) => !item.is_read).length || 0;

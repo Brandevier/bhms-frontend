@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Typography, message, Spin, Divider } from "antd";
+import { Form, Input, Button, Typography, Spin, Divider } from "antd";
 import { LeftOutlined, LockOutlined, IdcardOutlined } from "@ant-design/icons";
 import { loginUser } from "../../redux/slice/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BhmsButton from "../../heroComponents/BhmsButton";
+import LoginErrorModal from "../../modal/LoginErrorModal";
 
 const { Title, Text } = Typography;
 
@@ -12,6 +13,10 @@ const StaffLogin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  
+  // Error modal state
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onFinish = (values) => {
     setLoading(true); 
@@ -24,22 +29,27 @@ const StaffLogin = () => {
     dispatch(loginUser(trimmedValues))
       .unwrap()
       .then((res) => {
-        
-        message.success("Human verification required.");
         navigate("/hms/puzzle-authentication");
       })
       .catch((err) => {
-        message.error(err.error || "Login failed. Please try again.");
+        setErrorMessage(err.error || "Login failed. Please try again.");
+        setErrorModalVisible(true);
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
+  const handleCloseErrorModal = () => {
+    setErrorModalVisible(false);
+    setErrorMessage("");
+  };
 
-  const forgotPassword = () =>{
-    message.info('Contact admin for a password reset')
-  }
+  const forgotPassword = () => {
+    // Show info message - we'll use a simple alert for now or could create another modal
+    setErrorMessage("Please contact your administrator for password reset assistance.");
+    setErrorModalVisible(true);
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#F7F9FC]">
@@ -152,6 +162,13 @@ const StaffLogin = () => {
           © {new Date().getFullYear()} Tonitel. All rights reserved.
         </div>
       </div>
+
+      {/* Login Error Modal */}
+      <LoginErrorModal 
+        visible={errorModalVisible} 
+        error={errorMessage} 
+        onClose={handleCloseErrorModal}
+      />
     </div>
   );
 };

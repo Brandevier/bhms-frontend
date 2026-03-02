@@ -9,15 +9,18 @@ import {
   Modal,
   message,
   Spin,
-  Alert,
   Typography,
   Row,
   Col,
   Statistic,
   Popconfirm,
-  Badge,
   Tooltip,
-  Divider
+  Divider,
+  Switch,
+  Select,
+  InputNumber,
+  Alert,
+  Input
 } from 'antd';
 import {
   CloudUploadOutlined,
@@ -29,42 +32,90 @@ import {
   FileTextOutlined,
   ExclamationCircleOutlined,
   CheckCircleOutlined,
-  SyncOutlined
+  SyncOutlined,
+  SettingOutlined,
+  SaveOutlined
 } from '@ant-design/icons';
-import { fetchBackupStatus, createBackup } from '../../../redux/slice/dashboardSlice';
+import {
+  fetchBackups,
+  createBackup,
+  deleteBackup,
+  restoreBackup,
+  fetchBackupSettings,
+  updateBackupSettings,
+  clearBackupError,
+  clearBackupSuccess
+} from '../../../redux/slice/backupSlice';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const BackupsSettings = () => {
   const dispatch = useDispatch();
-  const { backupStatus, loading } = useSelector((state) => state.dashboard);
+  const {
+    backups,
+    totalBackups,
+    totalSize,
+    settings,
+    lastBackup,
+    loading,
+    creating,
+    restoring,
+    deleting,
+    settingsLoading,
+    error,
+    successMessage,
+    restoreStatus
+  } = useSelector((state) => state.backup);
+  
   const user = useSelector((state) => state.auth.admin || state.auth.user);
-  const [creatingBackup, setCreatingBackup] = useState(false);
-  const [restoring, setRestoring] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [localSettings, setLocalSettings] = useState(settings);
 
   const loadBackups = useCallback(() => {
     const institutionId = user?.institution?.id;
-    dispatch(fetchBackupStatus({ institution_id: institutionId }));
+    dispatch(fetchBackups({ institution_id: institutionId }));
   }, [dispatch, user]);
+
+  const loadSettings = useCallback(() => {
+    dispatch(fetchBackupSettings());
+  }, [dispatch]);
 
   useEffect(() => {
     loadBackups();
-  }, [loadBackups]);
+    loadSettings();
+  }, [loadBackups, loadSettings]);
+
+  // Update local settings when settings change
+  useEffect(() => {
+    setLocalSettings(settings);
+  }, [settings]);
+
+  // Show success/error messages
+  useEffect(() => {
+    if (successMessage) {
+      message.success(successMessage);
+      dispatch(clearBackupSuccess());
+    }
+  }, [successMessage, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+      dispatch(clearBackupError());
+    }
+  }, [error, dispatch]);
 
   const handleCreateBackup = async () => {
-    setCreatingBackup(true);
+    const institutionId = user?.institution?.id;
     try {
-      const result = await dispatch(createBackup({}));
+      const result = await dispatch(createBackup({ institution_id: institutionId }));
       if (!result.error) {
         message.success('Backup created successfully!');
         loadBackups();
-      } else {
-        message.error('Failed to create backup');
       }
     } catch (error) {
       message.error('Error creating backup: ' + error.message);
-    } finally {
-      setCreatingBackup(false);
     }
   };
 
@@ -74,8 +125,11 @@ const BackupsSettings = () => {
   };
 
   const handleDelete = (backupId) => {
-    // Implement delete functionality
-    message.info('Delete functionality - would call API to delete backup');
+    dispatch(deleteBackup(backupId)).then((result) => {
+      if (!result.error) {
+        message.success('Backup deleted successfully');
+      }
+    });
   };
 
   const handleRestore = (backupId) => {
@@ -87,46 +141,26 @@ const BackupsSettings = () => {
       okType: 'danger',
       cancelText: 'Cancel',
       onOk: async () => {
-        setRestoring(true);
         try {
-          // Would call restore API here
-          message.success('Restore initiated successfully');
+          const result = await dispatch(restoreBackup(backupId));
+          if (!result.error) {
+            message.success('Restore initiated successfully');
+          }
         } catch (error) {
           message.error('Failed to restore backup');
-        } finally {
-          setRestoring(false);
         }
       }
     });
   };
 
-  // Mock backup data - in real app, this would come from backend
-  const mockBackups = [
-    {
-      id: '1',
-      filename: 'hms_backup_2024-01-15.json',
-      created_at: '2024-01-15T10:30:00Z',
-      size: 2456789,
-      institution_id: 'inst-1',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      filename: 'hms_backup_2024-01-14.json',
-      created_at: '2024-01-14T10:30:00Z',
-      size: 2423456,
-      institution_id: 'inst-1',
-      status: 'completed'
-    },
-    {
-      id: '3',
-      filename: 'hms_backup_2024-01-13.json',
-      created_at: '2024-01-13T10:30:00Z',
-      size: 2398765,
-      institution_id: 'inst-1',
-      status: 'completed'
-    }
-  ];
+  const handleSaveSettings = () => {
+    dispatch(updateBackupSettings(localSettings)).then((result) => {
+      if (!result.error) {
+        message.success('Backup settings saved successfully');
+        setSettingsModalVisible(false);
+      }
+    });
+  };
 
   const columns = [
     {
@@ -147,7 +181,7 @@ const BackupsSettings = () => {
       render: (date) => (
         <Space>
           <ClockCircleOutlined />
-          {new Date(date).toLocaleString()}
+          {date ? new Date(date).toLocaleString() : 'N/A'}
         </Space>
       )
     },
@@ -156,6 +190,7 @@ const BackupsSettings = () => {
       dataIndex: 'size',
       key: 'size',
       render: (size) => {
+        if (!size) return 'N/A';
         const mb = (size / (1024 * 1024)).toFixed(2);
         return `${mb} MB`;
       }
@@ -166,7 +201,7 @@ const BackupsSettings = () => {
       key: 'status',
       render: (status) => (
         <Tag icon={<CheckCircleOutlined />} color="success">
-          {status.toUpperCase()}
+          {status ? status.toUpperCase() : 'COMPLETED'}
         </Tag>
       )
     },
@@ -189,6 +224,7 @@ const BackupsSettings = () => {
               type="link"
               icon={<SyncOutlined />}
               onClick={() => handleRestore(record.id)}
+              loading={restoring && restoreStatus?.status === 'in_progress'}
             >
               Restore
             </Button>
@@ -209,6 +245,32 @@ const BackupsSettings = () => {
       )
     }
   ];
+
+  // Restore status alert
+  if (restoreStatus) {
+    const statusColor = restoreStatus.status === 'completed' ? 'success' : 
+                        restoreStatus.status === 'failed' ? 'error' : 'processing';
+    const statusIcon = restoreStatus.status === 'completed' ? <CheckCircleOutlined /> :
+                       restoreStatus.status === 'failed' ? <ExclamationCircleOutlined /> :
+                       <SyncOutlined spin />;
+    
+    return (
+      <Alert
+        message="Restore Status"
+        description={restoreStatus.message}
+        type={statusColor}
+        icon={statusIcon}
+        showIcon
+        closable
+        style={{ marginBottom: 16 }}
+        action={
+          <Button size="small" onClick={() => dispatch(clearRestoreStatus())}>
+            Dismiss
+          </Button>
+        }
+      />
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -232,7 +294,7 @@ const BackupsSettings = () => {
             <Card className="border-0 shadow-sm">
               <Statistic
                 title="Total Backups"
-                value={backupStatus?.backupsAvailable || mockBackups.length}
+                value={totalBackups || backups.length || 0}
                 prefix={<DatabaseOutlined className="text-blue-500" />}
               />
             </Card>
@@ -241,7 +303,7 @@ const BackupsSettings = () => {
             <Card className="border-0 shadow-sm">
               <Statistic
                 title="Total Storage Used"
-                value={backupStatus?.totalSize || '7.21 MB'}
+                value={totalSize || '0 MB'}
                 prefix={<CloudUploadOutlined className="text-green-500" />}
               />
             </Card>
@@ -250,7 +312,7 @@ const BackupsSettings = () => {
             <Card className="border-0 shadow-sm">
               <Statistic
                 title="Last Backup"
-                value={backupStatus?.lastBackup ? new Date(backupStatus.lastBackup).toLocaleDateString() : 'Never'}
+                value={lastBackup ? new Date(lastBackup).toLocaleDateString() : 'Never'}
                 prefix={<ClockCircleOutlined className="text-orange-500" />}
               />
             </Card>
@@ -264,15 +326,23 @@ const BackupsSettings = () => {
               <Text strong className="text-lg block mb-1">Create New Backup</Text>
               <Text type="secondary">Generate a new backup of all system data including patients, visits, and records.</Text>
             </div>
-            <Button
-              type="primary"
-              size="large"
-              icon={<CloudUploadOutlined />}
-              loading={creatingBackup}
-              onClick={handleCreateBackup}
-            >
-              {creatingBackup ? 'Creating Backup...' : 'Create Backup Now'}
-            </Button>
+            <Space>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setSettingsModalVisible(true)}
+              >
+                Settings
+              </Button>
+              <Button
+                type="primary"
+                size="large"
+                icon={<CloudUploadOutlined />}
+                loading={creating}
+                onClick={handleCreateBackup}
+              >
+                {creating ? 'Creating Backup...' : 'Create Backup Now'}
+              </Button>
+            </Space>
           </div>
         </Card>
 
@@ -295,7 +365,7 @@ const BackupsSettings = () => {
           <Spin spinning={loading}>
             <Table
               columns={columns}
-              dataSource={mockBackups}
+              dataSource={backups}
               rowKey="id"
               pagination={{
                 pageSize: 10,
@@ -322,45 +392,142 @@ const BackupsSettings = () => {
             <Col xs={24} md={12}>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <Text strong className="block mb-2">Backup Frequency</Text>
-                <Text type="secondary">Current: Daily at 2:00 AM</Text>
+                <Text type="secondary">
+                  Current: {settings.frequency === 'daily' ? 'Daily' : 
+                           settings.frequency === 'weekly' ? 'Weekly' : 
+                           settings.frequency === 'monthly' ? 'Monthly' : 'Custom'}
+                  {settings.time ? ` at ${settings.time}` : ''}
+                </Text>
                 <div className="mt-2">
-                  <Button type="link">Change Schedule</Button>
+                  <Button type="link" onClick={() => setSettingsModalVisible(true)}>Change Schedule</Button>
                 </div>
               </div>
             </Col>
             <Col xs={24} md={12}>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <Text strong className="block mb-2">Retention Policy</Text>
-                <Text type="secondary">Keep last 30 backups</Text>
+                <Text type="secondary">Keep last {settings.retentionDays || 30} backups</Text>
                 <div className="mt-2">
-                  <Button type="link">Configure</Button>
+                  <Button type="link" onClick={() => setSettingsModalVisible(true)}>Configure</Button>
                 </div>
               </div>
             </Col>
             <Col xs={24} md={12}>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <Text strong className="block mb-2">Backup Location</Text>
-                <Text type="secondary">Local Server (/backups)</Text>
+                <Text type="secondary">{settings.location || '/backups'}</Text>
                 <div className="mt-2">
-                  <Button type="link">Change Location</Button>
+                  <Button type="link" onClick={() => setSettingsModalVisible(true)}>Change Location</Button>
                 </div>
               </div>
             </Col>
             <Col xs={24} md={12}>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <Text strong className="block mb-2">Compression</Text>
-                <Text type="secondary">Enabled (GZIP)</Text>
+                <Text type="secondary">{settings.compression ? 'Enabled (GZIP)' : 'Disabled'}</Text>
                 <div className="mt-2">
-                  <Button type="link">Settings</Button>
+                  <Button type="link" onClick={() => setSettingsModalVisible(true)}>Settings</Button>
                 </div>
               </div>
             </Col>
           </Row>
         </Card>
+
+        {/* Settings Modal */}
+        <Modal
+          title={
+            <Space>
+              <SettingOutlined />
+              Backup Settings
+            </Space>
+          }
+          open={settingsModalVisible}
+          onCancel={() => setSettingsModalVisible(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setSettingsModalVisible(false)}>
+              Cancel
+            </Button>,
+            <Button
+              key="save"
+              type="primary"
+              icon={<SaveOutlined />}
+              loading={settingsLoading}
+              onClick={handleSaveSettings}
+            >
+              Save Settings
+            </Button>
+          ]}
+          width={600}
+        >
+          <Spin spinning={settingsLoading}>
+            <div className="space-y-4">
+              {/* Auto Backup Toggle */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Text strong>Automatic Backup</Text>
+                  <Text type="secondary" className="block">Enable automatic scheduled backups</Text>
+                </div>
+                <Switch
+                  checked={localSettings.autoBackup}
+                  onChange={(checked) => setLocalSettings({ ...localSettings, autoBackup: checked })}
+                />
+              </div>
+
+              {/* Frequency */}
+              <div>
+                <Text strong className="block mb-2">Backup Frequency</Text>
+                <Select
+                  style={{ width: '100%' }}
+                  value={localSettings.frequency}
+                  onChange={(value) => setLocalSettings({ ...localSettings, frequency: value })}
+                >
+                  <Option value="daily">Daily</Option>
+                  <Option value="weekly">Weekly</Option>
+                  <Option value="monthly">Monthly</Option>
+                </Select>
+              </div>
+
+              {/* Time */}
+              <div>
+                <Text strong className="block mb-2">Backup Time</Text>
+                <Input
+                  type="time"
+                  style={{ width: '100%' }}
+                  value={localSettings.time}
+                  onChange={(e) => setLocalSettings({ ...localSettings, time: e.target.value })}
+                />
+              </div>
+
+              {/* Retention Days */}
+              <div>
+                <Text strong className="block mb-2">Retention Period (days)</Text>
+                <InputNumber
+                  min={1}
+                  max={365}
+                  style={{ width: '100%' }}
+                  value={localSettings.retentionDays}
+                  onChange={(value) => setLocalSettings({ ...localSettings, retentionDays: value })}
+                />
+                <Text type="secondary">Number of backups to keep before automatic deletion</Text>
+              </div>
+
+              {/* Compression */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Text strong>Compression</Text>
+                  <Text type="secondary" className="block">Compress backups using GZIP</Text>
+                </div>
+                <Switch
+                  checked={localSettings.compression}
+                  onChange={(checked) => setLocalSettings({ ...localSettings, compression: checked })}
+                />
+              </div>
+            </div>
+          </Spin>
+        </Modal>
       </div>
     </div>
   );
 };
 
 export default BackupsSettings;
-

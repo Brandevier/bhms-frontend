@@ -105,7 +105,7 @@ const Records = () => {
         />
 
         {/* Debug info - remove in production */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <div className="mb-4 p-2 bg-yellow-100 rounded text-xs">
             Debug: {patients.length} patients loaded, {filteredPatients.length} filtered
           </div>

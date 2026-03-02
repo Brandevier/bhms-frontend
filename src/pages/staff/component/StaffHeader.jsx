@@ -28,7 +28,9 @@ const { Header } = Layout;
 const StaffHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  // Fix: Properly get user - check both user and admin, and handle undefined properly
+  const authState = useSelector((state) => state.auth);
+  const user = authState?.user || authState?.admin || null;
   const { items } = useSelector((state) => state.notification);
 
   const {
@@ -97,7 +99,7 @@ const StaffHeader = () => {
       >
         {/* Hospital Name + Department */}
         <h1 className="hidden md:block text-lg font-semibold text-gray-800">
-          {user.institution?.name} —{" "}
+          {user?.institution?.name || 'Hospital'} —{" "}
           <span className="text-blue-600">{currentDepartment?.name || "No Department"}</span>
         </h1>
 

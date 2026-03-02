@@ -18,6 +18,8 @@ import PuzzleAuthentication from "./pages/auth/PuzzleAuthentication";
 import Service from "./pages/admin/Service";
 import Store from "./pages/departments/store/Store";
 import ConsultationDepartment from "./pages/departments/consultation/ConsultationDepartment";
+import ConsultationErpDashboard from "./pages/departments/consultation/ConsultationErpDashboard";
+import DoctorErpDashboard from "./pages/departments/consultation/DoctorErpDashboard";
 import RecordsStats from "./pages/departments/records/RecordsStats";
 import StockItems from "./pages/departments/store/stock_items/StockItems";
 import IssuedItems from "./pages/departments/store/IssuedItems";
@@ -61,6 +63,8 @@ export {
   Service,
   Store,
   ConsultationDepartment,
+  ConsultationErpDashboard,
+  DoctorErpDashboard,
   RecordsStats,
   StockItems,
   IssuedItems,

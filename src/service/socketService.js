@@ -14,7 +14,7 @@ class SocketService {
       this.socket.disconnect();
     }
 
-    const url = socketUrl || process.env.VITE_API_URL || process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    const url = socketUrl || import.meta.env.VITE_API_URL || import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
     
     this.socket = io(url, {
       transports: ['websocket', 'polling'],
@@ -182,4 +182,9 @@ class SocketService {
 
 export const socketService = new SocketService();
 export const getSocket = () => socketService.socket;
+
+// Wrapper functions to match expected imports
+export const initializeSocket = (socketUrl) => socketService.initialize(socketUrl);
+export const disconnectSocket = () => socketService.disconnect();
+
 export default socketService;

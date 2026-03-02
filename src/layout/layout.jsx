@@ -10,7 +10,11 @@ import StaffHeader from "../pages/staff/component/StaffHeader";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
-  const { user,admin } = useSelector((state)=>state.auth)
+  // Fix: Properly get user and admin - check both user and admin with null safety
+  const authState = useSelector((state) => state.auth);
+  const user = authState?.user || null;
+  const admin = authState?.admin || null;
+  
   return (
     <Layout style={{ height: "100vh", overflow: "hidden" }}>
       {/* Sidebar (Fixed) */}

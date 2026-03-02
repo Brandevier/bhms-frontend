@@ -9,10 +9,13 @@ export const fetchNotifications = createAsyncThunk(
   'notifications/fetchAll',
   async (_, { rejectWithValue, getState }) => {
     try {
-      const user = getState().auth.user || getState().auth.admin;
-
+      const authState = getState().auth;
+      // Check both user and admin, and get ID from either
+      const user = authState?.user || authState?.admin;
+      
       if (!user?.id) {
-        throw new Error('User ID not found');
+        // Return empty array instead of throwing error when no user is logged in
+        return [];
       }
 
       // Backend expects staff_id as a query parameter
@@ -22,7 +25,9 @@ export const fetchNotifications = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: error.message });
+      // Return empty array on error instead of rejecting
+      console.error('Failed to fetch notifications:', error);
+      return [];
     }
   }
 );
@@ -68,11 +73,13 @@ const notificationSlice = createSlice({
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload;
+        // Handle empty array or actual notifications
+        state.list = action.payload || [];
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        // Keep existing list on error
       })
       .addCase(markNotificationRead.fulfilled, (state, action) => {
         const index = state.list.findIndex(n => n.id === action.payload.id);

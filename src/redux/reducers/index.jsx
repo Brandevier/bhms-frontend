@@ -1,5 +1,6 @@
 import authReducer from '../slice/authSlice'
 import dashboardReducer from '../slice/dashboardSlice'
+import backupReducer from '../slice/backupSlice'
 import waitListReducers from '../slice/waitlistSlice'
 import departmentReducers from '../slice/departmentSlice'
 import staffAdminManagementSlice from  '../slice/staff_admin_managment_slice'
@@ -72,9 +73,12 @@ import allergyReducer from '../slice/allergySlice'
 import chronicConditionReducer from '../slice/chronicConditionSlice'
 import riskAssessmentReducer from '../slice/riskAssessmentSlice'
 import patientAdvancedReducer from '../slice/patientAdvancedSlice'
+import systemConfigReducer from '../slice/systemConfigSlice'
 
 export {
     dashboardReducer,
+    backupReducer,
+    systemConfigReducer,
     allergyReducer,
     chronicConditionReducer,
     riskAssessmentReducer,

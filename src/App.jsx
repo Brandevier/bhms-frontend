@@ -30,6 +30,8 @@ import {
   Service,
   Store,
   ConsultationDepartment,
+  ConsultationErpDashboard,
+  DoctorErpDashboard,
   RecordsStats,
   StockItems,
   IssuedItems,
@@ -97,7 +99,7 @@ import UltraSoundStats from "./pages/departments/maternity/ultrasound/UltraSound
 import DepartmentLabStats from "./pages/departments/maternity/components/DepartmentLabStats";
 import PatientAnalysis from "./pages/departments/information_manager/PatientAnalysis";
 import DiagnosisAnalysis from "./pages/departments/information_manager/DiagnosisAnalysis";
-import BedStatisticsDashboard from "./pages/departments/information_manager/BedStatisticsDashboard"; 
+import BedStatisticsDashboard from "./pages/departments/information_manager/BedStatisticsDashboard";
 import PatientSummaryDashboard from "./pages/departments/information_manager/patientSummary/PatientSummaryDashboard";
 import DepartmentDetails from "./pages/admin/department_settings/DepartmentDetails";
 import SessionManager from "./hooks/session/SessionManager";
@@ -110,6 +112,7 @@ import LabAnalytics from "./pages/departments/information_manager/labAnalytics/L
 import MaternityAnalytics from "./pages/departments/information_manager/maternity_analytics/MaternityAnalytics";
 import ClaimsExportHistory from "./pages/departments/claims/History/ClaimsExportHistory";
 import XmlViewerPage from "./pages/departments/claims/History/components/XmlViewerPage";
+import ClaimsErpDashboard from "./pages/departments/claims/ClaimsErpDashboard";
 import AllPatientBills from "./pages/departments/clerk/Invoices/AllPatientBills";
 import PatientBillDetails from "./pages/departments/clerk/Invoices/PatientBillDetails";
 import NHIA_Claims_Services from "./pages/departments/clerk/Invoices/NHIA_Bills/NHIA_Claims_Services";
@@ -117,9 +120,17 @@ import BackupsSettings from "./pages/admin/settings/BackupsSettings";
 import SystemConfigSettings from "./pages/admin/settings/SystemConfigSettings";
 import AuditLogsSettings from "./pages/admin/settings/AuditLogsSettings";
 import DataManagementSettings from "./pages/admin/settings/DataManagementSettings";
+import StoreDashboard from "./pages/departments/store/StoreDashboard";
+import Suppliers from "./pages/departments/store/Suppliers";
+import PurchaseOrders from "./pages/departments/store/PurchaseOrders";
+import LowStock from "./pages/departments/store/LowStock";
+import StockTransfer from "./pages/departments/store/StockTransfer";
+import InventoryIn from "./pages/departments/store/InventoryIn";
+import InventoryOut from "./pages/departments/store/InventoryOut";
+import StockAdjustment from "./pages/departments/store/StockAdjustment";
+import StockReport from "./pages/departments/store/StockReport";
 
 
- 
 const App = () => {
   const user = useSelector((state) => state.auth.user || state.auth.admin);
   const dispatch = useDispatch();
@@ -166,7 +177,19 @@ const App = () => {
             <Route path="departments" element={<DepartmentsList />} />
             <Route path="department/details/:id" element={<DepartmentDetails />} />
             <Route path="departments/store" element={<DepartmentStore />} />
-<Route path="communication/call-chat" element={<CallComponent />} />
+            <Route path="store/dashboard" element={<StoreDashboard />} />
+            
+            {/* STORE MANAGEMENT */}
+            <Route path="store/suppliers" element={<Suppliers />} />
+            <Route path="store/purchase-orders" element={<PurchaseOrders />} />
+            <Route path="store/low-stock" element={<LowStock />} />
+            <Route path="store/stock-transfer" element={<StockTransfer />} />
+            <Route path="store/inventory-in" element={<InventoryIn />} />
+            <Route path="store/inventory-out" element={<InventoryOut />} />
+            <Route path="store/stock-adjustment" element={<StockAdjustment />} />
+            <Route path="store/reports" element={<StockReport />} />
+            
+            <Route path="communication/call-chat" element={<CallComponent />} />
             <Route path="communication/department-call" element={<DepartmentCallPage />} />
             <Route path="departments/accounts" element={<InstitutionAccounts />} />
             <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
@@ -192,6 +215,8 @@ const App = () => {
             <Route path="departments/:id/stats" element={<DepartmentalStats />} />
             <Route path="opd/:id" element={<PatientRecords />} />
             <Route path="consultation/:id" element={<ConsultationDepartment />} />
+            <Route path="consultation/dashboard" element={<ConsultationErpDashboard />} />
+            <Route path="consultation/doctor-dashboard" element={<DoctorErpDashboard />} />
             <Route path="patient/details/:id" element={<PatientLayout />} />
             <Route path="records/:id" element={<Records />} />
             <Route path="records/folder/:id" element={<PatientFolderDetails />} />
@@ -234,6 +259,7 @@ const App = () => {
             <Route path="chat" element={<ChatUI />} />
 
             {/* CLAIMS */}
+            <Route path="claims/erp-dashboard" element={<ClaimsErpDashboard />} />
             <Route path="claims/dashboard" element={<ClaimsDashboard />} />
             <Route path="claims/mappings" element={<ICD10GDRGManager />} />
             <Route path="claims/medications" element={<NHIAMedicationsManager />} />
@@ -258,19 +284,19 @@ const App = () => {
             <Route path="wards/hand-over-notes" element={<HandOverNote />} />
 
             {/* ULTRA-SOUND */}
-              <Route path="ultra-sound/stats" element={<UltraSoundStats />} />
+            <Route path="ultra-sound/stats" element={<UltraSoundStats />} />
 
 
             {/* INFORMATION MANAGER */}
             <Route path="information-manager/visualization/patient-analysis" element={<PatientAnalysis />} />
             <Route path="information-manager/diagnosis-analysis" element={<DiagnosisAnalysis />} />
             <Route path="information-manager/visualization/beds-analytics" element={<BedStatisticsDashboard />} />
-             <Route path="information-manager/visualization/patient-summary" element={<PatientSummaryDashboard />} />
+            <Route path="information-manager/visualization/patient-summary" element={<PatientSummaryDashboard />} />
             <Route path="information-manager/lab/analytics" element={<LabAnalytics />} />
             <Route path="information-manager/maternity/analytics" element={<MaternityAnalytics />} />
           </Route>
 
-{/* Admin-Only Routes */}
+          {/* Admin-Only Routes */}
           <Route path="/admin/*" element={<AdminRoutes />}>
             <Route path="" element={<Dashboard />} />
             <Route path="staffs" element={<StaffList />} />

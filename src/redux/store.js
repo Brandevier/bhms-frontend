@@ -87,6 +87,8 @@ const rootReducer = combineReducers({
   riskAssessment: reducers.riskAssessmentReducer,
 patientAdvanced: reducers.patientAdvancedReducer,
   dashboard: reducers.dashboardReducer,
+  backup: reducers.backupReducer,
+  systemConfig: reducers.systemConfigReducer,
 
 });
 
@@ -99,6 +101,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, // Needed for Redux Persist
+      immutableCheck: false, // Disable immutable check to prevent errors from persisted state
     }).concat(logger), // Adds Redux Logger
 });
 

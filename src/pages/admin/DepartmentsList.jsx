@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import CreateDepartmentDialog from "./components/CreateDepartmentDialog";
 import { useNavigate } from "react-router-dom";
 import { filterDepartmentsByRole } from "../../util/permissionsUtil";
-import { initializeSocket } from "../../service/socketService";
+import socketService from "../../service/socketService";
 import DepartmentCallModal from "../../modal/DepartmentCallModal";
 
 
@@ -21,8 +21,18 @@ const DepartmentsList = () => {
     const [callStatus, setCallStatus] = useState('idle'); // 'idle', 'calling', 'in-call'
     const navigate = useNavigate();
     const { admin, user } = useSelector((state) => state.auth);
+    const currentUser = user || admin;
+    const [socket, setSocket] = useState(null);
     const [filteredDepartments, setFilteredDepartments] = useState([]);
-    const socket = initializeSocket(user || admin); // Initialize socket
+
+    // Initialize socket on mount
+    useEffect(() => {
+        if (currentUser?.id) {
+            const socketInstance = socketService.initialize();
+            socketService.register(currentUser.id, currentUser.staff_departments?.[0]?.department?.id);
+            setSocket(socketInstance);
+        }
+    }, [currentUser]);
 
     useEffect(() => {
         dispatch(getDepartmentsByInstitution());
