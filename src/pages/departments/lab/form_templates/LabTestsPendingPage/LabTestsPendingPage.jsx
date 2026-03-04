@@ -25,20 +25,22 @@ const LabTestsPendingPage = () => {
     }, [dispatch]);
 
     // Filter and format pending tests
-    const pendingTests = results
-        ?.filter(result => result?.status === 'pending')
-        ?.map(result => ({
-            key: result.id,
-            id: result.id,
-            patientName: `${result.visit?.patient?.first_name} ${result.visit?.patient?.last_name}` || 'Unknown',
-            attendanceNumber: result.visit?.attendance_number || 'N/A',
-            testName: result.template?.lab_tarrif?.test_description || 'Unknown Test',
-            requestedDate: result.createdAt,
-            status: result.status,
-            nhiaAmount: result.template?.lab_tarrif?.tariff_ghc || '0.00',
-            patientAmount: result.template?.lab_tarrif?.market_price || '0.00',
-            originalData: result,
-        })) || [];
+    const pendingTests = Array.isArray(results)
+        ? results
+            .filter(result => result?.status === 'pending')
+            .map(result => ({
+                key: result.id,
+                id: result.id,
+                patientName: `${result.visit?.patient?.first_name} ${result.visit?.patient?.last_name}` || 'Unknown',
+                attendanceNumber: result.visit?.attendance_number || 'N/A',
+                testName: result.template?.lab_tariff?.test_description || 'Unknown Test',
+                requestedDate: result.createdAt,
+                status: result.status,
+                nhiaAmount: result.template?.lab_tariff?.tariff_ghc || '0.00',
+                patientAmount: result.template?.lab_tariff?.market_price || '0.00',
+                originalData: result,
+            }))
+        : [];
 
     const handleEnterResults = (record) => {
         setCurrentTest(record.originalData);

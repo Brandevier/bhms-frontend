@@ -14,6 +14,7 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
     const dispatch = useDispatch();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [selectedDepartments, setSelectedDepartments] = useState([]);
+    const [primaryDepartmentId, setPrimaryDepartmentId] = useState(null);
 
     // Get roles and departments from Redux store
     const { roles, loading: rolesLoading } = useSelector((state) => state.permissions);
@@ -33,7 +34,8 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                 // Convert department array to the format expected by your API
                 const submitData = {
                     ...values,
-                    department_ids: values.department_ids || [] // Ensure it's an array
+                    department_ids: values.department_ids || [], // Ensure it's an array
+                    primary_department_id: values.primary_department_id // Include primary department
                 };
                 
                 dispatch(registerStaff(submitData))
@@ -56,11 +58,19 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
 
     const handleDepartmentChange = (selectedValues) => {
         setSelectedDepartments(selectedValues);
+        // Reset primary department if the selected departments change
+        setPrimaryDepartmentId(null);
+        form.setFieldValue('primary_department_id', undefined);
+    };
+
+    const handlePrimaryDepartmentChange = (value) => {
+        setPrimaryDepartmentId(value);
     };
 
     const handleClose = () => {
         form.resetFields();
         setSelectedDepartments([]);
+        setPrimaryDepartmentId(null);
         onClose();
     };
 
@@ -68,6 +78,12 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
     const selectedDepartmentDetails = selectedDepartments.map(deptId => 
         departments?.find(dept => dept.id === deptId)
     ).filter(Boolean);
+
+    // Get department options for primary department dropdown (only from selected departments)
+    const primaryDepartmentOptions = selectedDepartments.map(deptId => {
+        const dept = departments?.find(d => d.id === deptId);
+        return dept ? { id: dept.id, name: dept.name, departmentType: dept.departmentType } : null;
+    }).filter(Boolean);
 
     return (
         <Modal
@@ -338,6 +354,45 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                         </Col>
                     </Row>
 
+                    {/* Primary Department Selection */}
+                    {selectedDepartments.length > 0 && (
+                        <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
+                            <Col xs={24}>
+                                <Form.Item 
+                                    name="primary_department_id" 
+                                    label={
+                                        <span>
+                                            Primary Department <Text type="danger">*</Text>
+                                        </span>
+                                    }
+                                    rules={[{ 
+                                        required: true, 
+                                        message: "Please select a primary department"
+                                    }]}
+                                    tooltip="The main department where this staff member works"
+                                >
+                                    <Select
+                                        placeholder="Select primary department"
+                                        size="large"
+                                        onChange={handlePrimaryDepartmentChange}
+                                        showSearch
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) =>
+                                            option.children.toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        style={{ width: '100%' }}
+                                    >
+                                        {primaryDepartmentOptions.map((dept) => (
+                                            <Option key={dept.id} value={dept.id}>
+                                                {dept.name} {dept.departmentType && `(${dept.departmentType})`}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    )}
+
                     {/* Selected Departments Preview */}
                     {selectedDepartmentDetails.length > 0 && (
                         <div style={{ marginTop: '16px' }}>
@@ -346,13 +401,18 @@ const AddStaffDialog = ({ visible, onClose, updateComponent }) => {
                                 {selectedDepartmentDetails.map((dept, index) => (
                                     <Tag 
                                         key={dept.id} 
-                                        color="blue" 
+                                        color={dept.id === primaryDepartmentId ? "green" : "blue"}
                                         style={{ marginBottom: '4px', padding: '4px 8px' }}
                                     >
                                         {dept.name}
                                         {dept.departmentType && (
                                             <Text type="secondary" style={{ fontSize: '12px', marginLeft: '4px' }}>
                                                 ({dept.departmentType})
+                                            </Text>
+                                        )}
+                                        {dept.id === primaryDepartmentId && (
+                                            <Text style={{ fontSize: '12px', marginLeft: '4px', fontWeight: 'bold' }}>
+                                                (Primary)
                                             </Text>
                                         )}
                                     </Tag>

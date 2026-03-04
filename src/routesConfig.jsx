@@ -6,7 +6,7 @@ import AdminRoutes from "./routes/AdminRoutes";
 import Dashboard from "./pages/admin/Dashbaord";
 import StaffLogin from "./pages/auth/StaffLogin";
 import EmailVerification from "./pages/auth/EmailVerification";
-import PageNotFound from "./pages/404/PageNotFound";
+import PageNotFound from "./pages/404/PageNotFound"; 
 import StaffList from "./pages/admin/staff_pages/StaffList";
 import DepartmentsList from "./pages/admin/DepartmentsList";
 import CalendarComponent from "./pages/admin/components/CalendarComponent";

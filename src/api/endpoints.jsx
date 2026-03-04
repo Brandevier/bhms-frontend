@@ -42,3 +42,22 @@ export const CLAIMS_UPDATE_STATUS = `${BASE_URL}/claims/update-claim-status`;
 export const CLAIMS_XML_GENERATE = `${BASE_URL}/claims/xml/generate`;
 export const CLAIMS_EXPORT_HISTORY = `${BASE_URL}/claims/export-history`;
 export const CLAIMS_BY_ID = (id) => `${BASE_URL}/claims/${id}`;
+
+// Data Management API Endpoints
+export const DATA_TABLES = `${BASE_URL}/system/data/tables`;
+export const DATA_SYNC_TABLE = (tableName) => `${BASE_URL}/system/data/sync/${tableName}`;
+export const DATA_SYNC_ALL = `${BASE_URL}/system/data/sync-all`;
+export const DATA_EXPORT_TABLE = (tableName) => `${BASE_URL}/system/data/export/${tableName}`;
+export const DATA_CLEAR_TABLE = (tableName) => `${BASE_URL}/system/data/clear/${tableName}`;
+export const DATA_STORAGE = `${BASE_URL}/system/data/storage`;
+export const DATA_CLEANUP = (operation) => `${BASE_URL}/system/data/cleanup/${operation}`;
+export const DATA_RETENTION = `${BASE_URL}/system/data/retention`;
+
+// Leave Management API Endpoints
+export const LEAVE_REQUEST = `${BASE_URL}/leave/request`;
+export const LEAVE_MY_LEAVES = `${BASE_URL}/leave/my-leaves`;
+export const LEAVE_BALANCE = `${BASE_URL}/leave/balance`;
+export const LEAVE_UPDATE = (leaveId) => `${BASE_URL}/leave/update/${leaveId}`;
+export const LEAVE_CANCEL = (leaveId) => `${BASE_URL}/leave/cancel/${leaveId}`;
+export const LEAVE_REVIEW = (leaveId) => `${BASE_URL}/leave/review/${leaveId}`;
+export const LEAVE_ALL = `${BASE_URL}/leave/all`;

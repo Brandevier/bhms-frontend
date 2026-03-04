@@ -32,6 +32,32 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
+// ================================
+// Fetch Unread Count
+// ================================
+export const fetchUnreadCount = createAsyncThunk(
+  'notifications/fetchUnreadCount',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const authState = getState().auth;
+      const user = authState?.user || authState?.admin;
+      
+      if (!user?.id) {
+        return 0;
+      }
+
+      const response = await apiClient.get(`/notifications/get-unread-count`, {
+        params: { staffId: user.id },
+      });
+
+      return response.data.unreadCount || 0;
+    } catch (error) {
+      console.error('Failed to fetch unread count:', error);
+      return 0;
+    }
+  }
+);
+
 
 // ================================
 // Mark Notification as Read
@@ -40,7 +66,33 @@ export const markNotificationRead = createAsyncThunk(
   'notifications/markRead',
   async (notificationId, { rejectWithValue }) => {
     try {
-      const res = await apiClient.put(`/notifications/${notificationId}/read`);
+      const res = await apiClient.put(`/notifications/notification/markAsRead`, {
+        notificationIds: [notificationId]
+      });
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// ================================
+// Mark All Notifications as Read
+// ================================
+export const markAllNotificationsRead = createAsyncThunk(
+  'notifications/markAllRead',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const authState = getState().auth;
+      const user = authState?.user || authState?.admin;
+      
+      if (!user?.id) {
+        return rejectWithValue('User not found');
+      }
+
+      const res = await apiClient.put(`/notifications/notification/markAllAsRead`, {
+        staffId: user.id
+      });
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -52,6 +104,7 @@ const notificationSlice = createSlice({
   name: 'notifications',
   initialState: {
     list: [],
+    unreadCount: 0,
     loading: false,
     error: null,
   },
@@ -59,10 +112,18 @@ const notificationSlice = createSlice({
     addNotification: (state, action) => {
       // Add new notification to the top of the list
       state.list.unshift(action.payload);
+      // Increment unread count
+      state.unreadCount += 1;
     },
     updateNotification: (state, action) => {
       const index = state.list.findIndex(n => n.id === action.payload.id);
       if (index !== -1) state.list[index] = action.payload;
+    },
+    incrementUnreadCount: (state) => {
+      state.unreadCount += 1;
+    },
+    resetUnreadCount: (state) => {
+      state.unreadCount = 0;
     },
   },
   extraReducers: (builder) => {
@@ -81,13 +142,29 @@ const notificationSlice = createSlice({
         state.error = action.payload;
         // Keep existing list on error
       })
+      // Fetch Unread Count
+      .addCase(fetchUnreadCount.fulfilled, (state, action) => {
+        state.unreadCount = action.payload;
+      })
+      // Mark as Read
       .addCase(markNotificationRead.fulfilled, (state, action) => {
         const index = state.list.findIndex(n => n.id === action.payload.id);
-        if (index !== -1) state.list[index] = action.payload;
+        if (index !== -1) {
+          state.list[index] = action.payload;
+          // Decrement unread count
+          if (!action.payload.is_read && state.unreadCount > 0) {
+            state.unreadCount -= 1;
+          }
+        }
+      })
+      // Mark All as Read
+      .addCase(markAllNotificationsRead.fulfilled, (state) => {
+        state.list = state.list.map(n => ({ ...n, is_read: true }));
+        state.unreadCount = 0;
       });
   },
 });
 
-export const { addNotification, updateNotification } = notificationSlice.actions;
+export const { addNotification, updateNotification, incrementUnreadCount, resetUnreadCount } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

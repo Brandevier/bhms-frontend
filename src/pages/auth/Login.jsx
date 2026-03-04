@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Typography, Spin, Divider } from "antd";
-import { LeftOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Typography, Spin, Divider, Modal } from "antd";
+import { LeftOutlined, LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BhmsButton from "../../heroComponents/BhmsButton";
@@ -8,7 +8,7 @@ import { loginAdmin } from "../../redux/slice/authSlice";
 import LoginErrorModal from "../../modal/LoginErrorModal";
 
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -18,6 +18,9 @@ const Login = () => {
   // Error modal state
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Forgot password modal state
+  const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (admin) {
@@ -154,7 +157,13 @@ const Login = () => {
             </Form.Item>
 
             <div className="flex justify-between items-center mb-6">
-              <Button type="link" className="p-0 text-gray-600">Forgot password?</Button>
+              <Button 
+                type="link" 
+                className="p-0 text-gray-600"
+                onClick={() => setForgotPasswordVisible(true)}
+              >
+                Forgot password?
+              </Button>
             </div>
 
             <Divider plain className="text-gray-400">or</Divider>
@@ -177,6 +186,59 @@ const Login = () => {
         error={errorMessage} 
         onClose={handleCloseErrorModal}
       />
+
+      {/* Forgot Password - Contact IT Support Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <MailOutlined className="text-blue-600" />
+            <span>Password Assistance</span>
+          </div>
+        }
+        open={forgotPasswordVisible}
+        onCancel={() => setForgotPasswordVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setForgotPasswordVisible(false)}>
+            Close
+          </Button>
+        ]}
+        centered
+        width={500}
+      >
+        <div className="text-center py-4">
+          <div className="mb-4">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MailOutlined className="text-2xl text-blue-600" />
+            </div>
+            <Title level={4} className="mb-2">Contact IT Support</Title>
+            <Paragraph type="secondary">
+              For security reasons, password reset requests must be handled by our IT support team.
+            </Paragraph>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4 mt-6 text-left">
+            <Text strong className="block mb-2">Please contact IT Support:</Text>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <MailOutlined className="text-gray-500" />
+                <Text>it.support@tonitel.com</Text>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>📞</span>
+                <Text>Ext. 1234 or +233 123 456 789</Text>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>🕐</span>
+                <Text>Monday - Friday, 8:00 AM - 5:00 PM</Text>
+              </div>
+            </div>
+          </div>
+
+          <Paragraph type="secondary" className="mt-4 text-xs">
+            Please provide your username/email and department when contacting IT support.
+          </Paragraph>
+        </div>
+      </Modal>
     </div>
   );
 };

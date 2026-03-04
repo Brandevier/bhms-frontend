@@ -20,9 +20,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 import {
-  fetchClaimsSummary,
+  fetchClaimSummary,
   fetchRecentClaims,
-  fetchClaimsItemsBreakdown,
+  fetchClaimItemsBreakdown
+} from "../../../redux/slice/claimItemSlice";
+import {
   fetchAllClaims,
   updateClaimStatus
 } from "../../../redux/slice/claimsSlice";
@@ -36,15 +38,23 @@ const ClaimsErpDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  // Redux state
+  // Redux state - using both slices
+  const claimItemState = useSelector((state) => state.claimItem);
+  const claimsState = useSelector((state) => state.claims);
+
+  // Destructure from claimItem slice (for dashboard data)
   const { 
     summary, 
     recentClaims, 
     itemsBreakdown, 
+    loading: claimItemLoading
+  } = claimItemState;
+
+  // Destructure from claims slice (for claims list)
+  const { 
     claims, 
-    pagination,
-    loading 
-  } = useSelector((state) => state.claims);
+    pagination 
+  } = claimsState;
 
   // Local state
   const [activeTab, setActiveTab] = useState('overview');
@@ -69,7 +79,7 @@ const ClaimsErpDashboard = () => {
   }, []);
 
   const loadDashboardData = useCallback(() => {
-    dispatch(fetchClaimsSummary())
+    dispatch(fetchClaimSummary())
       .unwrap()
       .catch((err) => console.error('Failed to load summary:', err));
 
@@ -77,7 +87,7 @@ const ClaimsErpDashboard = () => {
       .unwrap()
       .catch((err) => console.error('Failed to load recent claims:', err));
 
-    dispatch(fetchClaimsItemsBreakdown())
+    dispatch(fetchClaimItemsBreakdown())
       .unwrap()
       .catch((err) => console.error('Failed to load items breakdown:', err));
       
@@ -345,7 +355,7 @@ const ClaimsErpDashboard = () => {
             <Button
               icon={<SyncOutlined />}
               onClick={handleRefresh}
-              loading={loading}
+              loading={claimItemLoading}
             >
               Refresh
             </Button>
@@ -631,7 +641,7 @@ const ClaimsErpDashboard = () => {
                     pagination={false}
                     size="small"
                     rowKey="id"
-                    loading={loading}
+                    loading={claimItemLoading}
                     locale={{ emptyText: 'No recent claims' }}
                   />
                 </Card>
@@ -685,7 +695,7 @@ const ClaimsErpDashboard = () => {
                 dataSource={claims || []}
                 columns={claimsColumns}
                 rowKey="id"
-                loading={loading}
+                loading={claimItemLoading}
                 pagination={{
                   current: pagination.currentPage,
                   total: pagination.totalItems,

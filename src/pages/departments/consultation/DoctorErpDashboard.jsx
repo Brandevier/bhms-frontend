@@ -101,15 +101,15 @@ const DoctorErpDashboard = () => {
   );
 
   // Pending lab results
-  const pendingLabResults = labResults?.filter(r => 
+  const pendingLabResults = (Array.isArray(labResults) ? labResults : []).filter(r => 
     r?.status === 'pending' || r?.status === 'in-progress'
-  ) || [];
+  );
 
   // Recent prescriptions
   const recentPrescriptions = prescriptions?.slice(0, 5) || [];
 
   // Quick actions
-  const quickActions = [
+  const quickActions = [ 
     { 
       key: 'new-patient', 
       title: 'New Patient', 
@@ -306,7 +306,7 @@ const DoctorErpDashboard = () => {
               Doctor's Dashboard
             </Title>
             <Text type="secondary">
-              Welcome, Dr. {user?.first_name || user?.username || 'Doctor'} | {new Date().toLocaleDateString('en-US', { 
+              Welcome, Dr. {user?.firstName || user?.username || 'Doctor'} | {new Date().toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
@@ -408,7 +408,7 @@ const DoctorErpDashboard = () => {
           <Card size="small" className="border-0 shadow-sm">
             <Statistic 
               title={<span style={{ fontSize: 12 }}>Lab Tests</span>} 
-              value={labTests || 0} 
+              value={Array.isArray(labResults) ? labResults.length : 0} 
               prefix={<ExperimentOutlined style={{ color: '#fa8c16' }} />}
               valueStyle={{ fontSize: 20 }}
             />
@@ -498,7 +498,7 @@ const DoctorErpDashboard = () => {
                 ) : (
                   <Table 
                     columns={labColumns} 
-                    dataSource={labResults?.slice(0, 5) || []}
+                    dataSource={Array.isArray(labResults) ? labResults.slice(0, 5) : []}
                     rowKey="id"
                     pagination={false}
                     size="small"

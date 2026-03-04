@@ -1,6 +1,7 @@
 import authReducer from '../slice/authSlice'
 import dashboardReducer from '../slice/dashboardSlice'
 import backupReducer from '../slice/backupSlice'
+import dataManagementReducer from '../slice/dataManagementSlice'
 import waitListReducers from '../slice/waitlistSlice'
 import departmentReducers from '../slice/departmentSlice'
 import staffAdminManagementSlice from  '../slice/staff_admin_managment_slice'
@@ -67,6 +68,7 @@ import educationMaterialReducers from '../slice/theatre/educationMaterialsSlice'
 import doctorsNoteReducers from '../slice/doctorsNoteSlice' 
 import patientOccupationReducers from  '../slice/occupationHistorySlice'
 import drugHistoryReducers from '../slice/drugHistorySlice' 
+import pastMedicalHistoryReducers from '../slice/pastMedicalHistorySlice'
 
 // New Advanced Patient Feature Slices
 import allergyReducer from '../slice/allergySlice'
@@ -78,6 +80,7 @@ import systemConfigReducer from '../slice/systemConfigSlice'
 export {
     dashboardReducer,
     backupReducer,
+    dataManagementReducer,
     systemConfigReducer,
     allergyReducer,
     chronicConditionReducer,
@@ -86,6 +89,7 @@ export {
     authReducer,
     claimsReducers,
     drugHistoryReducers,
+    pastMedicalHistoryReducers,
     patientOccupationReducers,
     doctorsNoteReducers,
     educationMaterialReducers,

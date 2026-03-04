@@ -255,26 +255,34 @@ const PatientNotes = ({ patient_notes, general_handler, visit_id }) => {
 
               <Collapse style={{ marginTop: 10 }}>
                 <Panel
-                  header={<><CommentOutlined /> Comments ({note.comments?.length || 0})</>}
+                  header={<><CommentOutlined /> Team Comments ({note.comments?.length || 0})</>}
                   key={note.id}
                 >
                   {note.comments && note.comments.length > 0 ? (
                     <List
                       dataSource={note.comments}
-                      renderItem={(comment) => (
-                        <List.Item key={comment.id}>
-                          <List.Item.Meta
-                            avatar={<Avatar icon={<UserOutlined />} src={comment.user?.profile_pic} />}
-                            title={<strong>{comment.user?.firstName} {comment.user?.lastName}</strong>}
-                            description={
-                              <>
-                                <p>{comment.comment}</p>
-                                <small style={{ color: "gray" }}>{moment(comment.createdAt).fromNow()}</small>
-                              </>
-                            }
-                          />
-                        </List.Item>
-                      )}
+                      renderItem={(comment) => {
+                        // Build author name with fallbacks
+                        const authorFirstName = comment.author?.firstName || '';
+                        const authorMiddleName = comment.author?.middleName || '';
+                        const authorLastName = comment.author?.lastName || '';
+                        const authorName = [authorFirstName, authorMiddleName, authorLastName].filter(Boolean).join(' ') || 'Unknown Staff';
+                        
+                        return (
+                          <List.Item key={comment.id}>
+                            <List.Item.Meta
+                              avatar={<Avatar icon={<UserOutlined />} src={comment.author?.profile_pic} />}
+                              title={<strong>{authorName}</strong>}
+                              description={
+                                <>
+                                  <p>{comment.comment}</p>
+                                  <small style={{ color: "gray" }}>{moment(comment.createdAt).fromNow()}</small>
+                                </>
+                              }
+                            />
+                          </List.Item>
+                        );
+                      }}
                     />
                   ) : (
                     <Empty description="No comments yet" />
@@ -286,7 +294,7 @@ const PatientNotes = ({ patient_notes, general_handler, visit_id }) => {
                       onChange={(e) =>
                         setCommentTexts((prev) => ({ ...prev, [note.id]: e.target.value }))
                       }
-                      placeholder="Write a comment..."
+                      placeholder="Write a comment to the team..."
                       autoSize={{ minRows: 2, maxRows: 3 }}
                       style={{ marginRight: "5px" }}
                     />

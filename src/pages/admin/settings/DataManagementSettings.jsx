@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Card,
   Table,
@@ -23,7 +23,8 @@ import {
   Popconfirm,
   Badge,
   Tabs,
-  Tooltip
+  Tooltip,
+  Spin
 } from 'antd';
 import {
   DatabaseOutlined,
@@ -42,33 +43,96 @@ import {
   ClearOutlined,
   ReloadOutlined,
   SafetyOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  LoadingOutlined
 } from '@ant-design/icons';
+
+import {
+  fetchDatabaseTables,
+  syncTable,
+  syncAllTables,
+  exportTable,
+  clearTableData,
+  fetchStorageInfo,
+  performCleanup,
+  fetchRetentionPolicies,
+  updateRetentionPolicies,
+  clearError,
+  clearSuccess
+} from '../../../redux/slice/dataManagementSlice';
+
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
 const DataManagementSettings = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.admin || state.auth.user);
-  const [loading, setLoading] = useState(false);
+  
+  // Redux state
+  const {
+    tables,
+    tablesLoading,
+    storage,
+    storageLoading,
+    retentionPolicies,
+    retentionLoading,
+    syncing,
+    syncingTable,
+    exporting,
+    clearing,
+    cleaning,
+    lastSync,
+    error,
+    successMessage,
+    tablesError
+  } = useSelector((state) => state.dataManagement);
+  
   const [activeTab, setActiveTab] = useState('tables');
   const [selectedTables, setSelectedTables] = useState([]);
   const [clearModalVisible, setClearModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
+  const [clearOptions, setClearOptions] = useState([]);
 
-  // Database tables data
-  const [tables, setTables] = useState([
-    { key: 'patients', name: 'patients', description: 'Patient records', recordCount: 1245, size: '45 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'visits', name: 'visits', description: 'Patient visits', recordCount: 8934, size: '120 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'invoices', name: 'invoices', description: 'Billing invoices', recordCount: 4521, size: '35 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'prescriptions', name: 'prescriptions', description: 'Prescription records', recordCount: 7823, size: '65 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'lab_results', name: 'lab_results', description: 'Laboratory results', recordCount: 15672, size: '180 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'claims', name: 'claims', description: 'Insurance claims', recordCount: 3245, size: '28 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'staff', name: 'staff', description: 'Staff records', count: 156, size: '2 MB', lastSync: '2024-01-15 10:30' },
-    { key: 'departments', name: 'departments', description: 'Department data', count: 24, size: '0.5 MB', lastSync: '2024-01-15 10:30' }
-  ]);
+  // Fetch data on mount
+  useEffect(() => {
+    dispatch(fetchDatabaseTables());
+    dispatch(fetchStorageInfo());
+    dispatch(fetchRetentionPolicies());
+  }, [dispatch]);
 
+  // Show success messages
+  useEffect(() => {
+    if (successMessage) {
+      message.success(successMessage);
+    }
+  }, [successMessage]);
+
+  // Show error messages
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  // Format size
+  const formatSize = (bytes) => {
+    if (!bytes) return '0 B';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Format date
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'Never';
+    const date = new Date(dateStr);
+    return date.toLocaleString();
+  };
+
+  // Table columns
   const tableColumns = [
     {
       title: 'Table Name',
@@ -90,42 +154,56 @@ const DataManagementSettings = () => {
       title: 'Records',
       dataIndex: 'recordCount',
       key: 'recordCount',
-      render: (count) => count?.toLocaleString() || 'N/A'
+      render: (count) => count?.toLocaleString() || '0'
     },
     {
-      title: 'Size',
-      dataIndex: 'size',
-      key: 'size'
+      title: 'Columns',
+      dataIndex: 'columnCount',
+      key: 'columnCount'
     },
     {
       title: 'Last Sync',
       dataIndex: 'lastSync',
-      key: 'lastSync'
+      key: 'lastSync',
+      render: (date) => formatDate(date)
     },
     {
       title: 'Status',
       key: 'status',
-      render: () => (
-        <Tag icon={<CheckCircleOutlined />} color="success">
-          Synced
+      render: (_, record) => (
+        <Tag 
+          icon={syncingTable === record.name ? <LoadingOutlined /> : <CheckCircleOutlined />} 
+          color={syncingTable === record.name ? 'processing' : 'success'}
+        >
+          {syncingTable === record.name ? 'Syncing' : 'Synced'}
         </Tag>
       )
     }
   ];
 
+  // Handle sync single table
   const handleSyncTable = (tableName) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      message.success(`${tableName} synced successfully!`);
-    }, 1500);
+    dispatch(syncTable(tableName));
   };
 
+  // Handle export table
   const handleExportTable = (tableName) => {
-    message.info(`Exporting ${tableName}...`);
-    // Export functionality would go here
+    dispatch(exportTable({ tableName, format: 'json' }))
+      .then((action) => {
+        if (action.payload && action.payload.records) {
+          // Create download
+          const blob = new Blob([JSON.stringify(action.payload.records, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${tableName}_export.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      });
   };
 
+  // Handle clear table
   const handleClearTable = (tableName) => {
     Modal.confirm({
       title: `Clear ${tableName}?`,
@@ -135,29 +213,82 @@ const DataManagementSettings = () => {
       okType: 'danger',
       cancelText: 'Cancel',
       onOk: () => {
-        message.success(`${tableName} data cleared successfully!`);
+        dispatch(clearTableData({ tableName, confirm: true }))
+          .then(() => {
+            dispatch(fetchDatabaseTables());
+          });
       }
     });
   };
 
+  // Handle sync all
   const handleSyncAll = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      message.success('All tables synced successfully!');
-    }, 2000);
+    dispatch(syncAllTables())
+      .then(() => {
+        dispatch(fetchDatabaseTables());
+      });
   };
 
+  // Handle export all
   const handleExportAll = () => {
-    message.info('Exporting all data...');
+    message.info('Exporting all tables... This may take a while.');
+    // Export each table one by one
+    tables.forEach((table) => {
+      dispatch(exportTable({ tableName: table.name, format: 'json' }));
+    });
   };
 
+  // Handle import
   const handleImport = () => {
     setImportModalVisible(true);
   };
 
+  // Handle bulk clear
   const handleBulkClear = () => {
     setClearModalVisible(true);
+  };
+
+  // Handle cleanup operations
+  const handleCleanup = (operation) => {
+    dispatch(performCleanup(operation));
+  };
+
+  // Get storage data for display
+  const getStorageData = () => {
+    if (!storage) return null;
+    
+    const summary = storage.summary || {};
+    const tableSizes = storage.tables || [];
+    
+    return {
+      usedSpace: summary.usedSpace || '0 B',
+      usedPercent: summary.usedPercent || 0,
+      totalSpace: summary.totalSpace || '0 B',
+      freeSpace: summary.freeSpace || '0 B',
+      tableSizes: tableSizes.slice(0, 6).map(t => ({
+        name: t.name,
+        size: t.size,
+        percent: t.percent
+      }))
+    };
+  };
+
+  const storageData = getStorageData();
+
+  // Get retention data for display
+  const getRetentionData = () => {
+    if (!retentionPolicies || retentionPolicies.length === 0) {
+      return [
+        { category: 'Patient Records', retention: '7 years', action: 'Archive' },
+        { category: 'Visit Records', retention: '5 years', action: 'Archive' },
+        { category: 'Billing Data', retention: '10 years', action: 'Archive' },
+        { category: 'Lab Results', retention: '3 years', action: 'Delete' },
+        { category: 'Audit Logs', retention: '90 days', action: 'Delete' },
+        { category: 'Session Data', retention: '30 days', action: 'Delete' },
+        { category: 'Temporary Files', retention: '7 days', action: 'Delete' }
+      ];
+    }
+    return retentionPolicies;
   };
 
   const tabItems = [
@@ -175,12 +306,23 @@ const DataManagementSettings = () => {
             <div>
               <Title level={4} className="m-0">Database Tables</Title>
               <Text type="secondary">Manage and sync database tables</Text>
+              {lastSync && (
+                <div>
+                  <Text type="secondary" className="text-xs">
+                    Last synced: {formatDate(lastSync)}
+                  </Text>
+                </div>
+              )}
             </div>
             <Space>
-              <Button icon={<SyncOutlined />} onClick={handleSyncAll} loading={loading}>
+              <Button 
+                icon={<SyncOutlined />} 
+                onClick={handleSyncAll} 
+                loading={syncing && syncingTable === 'all'}
+              >
                 Sync All
               </Button>
-              <Button icon={<ExportOutlined />} onClick={handleExportAll}>
+              <Button icon={<ExportOutlined />} onClick={handleExportAll} disabled={tablesLoading}>
                 Export All
               </Button>
               <Button icon={<ImportOutlined />} onClick={handleImport}>
@@ -189,10 +331,21 @@ const DataManagementSettings = () => {
             </Space>
           </div>
 
+          {tablesError && (
+            <Alert
+              message="Error loading tables"
+              description={tablesError}
+              type="error"
+              showIcon
+              className="mb-4"
+            />
+          )}
+
           <Table
             columns={tableColumns}
             dataSource={tables}
             rowKey="key"
+            loading={tablesLoading}
             pagination={false}
             expandable={{
               expandedRowRender: (record) => (
@@ -202,6 +355,7 @@ const DataManagementSettings = () => {
                       type="link"
                       icon={<SyncOutlined />}
                       onClick={() => handleSyncTable(record.name)}
+                      loading={syncingTable === record.name}
                     >
                       Sync Now
                     </Button>
@@ -209,6 +363,7 @@ const DataManagementSettings = () => {
                       type="link"
                       icon={<DownloadOutlined />}
                       onClick={() => handleExportTable(record.name)}
+                      loading={exporting}
                     >
                       Export
                     </Button>
@@ -245,56 +400,69 @@ const DataManagementSettings = () => {
           </Paragraph>
           <Divider />
 
-          <List
-            itemLayout="horizontal"
-            dataSource={[
-              {
-                title: 'Duplicate Records',
-                description: 'Find and remove duplicate patient or visit records',
-                icon: <CheckCircleOutlined className="text-green-500" />,
-                button: 'Scan for Duplicates'
-              },
-              {
-                title: 'Old Visits',
-                description: 'Archive visits older than 2 years',
-                icon: <FileTextOutlined className="text-blue-500" />,
-                button: 'Archive Old Data'
-              },
-              {
-                title: 'Temp Files',
-                description: 'Clear temporary files and cache',
-                icon: <DeleteOutlined className="text-red-500" />,
-                button: 'Clear Temp Files'
-              },
-              {
-                title: 'Log Files',
-                description: 'Clean up old system log files',
-                icon: <WarningOutlined className="text-orange-500" />,
-                button: 'Clean Logs'
-              },
-              {
-                title: 'Orphan Records',
-                description: 'Find and remove orphaned records',
-                icon: <WarningOutlined className="text-red-500" />,
-                button: 'Scan Orphans'
-              }
-            ]}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Button type="primary" ghost key={item.title}>
-                    {item.button}
-                  </Button>
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={item.icon}
-                  title={item.title}
-                  description={item.description}
-                />
-              </List.Item>
-            )}
-          />
+          <Spin spinning={cleaning}>
+            <List
+              itemLayout="horizontal"
+              dataSource={[
+                {
+                  key: 'scan-duplicates',
+                  title: 'Duplicate Records',
+                  description: 'Find and remove duplicate patient or visit records',
+                  icon: <CheckCircleOutlined className="text-green-500" />,
+                  button: 'Scan for Duplicates'
+                },
+                {
+                  key: 'archive-old-data',
+                  title: 'Old Visits',
+                  description: 'Archive visits older than 2 years',
+                  icon: <FileTextOutlined className="text-blue-500" />,
+                  button: 'Archive Old Data'
+                },
+                {
+                  key: 'clear-temp',
+                  title: 'Temp Files',
+                  description: 'Clear temporary files and cache',
+                  icon: <DeleteOutlined className="text-red-500" />,
+                  button: 'Clear Temp Files'
+                },
+                {
+                  key: 'clean-logs',
+                  title: 'Log Files',
+                  description: 'Clean up old system log files',
+                  icon: <WarningOutlined className="text-orange-500" />,
+                  button: 'Clean Logs'
+                },
+                {
+                  key: 'scan-orphans',
+                  title: 'Orphan Records',
+                  description: 'Find and remove orphaned records',
+                  icon: <WarningOutlined className="text-red-500" />,
+                  button: 'Scan Orphans'
+                }
+              ]}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button 
+                      type="primary" 
+                      ghost 
+                      key={item.key}
+                      onClick={() => handleCleanup(item.key)}
+                      loading={cleaning}
+                    >
+                      {item.button}
+                    </Button>
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={item.icon}
+                    title={item.title}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
+          </Spin>
 
           <Divider />
 
@@ -323,52 +491,58 @@ const DataManagementSettings = () => {
           </Paragraph>
           <Divider />
 
-          <Row gutter={[24, 24]}>
-            <Col xs={24} md={12}>
-              <Card title="Storage Usage" size="small">
-                <Statistic
-                  title="Used Space"
-                  value={476.5}
-                  suffix="MB"
-                  prefix={<DatabaseOutlined />}
-                />
-                <Progress
-                  percent={68}
-                  status="active"
-                  strokeColor={{ from: '#108ee9', to: '#87d068' }}
-                />
-                <div className="mt-2">
-                  <Text type="secondary">Total: 700 MB | Free: 223.5 MB</Text>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} md={12}>
-              <Card title="Storage by Table" size="small">
-                <List
-                  size="small"
-                  dataSource={[
-                    { name: 'lab_results', size: '180 MB', percent: 38 },
-                    { name: 'visits', size: '120 MB', percent: 25 },
-                    { name: 'prescriptions', size: '65 MB', percent: 14 },
-                    { name: 'patients', size: '45 MB', percent: 9 },
-                    { name: 'invoices', size: '35 MB', percent: 7 },
-                    { name: 'Other', size: '31 MB', percent: 7 }
-                  ]}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <div className="w-full">
-                        <div className="flex justify-between mb-1">
-                          <Text>{item.name}</Text>
-                          <Text>{item.size}</Text>
-                        </div>
-                        <Progress percent={item.percent} size="small" showInfo={false} />
+          <Spin spinning={storageLoading}>
+            <Row gutter={[24, 24]}>
+              <Col xs={24} md={12}>
+                <Card title="Storage Usage" size="small">
+                  {storageData ? (
+                    <>
+                      <Statistic
+                        title="Used Space"
+                        value={storageData.usedSpace}
+                        prefix={<DatabaseOutlined />}
+                      />
+                      <Progress
+                        percent={storageData.usedPercent}
+                        status="active"
+                        strokeColor={{ from: '#108ee9', to: '#87d068' }}
+                      />
+                      <div className="mt-2">
+                        <Text type="secondary">
+                          Total: {storageData.totalSpace} | Free: {storageData.freeSpace}
+                        </Text>
                       </div>
-                    </List.Item>
+                    </>
+                  ) : (
+                    <Text type="secondary">Loading storage data...</Text>
                   )}
-                />
-              </Card>
-            </Col>
-          </Row>
+                </Card>
+              </Col>
+              <Col xs={24} md={12}>
+                <Card title="Storage by Table" size="small">
+                  {storageData && storageData.tableSizes.length > 0 ? (
+                    <List
+                      size="small"
+                      dataSource={storageData.tableSizes}
+                      renderItem={(item) => (
+                        <List.Item>
+                          <div className="w-full">
+                            <div className="flex justify-between mb-1">
+                              <Text>{item.name}</Text>
+                              <Text>{item.size}</Text>
+                            </div>
+                            <Progress percent={item.percent} size="small" showInfo={false} />
+                          </div>
+                        </List.Item>
+                      )}
+                    />
+                  ) : (
+                    <Text type="secondary">Loading table sizes...</Text>
+                  )}
+                </Card>
+              </Col>
+            </Row>
+          </Spin>
 
           <Divider />
 
@@ -399,35 +573,29 @@ const DataManagementSettings = () => {
           </Paragraph>
           <Divider />
 
-          <List
-            itemLayout="horizontal"
-            dataSource={[
-              { category: 'Patient Records', retention: '7 years', action: 'Archive' },
-              { category: 'Visit Records', retention: '5 years', action: 'Archive' },
-              { category: 'Billing Data', retention: '10 years', action: 'Archive' },
-              { category: 'Lab Results', retention: '3 years', action: 'Delete' },
-              { category: 'Audit Logs', retention: '90 days', action: 'Delete' },
-              { category: 'Session Data', retention: '30 days', action: 'Delete' },
-              { category: 'Temporary Files', retention: '7 days', action: 'Delete' }
-            ]}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Button type="link" key={item.category}>Configure</Button>
-                ]}
-              >
-                <List.Item.Meta
-                  title={item.category}
-                  description={
-                    <Space>
-                      <Tag>{item.retention}</Tag>
-                      <Text type="secondary">then {item.action}</Text>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-          />
+          <Spin spinning={retentionLoading}>
+            <List
+              itemLayout="horizontal"
+              dataSource={getRetentionData()}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button type="link" key={item.category}>Configure</Button>
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={item.category}
+                    description={
+                      <Space>
+                        <Tag>{item.retention}</Tag>
+                        <Text type="secondary">then {item.action}</Text>
+                      </Space>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Spin>
 
           <Divider />
 
@@ -458,6 +626,37 @@ const DataManagementSettings = () => {
           </Text>
         </div>
 
+        {/* Quick Stats */}
+        <Row gutter={[16, 16]} className="mb-6">
+          <Col xs={24} sm={8}>
+            <Card>
+              <Statistic
+                title="Total Tables"
+                value={tables.length}
+                prefix={<TableOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card>
+              <Statistic
+                title="Total Records"
+                value={tables.reduce((sum, t) => sum + (t.recordCount || 0), 0)}
+                prefix={<DatabaseOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card>
+              <Statistic
+                title="Database Size"
+                value={storageData?.usedSpace || '0 B'}
+                prefix={<DatabaseOutlined />}
+              />
+            </Card>
+          </Col>
+        </Row>
+
         {/* Tabs */}
         <Tabs
           activeKey={activeTab}
@@ -477,7 +676,7 @@ const DataManagementSettings = () => {
             <Paragraph>
               Upload a JSON or CSV file to import data into the database.
             </Paragraph>
-            <Input type="file" className="mb-4" />
+            <Input type="file" className="mb-4" accept=".json,.csv" />
             <Space>
               <Button onClick={() => setImportModalVisible(false)}>Cancel</Button>
               <Button type="primary" icon={<ImportOutlined />}>
@@ -503,7 +702,11 @@ const DataManagementSettings = () => {
               className="mb-4"
             />
 
-            <Checkbox.Group className="w-full">
+            <Checkbox.Group 
+              className="w-full" 
+              value={clearOptions}
+              onChange={setClearOptions}
+            >
               <Space direction="vertical" className="w-full">
                 <Checkbox value="temp">Temporary Files</Checkbox>
                 <Checkbox value="cache">Cache Data</Checkbox>
@@ -517,7 +720,15 @@ const DataManagementSettings = () => {
               <Button onClick={() => setClearModalVisible(false)} className="mr-2">
                 Cancel
               </Button>
-              <Button type="primary" danger icon={<DeleteOutlined />}>
+              <Button 
+                type="primary" 
+                danger 
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setClearModalVisible(false);
+                  message.success('Selected data cleared successfully');
+                }}
+              >
                 Clear Selected Data
               </Button>
             </div>

@@ -48,6 +48,7 @@ const rootReducer = combineReducers({
   discharge: reducers.dischargeSlice,
   billingStats: reducers.billingStatsSlice,
   drugHistory: reducers.drugHistoryReducers,
+  pastMedicalHistory: reducers.pastMedicalHistoryReducers,
   beds: reducers.bedSlice,
   orScheduling: reducers.ORscheduling,
   icd10GDRG: reducers.icd10ToGdrg,
@@ -89,6 +90,7 @@ patientAdvanced: reducers.patientAdvancedReducer,
   dashboard: reducers.dashboardReducer,
   backup: reducers.backupReducer,
   systemConfig: reducers.systemConfigReducer,
+  dataManagement: reducers.dataManagementReducer,
 
 });
 

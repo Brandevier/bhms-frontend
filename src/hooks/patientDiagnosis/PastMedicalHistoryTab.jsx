@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Button,
@@ -8,7 +8,9 @@ import {
   Table,
   Tag,
   Tooltip,
-  Modal
+  Modal,
+  message,
+  Spin
 } from 'antd';
 import {
   PlusOutlined,
@@ -18,30 +20,92 @@ import {
   HistoryOutlined
 } from '@ant-design/icons';
 
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchPastMedicalHistories,
+  createPastMedicalHistory,
+  updatePastMedicalHistory,
+  deletePastMedicalHistory
+} from '../../redux/slice/pastMedicalHistorySlice';
+
+import PastMedicalHistoryFormModal from './modals/PastMedicalHistoryFormModal';
+
 const { Title, Text } = Typography;
 
 const PastMedicalHistoryTab = ({ visitId }) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { pastMedicalHistories, loading, error } = useSelector(
+    (state) => state.pastMedicalHistory
+  );
 
-  const mockData = [
-    {
-      id: 1,
-      condition: "Hypertension",
-      diagnosis_date: "2018-05-15",
-      status: "controlled",
-      treatment: "Amlodipine 5mg daily",
-      notes: "Diagnosed in 2018, well controlled with medication"
-    },
-    {
-      id: 2,
-      condition: "Type 2 Diabetes",
-      diagnosis_date: "2020-03-20",
-      status: "controlled",
-      treatment: "Metformin 500mg BD",
-      notes: "Diet controlled with occasional medication"
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
+
+  // FETCH DATA
+  useEffect(() => {
+    if (visitId) {
+      dispatch(fetchPastMedicalHistories(visitId));
     }
-  ];
+  }, [visitId, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error.message || 'Something went wrong');
+    }
+  }, [error]);
+
+  // ADD / EDIT
+  const handleSubmit = (values) => {
+    if (editingRecord) {
+      dispatch(
+        updatePastMedicalHistory({
+          id: editingRecord.id,
+          payload: values
+        })
+      ).then(() => {
+        message.success('Past medical history updated');
+      });
+    } else {
+      dispatch(
+        createPastMedicalHistory({
+          ...values,
+          visit_id: visitId
+        })
+      ).then(() => {
+        message.success('Past medical history created');
+      });
+    }
+
+    setModalOpen(false);
+    setEditingRecord(null);
+  };
+
+  // DELETE
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: 'Delete Past Medical History',
+      content: 'Are you sure you want to delete this medical history record?',
+      okType: 'danger',
+      onOk: () => {
+        dispatch(deletePastMedicalHistory(id)).then(() => {
+          message.success('Past medical history deleted');
+        });
+      }
+    });
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active':
+        return 'orange';
+      case 'controlled':
+        return 'green';
+      case 'resolved':
+        return 'default';
+      default:
+        return 'default';
+    }
+  };
 
   const columns = [
     {
@@ -66,8 +130,8 @@ const PastMedicalHistoryTab = ({ visitId }) => {
       key: 'status',
       width: 100,
       render: (status) => (
-        <Tag color={status === 'controlled' ? 'green' : 'orange'}>
-          {status.toUpperCase()}
+        <Tag color={getStatusColor(status)}>
+          {status?.toUpperCase()}
         </Tag>
       )
     },
@@ -76,6 +140,7 @@ const PastMedicalHistoryTab = ({ visitId }) => {
       dataIndex: 'treatment',
       key: 'treatment',
       width: 150,
+      ellipsis: true,
     },
     {
       title: 'Actions',
@@ -87,14 +152,31 @@ const PastMedicalHistoryTab = ({ visitId }) => {
             <Button
               type="text"
               icon={<EyeOutlined />}
-              onClick={() => handleView(record)}
+              onClick={() =>
+                Modal.info({
+                  title: 'Past Medical History Details',
+                  content: (
+                    <div>
+                      <p><strong>Condition:</strong> {record.condition}</p>
+                      <p><strong>Diagnosis Date:</strong> {record.diagnosis_date || 'N/A'}</p>
+                      <p><strong>Status:</strong> {record.status}</p>
+                      <p><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
+                      <p><strong>Notes:</strong> {record.notes || 'N/A'}</p>
+                    </div>
+                  ),
+                  width: 600,
+                })
+              }
             />
           </Tooltip>
           <Tooltip title="Edit">
             <Button
               type="text"
               icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
+              onClick={() => {
+                setEditingRecord(record);
+                setModalOpen(true);
+              }}
             />
           </Tooltip>
           <Tooltip title="Delete">
@@ -110,41 +192,6 @@ const PastMedicalHistoryTab = ({ visitId }) => {
     }
   ];
 
-  const handleView = (record) => {
-    Modal.info({
-      title: 'Past Medical History Details',
-      content: (
-        <div>
-          <p><strong>Condition:</strong> {record.condition}</p>
-          <p><strong>Diagnosis Date:</strong> {record.diagnosis_date}</p>
-          <p><strong>Status:</strong> {record.status}</p>
-          <p><strong>Treatment:</strong> {record.treatment}</p>
-          <p><strong>Notes:</strong> {record.notes}</p>
-        </div>
-      ),
-      width: 600,
-    });
-  };
-
-  const handleAddNew = () => {
-    // Open modal for adding new PMH
-    console.log('Add new PMH');
-  };
-
-  const handleEdit = (record) => {
-    console.log('Edit record:', record);
-  };
-
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: 'Delete Past Medical History',
-      content: 'Are you sure you want to delete this medical history record?',
-      onOk: () => {
-        console.log('Delete record:', id);
-      }
-    });
-  };
-
   return (
     <div>
       <Card
@@ -156,34 +203,55 @@ const PastMedicalHistoryTab = ({ visitId }) => {
               type="primary"
               size="small"
               icon={<PlusOutlined />}
-              onClick={handleAddNew}
+              onClick={() => {
+                setEditingRecord(null);
+                setModalOpen(true);
+              }}
             >
               Add PMH
             </Button>
           </Space>
         }
       >
-        {mockData.length === 0 ? (
+        {loading ? (
+          <Spin />
+        ) : pastMedicalHistories.length === 0 ? (
           <Empty
             description="No past medical history recorded"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           >
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalOpen(true)}
+            >
               Add First PMH Record
             </Button>
           </Empty>
         ) : (
           <Table
             columns={columns}
-            dataSource={mockData}
+            dataSource={pastMedicalHistories}
             rowKey="id"
             pagination={false}
             size="small"
           />
         )}
       </Card>
+
+      <PastMedicalHistoryFormModal
+        open={modalOpen}
+        onCancel={() => {
+          setModalOpen(false);
+          setEditingRecord(null);
+        }}
+        onSubmit={handleSubmit}
+        initialValues={editingRecord}
+        loading={loading}
+      />
     </div>
   );
 };
 
 export default PastMedicalHistoryTab;
+
