@@ -20,15 +20,15 @@ const pharmacyMenu = [
       { key: "pharmacy-1-3", label: "Unfulfilled Prescription", path: "/shared/departments/pharmacy/prescriptions/rejected" },
     ]
   },
-  {
-    key: "pharmacy-3",
-    label: "Patient Management",
-    icon: <TeamOutlined />,
-    children: [
-      { key: "pharmacy-3-1", label: "Active Patients", path: "/shared/pharmacy/patients/active" },
-      { key: "pharmacy-3-3", label: "Patient Counseling", path: "/shared/departments/pharmacy/counsel" },
-    ]
-  },
+  // {
+  //   key: "pharmacy-3",
+  //   label: "Patient Management",
+  //   icon: <TeamOutlined />,
+  //   children: [
+  //     { key: "pharmacy-3-1", label: "Active Patients", path: "/shared/pharmacy/patients/active" },
+  //     { key: "pharmacy-3-3", label: "Patient Counseling", path: "/shared/departments/pharmacy/counsel" },
+  //   ]
+  // },
   {
     key: "pharmacy-4",
     label: "Reports & Analytics",

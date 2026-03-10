@@ -49,14 +49,14 @@ import billingReducer from '../slice/billingSlice';
 import leaveReducer from '../slice/leaveSlice';
 import claimItemReducer from '../slice/claimItemSlice';
 import ancReducer from '../slice/ancSlice';
-import partographReducer from '../slice/partographSlice'; // Import the partograph slice
-import ultrasoundReducer from '../slice/ultrasoundSlice'; // Import the ultrasound slice
-import staffDepartmentReducer from '../slice/staffDepartmentSlice'; // Import the new slice
+import partographReducer from '../slice/partographSlice';
+import ultrasoundReducer from '../slice/ultrasoundSlice';
+import staffDepartmentReducer from '../slice/staffDepartmentSlice';
 import departmentSwitchReducer from "../slice/departmentSwitchSlice";
 import diagnosisAnalysisReducers from '../slice/diagnosisAnalysisSlice'
 import patientAnalysisReducers from '../slice/patientAnalysisSlice'
 import bedStatisticsReducers from '../slice/bedStatisticsSlice'
-import patientSummaryReducer from '../slice/patientSummarySlice'; // Import the new slice
+import patientSummaryReducer from '../slice/patientSummarySlice';
 import staffDepartmentSwitchReducer from '../slice/staffDepartmentSwitchSlice';
 import sessionManagerReducer from '../slice/sessionSlice'
 import nurseHandoverReducers from '../slice/nurseHandoverSlice'
@@ -76,6 +76,9 @@ import chronicConditionReducer from '../slice/chronicConditionSlice'
 import riskAssessmentReducer from '../slice/riskAssessmentSlice'
 import patientAdvancedReducer from '../slice/patientAdvancedSlice'
 import systemConfigReducer from '../slice/systemConfigSlice'
+
+// Patient Billing Slice
+import patientBillingReducer from '../slice/patientBillingSlice'
 
 export {
     dashboardReducer,
@@ -106,6 +109,7 @@ export {
     partographReducer,
     departmentSwitchReducer,
     billingReducer,
+    patientBillingReducer,
     staffDepartmentReducer,
     invoiceReducer,
     claimItemReducer,
@@ -155,4 +159,4 @@ export {
     labInvestigationSlice,
     theatreReducer
 }
- 
+

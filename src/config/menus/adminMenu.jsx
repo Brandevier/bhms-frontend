@@ -50,6 +50,7 @@ const adminMenu = [
     icon: <DollarOutlined />,
     children: [
       { key: "invoices", label: "Invoices", path: "/shared/departments/accounts" },
+      { key: "accountsErp", label: "Accounts ERP Dashboard", path: "/shared/accounts/erp-dashboard" },
       { key: "insurance", label: "Insurance Claims", path: "/admin/insurance" },
       { key: "payments", label: "Payment Records", path: "/admin/payments" },
     ],

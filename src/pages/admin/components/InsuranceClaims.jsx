@@ -51,7 +51,7 @@ const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
 // Base URL for API
-const BASE_URL = 'http://localhost:7000/api/v1';
+const BASE_URL = 'http://localhost:4000/api/v1'; 
 
 // Status colors mapping
 const statusColors = {

@@ -39,7 +39,7 @@ const rootReducer = combineReducers({
   transfer: reducers.transferSlice,
   institutionAccounts: reducers.InstitutionPaymentSlice,
   patientObstetricHistory: reducers.obstetricHistorySlice,
-  medicalHistory: reducers.medicalHistorySlice,
+  medicalHistory: reducers.medicalHistorySlice,  
   immunization: reducers.ImmunizationSlice,
   consultation: reducers.consultationSlice,
   chat: reducers.chatSlice,
@@ -90,7 +90,8 @@ patientAdvanced: reducers.patientAdvancedReducer,
   dashboard: reducers.dashboardReducer,
   backup: reducers.backupReducer,
   systemConfig: reducers.systemConfigReducer,
-  dataManagement: reducers.dataManagementReducer,
+dataManagement: reducers.dataManagementReducer,
+  patientBilling: reducers.patientBillingReducer,
 
 });
 

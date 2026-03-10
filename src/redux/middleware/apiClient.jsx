@@ -2,9 +2,12 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { BASE_URL } from '../../api/endpoints';
 
+// Increase default timeout for large file uploads (5 minutes)
+const DEFAULT_TIMEOUT = 5 * 60 * 1000; 
+
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 30000, // Set a default timeout (optional)
+  timeout: DEFAULT_TIMEOUT,
 });
 
 const MAX_RETRIES = 3;

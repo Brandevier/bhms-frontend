@@ -12,6 +12,7 @@ import surgeryMenu from "./menus/surgeryMenu";
 import opdMenu from "./menus/opdMenu";
 import storeMenu from "./menus/storeMenu";
 import clerkMenu from "./menus/clerkMenu";
+import accountsMenu from "./menus/accountsMenu";
 // Add more department menus here...
 
 const departmentMenus = {
@@ -27,7 +28,8 @@ const departmentMenus = {
   Ward: wardMenu,
   OPD: opdMenu,
   Store: storeMenu,
-  Clerk:clerkMenu
+  Clerk: clerkMenu,
+  Accounts: accountsMenu
 };
 
 export default departmentMenus;

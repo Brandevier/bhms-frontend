@@ -156,10 +156,7 @@ export const startSurgery = createAsyncThunk(
   'theatre/startSurgery',
   async (bookingId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/theatre/theatre-bookings/${bookingId}`, {
-        status: 'intra-operation',
-        actual_start_time: new Date().toISOString()
-      });
+      const response = await apiClient.patch(`/theatre/theatre-bookings/${bookingId}/start`);
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to start surgery');
@@ -169,19 +166,47 @@ export const startSurgery = createAsyncThunk(
 
 export const completeSurgery = createAsyncThunk(
   'theatre/completeSurgery',
-  async ({ bookingId, outcome, notes, blood_loss_ml, complications }, { rejectWithValue }) => {
+  async ({ bookingId, outcome, notes, blood_loss_ml, complications, specimens_collected, implants_used }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/theatre/theatre-bookings/${bookingId}`, {
-        status: 'post-operation',
-        actual_end_time: new Date().toISOString(),
+      const response = await apiClient.patch(`/theatre/theatre-bookings/${bookingId}/complete`, {
         outcome,
-        post_op_notes: notes,
+        notes,
         blood_loss_ml,
-        complications
+        complications,
+        specimens_collected,
+        implants_used
       });
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to complete surgery');
+    }
+  }
+);
+
+// Get surgery status with duration
+export const getSurgeryStatus = createAsyncThunk(
+  'theatre/getSurgeryStatus',
+  async (bookingId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/theatre/theatre-bookings/${bookingId}/status`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to get surgery status');
+    }
+  }
+);
+
+// Update intra-operative notes in real-time
+export const updateIntraOpNotes = createAsyncThunk(
+  'theatre/updateIntraOpNotes',
+  async ({ bookingId, intra_op_notes }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/theatre/theatre-bookings/${bookingId}/intra-op-notes`, {
+        intra_op_notes
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to update intra-op notes');
     }
   }
 );
@@ -206,13 +231,237 @@ export const cancelSurgery = createAsyncThunk(
   'theatre/cancelSurgery',
   async ({ bookingId, cancellation_reason }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.put(`/theatre/theatre-bookings/${bookingId}`, {
-        status: 'cancelled',
-        cancellation_reason
+      const response = await apiClient.delete(`/theatre/theatre-bookings/${bookingId}`, {
+        data: { cancellation_reason }
       });
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to cancel surgery');
+    }
+  }
+);
+
+// ==================== Equipment Management ====================
+export const getAllEquipment = createAsyncThunk(
+  'theatre/getAllEquipment',
+  async (filters = {}, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/theatre/equipment', { params: filters });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch equipment');
+    }
+  }
+);
+
+export const getEquipmentById = createAsyncThunk(
+  'theatre/getEquipmentById',
+  async (equipmentId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/theatre/equipment/${equipmentId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch equipment');
+    }
+  }
+);
+
+export const createEquipment = createAsyncThunk(
+  'theatre/createEquipment',
+  async (equipmentData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post('/theatre/equipment', equipmentData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to create equipment');
+    }
+  }
+);
+
+export const updateEquipment = createAsyncThunk(
+  'theatre/updateEquipment',
+  async ({ id, updates }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.put(`/theatre/equipment/${id}`, updates);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to update equipment');
+    }
+  }
+);
+
+export const deleteEquipment = createAsyncThunk(
+  'theatre/deleteEquipment',
+  async (equipmentId, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/theatre/equipment/${equipmentId}`);
+      return equipmentId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to delete equipment');
+    }
+  }
+);
+
+export const transferEquipment = createAsyncThunk(
+  'theatre/transferEquipment',
+  async ({ id, room_id, notes }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/theatre/equipment/${id}/transfer`, { room_id, notes });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to transfer equipment');
+    }
+  }
+);
+
+export const scheduleMaintenance = createAsyncThunk(
+  'theatre/scheduleMaintenance',
+  async ({ id, next_maintenance_date, notes }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/theatre/equipment/${id}/maintenance`, { 
+        next_maintenance_date, 
+        notes 
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to schedule maintenance');
+    }
+  }
+);
+
+export const getEquipmentStatistics = createAsyncThunk(
+  'theatre/getEquipmentStatistics',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/theatre/equipment/statistics');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch equipment statistics');
+    }
+  }
+);
+
+// ==================== Case Cart Management ====================
+export const createCaseCart = createAsyncThunk(
+  'theatre/createCaseCart',
+  async (caseCartData, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post('/theatre/case-carts', caseCartData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to create case cart');
+    }
+  }
+);
+
+export const getAllCaseCarts = createAsyncThunk(
+  'theatre/getAllCaseCarts',
+  async (filters = {}, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/theatre/case-carts', { params: filters });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch case carts');
+    }
+  }
+);
+
+export const getCaseCartById = createAsyncThunk(
+  'theatre/getCaseCartById',
+  async (caseCartId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`/theatre/case-carts/${caseCartId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch case cart');
+    }
+  }
+);
+
+export const updateCaseCart = createAsyncThunk(
+  'theatre/updateCaseCart',
+  async ({ id, updates }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.put(`/theatre/case-carts/${id}`, updates);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to update case cart');
+    }
+  }
+);
+
+export const deleteCaseCart = createAsyncThunk(
+  'theatre/deleteCaseCart',
+  async (caseCartId, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/theatre/case-carts/${caseCartId}`);
+      return caseCartId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to delete case cart');
+    }
+  }
+);
+
+export const confirmCaseCart = createAsyncThunk(
+  'theatre/confirmCaseCart',
+  async ({ id, confirmed_by }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/theatre/case-carts/${id}/confirm`, { confirmed_by });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to confirm case cart');
+    }
+  }
+);
+
+export const addCaseCartItem = createAsyncThunk(
+  'theatre/addCaseCartItem',
+  async ({ caseCartId, item }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(`/theatre/case-carts/${caseCartId}/items`, item);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to add item');
+    }
+  }
+);
+
+export const updateCaseCartItemStatus = createAsyncThunk(
+  'theatre/updateCaseCartItemStatus',
+  async ({ itemId, status, prepared_by, notes }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.patch(`/theatre/case-carts/items/${itemId}/status`, { 
+        status, 
+        prepared_by,
+        notes 
+      });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to update item status');
+    }
+  }
+);
+
+export const deleteCaseCartItem = createAsyncThunk(
+  'theatre/deleteCaseCartItem',
+  async (itemId, { rejectWithValue }) => {
+    try {
+      await apiClient.delete(`/theatre/case-carts/items/${itemId}`);
+      return itemId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to delete item');
+    }
+  }
+);
+
+export const getCaseCartStatistics = createAsyncThunk(
+  'theatre/getCaseCartStatistics',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/theatre/case-carts/statistics');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch case cart statistics');
     }
   }
 );
@@ -226,6 +475,14 @@ const theatreSlice = createSlice({
     operatingRooms: [],
     currentRoom: null,
     orStatistics: null,
+    // Equipment state
+    equipment: [],
+    currentEquipment: null,
+    equipmentStatistics: null,
+    // Case Cart state
+    caseCarts: [],
+    currentCaseCart: null,
+    caseCartStatistics: null,
     // Surgery status
     surgeryInProgress: null,
     // Common state
@@ -427,20 +684,63 @@ const theatreSlice = createSlice({
       })
       // ==================== Surgery Status Transitions ====================
       // Start Surgery
+      .addCase(startSurgery.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(startSurgery.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.bookings.findIndex(booking => booking.id === action.payload.id);
         if (index !== -1) {
           state.bookings[index] = action.payload;
         }
         state.surgeryInProgress = action.payload;
+        state.currentBooking = action.payload;
+      })
+      .addCase(startSurgery.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       // Complete Surgery
+      .addCase(completeSurgery.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(completeSurgery.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.bookings.findIndex(booking => booking.id === action.payload.id);
         if (index !== -1) {
           state.bookings[index] = action.payload;
         }
         state.surgeryInProgress = null;
+        state.currentBooking = action.payload;
+      })
+      .addCase(completeSurgery.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get Surgery Status
+      .addCase(getSurgeryStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSurgeryStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentBooking = action.payload;
+      })
+      .addCase(getSurgeryStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update Intra-Op Notes
+      .addCase(updateIntraOpNotes.fulfilled, (state, action) => {
+        const index = state.bookings.findIndex(booking => booking.id === action.payload.id);
+        if (index !== -1) {
+          state.bookings[index] = action.payload;
+        }
+        if (state.currentBooking && state.currentBooking.id === action.payload.id) {
+          state.currentBooking = action.payload;
+        }
       })
       // Discharge from Recovery
       .addCase(dischargeFromRecovery.fulfilled, (state, action) => {
@@ -455,6 +755,166 @@ const theatreSlice = createSlice({
         if (index !== -1) {
           state.bookings[index] = action.payload;
         }
+      })
+      // ==================== Equipment Management ====================
+      // Get All Equipment
+      .addCase(getAllEquipment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllEquipment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.equipment = action.payload;
+      })
+      .addCase(getAllEquipment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get Equipment by ID
+      .addCase(getEquipmentById.fulfilled, (state, action) => {
+        state.currentEquipment = action.payload;
+      })
+      // Create Equipment
+      .addCase(createEquipment.fulfilled, (state, action) => {
+        state.equipment.push(action.payload);
+      })
+      // Update Equipment
+      .addCase(updateEquipment.fulfilled, (state, action) => {
+        const index = state.equipment.findIndex(e => e.id === action.payload.id);
+        if (index !== -1) {
+          state.equipment[index] = action.payload;
+        }
+      })
+      // Delete Equipment
+      .addCase(deleteEquipment.fulfilled, (state, action) => {
+        state.equipment = state.equipment.filter(e => e.id !== action.payload);
+      })
+      // Transfer Equipment
+      .addCase(transferEquipment.fulfilled, (state, action) => {
+        const index = state.equipment.findIndex(e => e.id === action.payload.id);
+        if (index !== -1) {
+          state.equipment[index] = action.payload;
+        }
+      })
+      // Schedule Maintenance
+      .addCase(scheduleMaintenance.fulfilled, (state, action) => {
+        const index = state.equipment.findIndex(e => e.id === action.payload.id);
+        if (index !== -1) {
+          state.equipment[index] = action.payload;
+        }
+      })
+      // Get Equipment Statistics
+      .addCase(getEquipmentStatistics.fulfilled, (state, action) => {
+        state.equipmentStatistics = action.payload;
+      })
+      // ==================== Case Cart Management ====================
+      // Create Case Cart
+      .addCase(createCaseCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createCaseCart.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.caseCarts.unshift(action.payload);
+      })
+      .addCase(createCaseCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.success = false;
+      })
+      // Get All Case Carts
+      .addCase(getAllCaseCarts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllCaseCarts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.caseCarts = action.payload;
+      })
+      .addCase(getAllCaseCarts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get Case Cart by ID
+      .addCase(getCaseCartById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCaseCartById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentCaseCart = action.payload;
+      })
+      .addCase(getCaseCartById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update Case Cart
+      .addCase(updateCaseCart.fulfilled, (state, action) => {
+        const index = state.caseCarts.findIndex(cart => cart.id === action.payload.id);
+        if (index !== -1) {
+          state.caseCarts[index] = action.payload;
+        }
+        if (state.currentCaseCart && state.currentCaseCart.id === action.payload.id) {
+          state.currentCaseCart = action.payload;
+        }
+      })
+      // Delete Case Cart
+      .addCase(deleteCaseCart.fulfilled, (state, action) => {
+        state.caseCarts = state.caseCarts.filter(cart => cart.id !== action.payload);
+        if (state.currentCaseCart && state.currentCaseCart.id === action.payload) {
+          state.currentCaseCart = null;
+        }
+      })
+      // Confirm Case Cart
+      .addCase(confirmCaseCart.fulfilled, (state, action) => {
+        const index = state.caseCarts.findIndex(cart => cart.id === action.payload.id);
+        if (index !== -1) {
+          state.caseCarts[index] = action.payload;
+        }
+      })
+      // Add Case Cart Item
+      .addCase(addCaseCartItem.fulfilled, (state, action) => {
+        if (state.currentCaseCart) {
+          state.currentCaseCart.items = state.currentCaseCart.items || [];
+          state.currentCaseCart.items.push(action.payload);
+        }
+      })
+      // Update Case Cart Item Status
+      .addCase(updateCaseCartItemStatus.fulfilled, (state, action) => {
+        if (state.currentCaseCart && state.currentCaseCart.items) {
+          const itemIndex = state.currentCaseCart.items.findIndex(
+            item => item.id === action.payload.id
+          );
+          if (itemIndex !== -1) {
+            state.currentCaseCart.items[itemIndex] = action.payload;
+          }
+        }
+        // Also update in the list
+        const cartIndex = state.caseCarts.findIndex(
+          cart => cart.id === state.currentCaseCart?.id
+        );
+        if (cartIndex !== -1 && state.caseCarts[cartIndex].items) {
+          const itemIndex = state.caseCarts[cartIndex].items.findIndex(
+            item => item.id === action.payload.id
+          );
+          if (itemIndex !== -1) {
+            state.caseCarts[cartIndex].items[itemIndex] = action.payload;
+          }
+        }
+      })
+      // Delete Case Cart Item
+      .addCase(deleteCaseCartItem.fulfilled, (state, action) => {
+        if (state.currentCaseCart && state.currentCaseCart.items) {
+          state.currentCaseCart.items = state.currentCaseCart.items.filter(
+            item => item.id !== action.payload
+          );
+        }
+      })
+      // Get Case Cart Statistics
+      .addCase(getCaseCartStatistics.fulfilled, (state, action) => {
+        state.caseCartStatistics = action.payload;
       });
   },
 });

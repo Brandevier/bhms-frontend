@@ -55,7 +55,7 @@ const MessagesArea = ({ messages, currentUser, loading, messagesEndRef }) => {
     <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
       {sortedDates.map((date) => (
         <div key={date} className="mb-6">
-          <Divider orientation="center" className="text-xs text-gray-500 bg-white px-3 py-1 rounded-full border">
+          <Divider orientation="center" className="text-xs text-gray-500 bg-white px-3 py-1 rounded-full ">
             {moment(date).calendar()}
           </Divider>
           

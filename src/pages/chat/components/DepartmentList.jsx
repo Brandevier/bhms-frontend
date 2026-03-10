@@ -62,15 +62,17 @@ const DepartmentList = ({
                 style={{ border: 'none' }}
               >
                 <div className="flex items-center w-full">
-                  <Avatar
-                    size={48}
-                    className="bg-blue-500 text-white mr-3 flex-shrink-0"
-                    style={{ 
-                      backgroundColor: selectedDepartment?.id === department.id ? '#1890ff' : '#6b7280'
-                    }}
-                  >
-                    {department.name?.charAt(0)?.toUpperCase() || 'D'}
-                  </Avatar>
+                  <Badge count={unreadCounts[department.id] || 0} overflowCount={99} size="small">
+                    <Avatar
+                      size={48}
+                      className="bg-blue-500 text-white mr-3 flex-shrink-0"
+                      style={{ 
+                        backgroundColor: selectedDepartment?.id === department.id ? '#1890ff' : '#6b7280'
+                      }}
+                    >
+                      {department.name?.charAt(0)?.toUpperCase() || 'D'}
+                    </Avatar>
+                  </Badge>
                   
                   <div className="flex-1 min-w-0 mx-2">
                     <div className="flex justify-between items-center">

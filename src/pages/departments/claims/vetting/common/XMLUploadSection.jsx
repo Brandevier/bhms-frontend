@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Card, Upload, Button, Typography, Alert, Space } from 'antd';
+import { Card, Upload, Button, Typography, Alert, Space, message } from 'antd';
 import { UploadOutlined, FileTextOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
+
+// Increase timeout for large XML files (5 minutes)
+const UPLOAD_TIMEOUT = 5 * 60 * 1000;
 
 const XMLUploadSection = ({ onFileUpload, status, disabled = false }) => {
   const [fileList, setFileList] = useState([]);
@@ -11,9 +14,13 @@ const XMLUploadSection = ({ onFileUpload, status, disabled = false }) => {
     // Check if file is XML
     const isXML = file.type === 'text/xml' || file.name.endsWith('.xml');
     if (!isXML) {
-      Alert.error('Please upload an XML file only!');
+      message.error('Please upload an XML file only!');
       return Upload.LIST_IGNORE;
     }
+    
+    // Log file size for debugging
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    console.log(`📁 XML File selected: ${file.name} (${fileSizeMB} MB)`);
     
     // Limit to one file
     setFileList([file]);
@@ -46,7 +53,7 @@ const XMLUploadSection = ({ onFileUpload, status, disabled = false }) => {
           loading={status === 'uploading'}
           disabled={disabled || status === 'uploading'}
         >
-          {status === 'uploading' ? 'Processing...' : 'Select XML File'}
+          {status === 'uploading' ? 'Processing (may take a while)...' : 'Select XML File'}
         </Button>
       </Upload>
 
@@ -67,6 +74,16 @@ const XMLUploadSection = ({ onFileUpload, status, disabled = false }) => {
           message="File Uploaded Successfully"
           description="The XML file has been processed successfully."
           type="success"
+          showIcon
+          style={{ marginTop: 16 }}
+        />
+      )}
+
+      {status === 'error' && (
+        <Alert
+          message="Upload Failed"
+          description="There was an error processing the XML file. Please check the file format and try again."
+          type="error"
           showIcon
           style={{ marginTop: 16 }}
         />

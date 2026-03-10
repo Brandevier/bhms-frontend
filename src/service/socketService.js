@@ -7,14 +7,26 @@ class SocketService {
     this.socket = null;
     this.currentUserId = null;
     this.currentDepartmentId = null;
+    this.chatHandlers = null;
   }
 
-  initialize(socketUrl) {
+  // Support both initializeSocket(url, handlers) and initializeSocket(userData, handlers)
+  initialize(socketUrlOrUserData, handlers = {}) {
     if (this.socket) {
       this.socket.disconnect();
     }
 
-    const url = socketUrl || import.meta.env.VITE_API_URL || import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    // Determine if first param is URL (string) or user data (object)
+    let url = import.meta.env.VITE_API_URL || import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
+    let userData = null;
+    
+    if (typeof socketUrlOrUserData === 'string') {
+      // First param is URL
+      url = socketUrlOrUserData || url;
+    } else if (socketUrlOrUserData && typeof socketUrlOrUserData === 'object') {
+      // First param is user data object (contains token, userId, etc.)
+      userData = socketUrlOrUserData;
+    }
     
     this.socket = io(url, {
       transports: ['websocket', 'polling'],
@@ -22,6 +34,14 @@ class SocketService {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });
+
+    // Store handlers
+    this.chatHandlers = handlers.chatHandlers || null;
+
+    // If user data was provided, store it for registration after connection
+    if (userData) {
+      this.currentUserId = userData.userId;
+    }
 
     this.setupEventListeners();
     return this.socket;
@@ -89,6 +109,43 @@ class SocketService {
     this.socket.on('user-left', (data) => {
       console.log('User left call:', data);
       window.dispatchEvent(new CustomEvent('user-left', { detail: data }));
+    });
+
+    // Chat message events
+    this.socket.on('new-message', (message) => {
+      console.log('New message received:', message);
+      if (this.chatHandlers?.onNewMessage) {
+        this.chatHandlers.onNewMessage(message);
+      }
+    });
+
+    this.socket.on('new-department-message', (message) => {
+      console.log('New department message received:', message);
+      if (this.chatHandlers?.onNewDepartmentMessage) {
+        this.chatHandlers.onNewDepartmentMessage(message);
+      }
+    });
+
+    // Department message notification for toast
+    this.socket.on('department-message-notification', (notification) => {
+      console.log('Department message notification received:', notification);
+      if (this.chatHandlers?.onDepartmentMessageNotification) {
+        this.chatHandlers.onDepartmentMessageNotification(notification);
+      }
+    });
+
+    this.socket.on('message-sent', (message) => {
+      console.log('Message sent confirmation:', message);
+      if (this.chatHandlers?.onMessageSent) {
+        this.chatHandlers.onMessageSent(message);
+      }
+    });
+
+    this.socket.on('message-error', (error) => {
+      console.error('Message error:', error);
+      if (this.chatHandlers?.onMessageError) {
+        this.chatHandlers.onMessageError(error);
+      }
     });
   }
 

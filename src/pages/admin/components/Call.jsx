@@ -29,7 +29,7 @@ const user = useSelector((state) => state.auth.user);
 
   // Initialize socket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:7000', {
+    const newSocket = io('http://localhost:4000', {
       withCredentials: true,
       transports: ['websocket'], // Force WebSocket transport
       autoConnect: true,

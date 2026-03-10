@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 // import { requestNotificationPermission } from "../firebase/requestNotificationPermission";
 import { fetchNotifications } from "./redux/slice/notificationSlice";
+import useDepartmentChatNotification from "./hooks/useDepartmentChatNotification";
 // Import all routes from the config file
 import { CallProvider } from "./context/CallContext";
 import CallDialog from "./modal/CallDialog";
@@ -113,6 +114,7 @@ import MaternityAnalytics from "./pages/departments/information_manager/maternit
 import ClaimsExportHistory from "./pages/departments/claims/History/ClaimsExportHistory";
 import XmlViewerPage from "./pages/departments/claims/History/components/XmlViewerPage";
 import ClaimsErpDashboard from "./pages/departments/claims/ClaimsErpDashboard";
+import AccountsErpDashboard from "./pages/departments/accounts/AccountsErpDashboard";
 import AllPatientBills from "./pages/departments/clerk/Invoices/AllPatientBills";
 import PatientBillDetails from "./pages/departments/clerk/Invoices/PatientBillDetails";
 import NHIA_Claims_Services from "./pages/departments/clerk/Invoices/NHIA_Bills/NHIA_Claims_Services";
@@ -134,6 +136,9 @@ import StockReport from "./pages/departments/store/StockReport";
 const App = () => {
   const user = useSelector((state) => state.auth.user || state.auth.admin);
   const dispatch = useDispatch();
+
+  // Initialize department chat notification listener
+  useDepartmentChatNotification(dispatch);
 
   useEffect(() => {
     if (user) {
@@ -271,9 +276,12 @@ const App = () => {
             <Route path="claims/history" element={<ClaimsExportHistory />} />
             <Route path="claims/history/xml-viewer" element={<XmlViewerPage />} />
 
-            {/* ACCOUNTS DEPARTMENT */}
+{/* ACCOUNTS DEPARTMENT */}
             <Route path="accounts/statistics" element={<AccountStatistics />} />
             <Route path="accounts/billing-invoicing" element={<BillingInvoicing />} />
+            <Route path="accounts/erp-dashboard" element={<AccountsErpDashboard />} />
+            <Route path="accounts/patient-billing" element={<PatientBillHistory />} />
+            <Route path="departments/accounts/:id/bill-history" element={<PatientBillHistory />} />
             <Route path="clerk/patient-bills" element={<AllPatientBills />} />
             <Route path="clerk/invoices/:visit_id" element={<PatientBillDetails />} />
             <Route path="clerk/nhia-claims-services" element={<NHIA_Claims_Services />} />

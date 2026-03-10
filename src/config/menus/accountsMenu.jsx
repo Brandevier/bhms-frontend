@@ -1,31 +1,44 @@
+// Accounts Department Menu Configuration - Hospital Accounting
 import {
   DashboardOutlined,
+  DollarOutlined,
   FileTextOutlined,
   CreditCardOutlined,
-  DollarOutlined,
+  BankOutlined,
+  UserOutlined,
   BarChartOutlined,
-  PercentageOutlined,
-  FundOutlined,
-  SwapOutlined,
-  ShopOutlined,
-  SafetyCertificateOutlined,
-  SettingOutlined,
-  UserSwitchOutlined,
+  ReconciliationOutlined,
+  InsuranceOutlined,
+  WalletOutlined,
+  CalendarOutlined,
+  UserSwitchOutlined
 } from "@ant-design/icons";
 
 const accountsMenu = [
-  { key: "accounts-1", label: "Accounts Dashboard", icon: <DashboardOutlined />, path: "/shared/accounts/statistics" },
-  { key: "accounts-2", label: "Billing & Invoicing", icon: <FileTextOutlined />, path: "/shared/accounts/billing-invoicing" },
-  { key: "accounts-3", label: "Payment Processing", icon: <CreditCardOutlined />, path: "/accounts/payments" },
-  { key: "accounts-4", label: "Expense Management", icon: <DollarOutlined />, path: "/accounts/expenses" },
-  { key: "accounts-5", label: "Financial Reports", icon: <BarChartOutlined />, path: "/accounts/reports" },
-  { key: "accounts-6", label: "Tax Management", icon: <PercentageOutlined />, path: "/accounts/taxes" },
-  { key: "accounts-7", label: "Budget Planning", icon: <FundOutlined />, path: "/accounts/budget" },
-  { key: "accounts-8", label: "Bank Reconciliation", icon: <SwapOutlined />, path: "/accounts/reconciliation" },
-  { key: "accounts-9", label: "Vendor Management", icon: <ShopOutlined />, path: "/accounts/vendors" },
-  { key: "accounts-10", label: "Audit Trail", icon: <SafetyCertificateOutlined />, path: "/accounts/audit" },
-  { key: "accounts-11", label: "Financial Settings", icon: <SettingOutlined />, path: "/accounts/settings" },
-  { key: "record-9", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },
+  // 1. Main Dashboard
+  { key: "accounts-dashboard", label: "Dashboard", icon: <DashboardOutlined />, path: "/shared/accounts/erp-dashboard" },
+  
+  // 2. Invoices & Billing
+  { key: "accounts-invoices", label: "Invoices & Billing", icon: <FileTextOutlined />, path: "/shared/accounts/invoices" },
+
+  // 3. Payments Collection
+  { key: "accounts-payments", label: "Payments", icon: <CreditCardOutlined />, path: "/shared/accounts/payment-history" },
+
+  // 4. Patient Accounts - Insured (NHIS) & Self-Pay
+  { key: "accounts-patients", label: "Patient Accounts", icon: <UserOutlined />, path: "/shared/accounts/patient-billing" },
+
+  // 5. Insurance Claims (NHIS)
+  { key: "accounts-nhis", label: "NHIS Claims", icon: <InsuranceOutlined />, path: "/shared/claims/nhis-claims-services" },
+
+  // 6. Financial Reports
+  { key: "accounts-reports", label: "Financial Reports", icon: <BarChartOutlined />, path: "/shared/accounts/revenue-report" },
+
+  // 7. Reconciliation
+  { key: "accounts-reconciliation", label: "Reconciliation", icon: <ReconciliationOutlined />, path: "/shared/accounts/bank-reconciliation" },
+
+  // 8. Common - Attendance
+  { key: "accounts-attendance", label: "Attendance", icon: <UserSwitchOutlined />, path: "/shared/attendance" },
 ];
 
 export default accountsMenu;
+

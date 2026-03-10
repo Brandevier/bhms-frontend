@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Drawer, Spin, message } from 'antd';
 import { useMediaQuery } from 'react-responsive';
 import moment from 'moment';
+import toast from 'react-hot-toast';
 
 import { fetchDepartments, fetchRecentChats } from '../../redux/slice/chatSlice';
 import { initializeSocket, getSocket, disconnectSocket } from '../../service/socketService';
@@ -57,6 +58,68 @@ const ChatUI = () => {
                 payload: newMessage.senderDepartmentId,
               });
             }
+          },
+          onDepartmentMessageNotification: (notification) => {
+            console.log('Department message notification received in ChatUI:', notification);
+            // Don't show toast if we're viewing this department
+            if (selectedDepartment?.id === notification.receiverDepartmentId) {
+              return;
+            }
+            // Don't show toast for own messages
+            if (notification.senderId === currentUser?.id) {
+              return;
+            }
+            
+            // Show toast notification
+            const messagePreview = notification.text?.length > 50 
+              ? notification.text.substring(0, 50) + '...' 
+              : notification.text;
+
+            toast.custom(
+              (t) => (
+                <div
+                  className={`${
+                    t.visible ? 'animate-enter' : 'animate-leave'
+                  } flex items-start gap-3 bg-white shadow-lg rounded-lg p-4 border-l-4 border-blue-500 max-w-sm cursor-pointer hover:shadow-xl transition-shadow`}
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    window.location.href = '/shared/chat';
+                  }}
+                >
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {notification.senderDepartmentName}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {notification.senderName}
+                    </p>
+                    <p className="text-sm text-gray-700 mt-1 line-clamp-2">
+                      {messagePreview}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Click to view in chat
+                    </p>
+                  </div>
+                </div>
+              ),
+              {
+                duration: 5000,
+                position: 'top-right'
+              }
+            );
+            
+            // Increment unread count for the department
+            dispatch({
+              type: 'chat/incrementUnread',
+              payload: notification.receiverDepartmentId,
+            });
           },
           onMessageSent: (sentMessage) => {
             setMessages(prev => prev.map(msg =>
