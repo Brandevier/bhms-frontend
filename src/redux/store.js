@@ -3,6 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import logger from "redux-logger";
 import * as reducers from "./reducers/index";
+import patientAIReducer from './slice/patientAISlice';
 
 
 
@@ -86,7 +87,8 @@ const rootReducer = combineReducers({
   allergy: reducers.allergyReducer,
   chronicCondition: reducers.chronicConditionReducer,
   riskAssessment: reducers.riskAssessmentReducer,
-patientAdvanced: reducers.patientAdvancedReducer,
+  patientAdvanced: reducers.patientAdvancedReducer,
+  patientAI: patientAIReducer,
   dashboard: reducers.dashboardReducer,
   backup: reducers.backupReducer,
   systemConfig: reducers.systemConfigReducer,

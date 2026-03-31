@@ -11,9 +11,9 @@ const ClaimsSummary = ({ claims }) => {
   // Calculate totals
   const totalClaims = claims.length;
   
-  const totals = claims.reduce((acc, claim) => {
+  const totalsRaw = claims.reduce((acc, claim) => {
     const claimTotal = claim.total_amount || 0;
-    const nhiaTotal = claim.items?.reduce((sum, item) => sum + (item.nhia_amount || 0), 0) || 0;
+    const nhiaTotal = claim.items?.reduce((sum, item) => sum + Math.min(item.amount || 0, item.nhia_amount || 0), 0) || 0;
     const patientTotal = claimTotal - nhiaTotal;
     
     return {
@@ -23,17 +23,25 @@ const ClaimsSummary = ({ claims }) => {
     };
   }, { totalAmount: 0, nhiaAmount: 0, patientAmount: 0 });
 
+  const totals = {
+    totalAmount: parseFloat(totalsRaw.totalAmount.toFixed(2)),
+    nhiaAmount: parseFloat(totalsRaw.nhiaAmount.toFixed(2)),
+    patientAmount: parseFloat(totalsRaw.patientAmount.toFixed(2))
+  };
+
   const nhiaPercentage = totals.totalAmount > 0 
-    ? (totals.nhiaAmount / totals.totalAmount) * 100 
+    ? Math.round((totals.nhiaAmount / totals.totalAmount) * 10000) / 100 
     : 0;
   const patientPercentage = totals.totalAmount > 0 
-    ? (totals.patientAmount / totals.totalAmount) * 100 
+    ? Math.round((totals.patientAmount / totals.totalAmount) * 10000) / 100 
     : 0;
 
   const formatAmount = (amount) => {
     return new Intl.NumberFormat('en-GH', {
       style: 'currency',
-      currency: 'GHS'
+      currency: 'GHS',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(amount);
   };
 

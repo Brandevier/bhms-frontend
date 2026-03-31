@@ -30,7 +30,7 @@ import {
 } from "@ant-design/icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { deleteDiagnosis } from "../../redux/slice/diagnosisSlice";
+import { deleteDiagnosis, addDiagnosis } from "../../redux/slice/diagnosisSlice";
 import { message } from "antd";
 import {
   createDoctorsNote,
@@ -56,6 +56,8 @@ import DrugHistoryTab from "./DrugHistoryTab";
 import ObstetricHistoryTab from "./ObstetricHistoryTab";
 import OccupationalHistoryTab from "./OccupationalHistoryTab";
 import OETab from "./OETab"; // On Examination Tab
+import DiagnosisDrawer from "../../drawers/DiagnosisDrawer";
+import AIPanel from "../patientAI/AIPanel";
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
@@ -70,8 +72,9 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
   const [editingNote, setEditingNote] = useState(null);
   const [selectedNote, setSelectedNote] = useState(null);
   const [selectedDiagnosis, setSelectedDiagnosis] = useState(null);
+  const [addDiagnosisModalVisible, setAddDiagnosisModalVisible] = useState(false);
 
-  const { loading } = useSelector((state) => state.diagnosis);
+  const { loading, addDiagnosisStatus } = useSelector((state) => state.diagnosis);
   const { notes, loading: noteLoading } = useSelector((state) => state.doctorsNote);
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
@@ -142,6 +145,21 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
     }
   };
 
+  const handleAddDiagnosis = async (diagnosisData) => {
+    try {
+      const data = {
+        ...diagnosisData,
+        visit_id: id,
+      };
+      await dispatch(addDiagnosis(data)).unwrap();
+      message.success("Diagnosis added successfully");
+      setAddDiagnosisModalVisible(false);
+      onSubmit?.();
+    } catch (error) {
+      message.error("Failed to add diagnosis");
+    }
+  };
+
   const handleAddDoctorsNote = (noteData) => {
     const data = {
       ...noteData,
@@ -190,7 +208,7 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
   const addMenu = (
     <Menu onClick={({ key }) => {
       if (key === 'diagnosis') {
-        console.log("Add new diagnosis");
+        setAddDiagnosisModalVisible(true);
       } else if (key === 'doctors_note') {
         handleAddNewNote();
       } else if (key === 'patient_complains') {
@@ -472,9 +490,9 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
                 icon={<PlusOutlined />}
                 onClick={() => {
                   if (activeTab === 'doctors_note') {
-                    handleAddNewNote();
+                    handleAddNewNote(); 
                   } else {
-                    console.log(`Add new ${activeTab}`);
+                    setAddDiagnosisModalVisible(true);
                   }
                 }}
               >
@@ -537,6 +555,7 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
           diagnoses={sortedDiagnoses}
           doctorsNotes={sortedNotes}
         />
+<AIPanel patientId={id} visitId={id} />
 
         {/* Diagnosis Tabs */}
         <Tabs
@@ -576,6 +595,15 @@ const PatientDiagnosis = ({ diagnosis, onSubmit }) => {
           visible={doctorsNoteViewModalVisible}
           note={selectedNote}
           onClose={() => setDoctorsNoteViewModalVisible(false)}
+        />
+        
+        {/* Diagnosis Drawer like PatientProfileHeader */}
+        <DiagnosisDrawer
+          visible={addDiagnosisModalVisible}
+          onClose={() => setAddDiagnosisModalVisible(false)}
+          visit_id={id}
+          claim_id={null}
+          onFinished={onSubmit}
         />
       </Card>
     </div>

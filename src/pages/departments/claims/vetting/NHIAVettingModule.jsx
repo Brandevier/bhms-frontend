@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Card, Row, Col, Typography, Alert, Spin, Button, Tabs, Table,
   Tag, Space, Divider, List, Statistic, Progress, Badge, message,
-  Input, Select, Modal, Form, Drawer, Empty
+  Input, Select, Modal, Form, Drawer, Empty, Radio
 } from 'antd';
 import {
   SafetyCertificateOutlined, ReloadOutlined, UploadOutlined,
@@ -11,7 +11,8 @@ import {
   EditOutlined, SearchOutlined, SettingOutlined, HistoryOutlined,
   DatabaseOutlined, ArrowRightOutlined, FilterOutlined, DownloadOutlined,
   PlayCircleOutlined, StopOutlined, CheckSquareOutlined, ClockCircleOutlined,
-  DollarOutlined, FileTextOutlined, BarChartOutlined, PieChartOutlined
+  DollarOutlined, FileTextOutlined, BarChartOutlined, PieChartOutlined,
+  SaveOutlined, FileOutlined
 } from '@ant-design/icons';
 import XMLUploadSection from './common/XMLUploadSection';
 import VettingResults from './common/VettingResults';
@@ -50,6 +51,10 @@ const NHIAVettingModule = () => {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [detailsDrawerVisible, setDetailsDrawerVisible] = useState(false);
   const [mappingModalVisible, setMappingModalVisible] = useState(false);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedExportFormat, setSelectedExportFormat] = useState('csv');
+  const [editingClaim, setEditingClaim] = useState(null);
 
   // Load validation rules and mappings on mount
   useEffect(() => {
@@ -57,16 +62,75 @@ const NHIAVettingModule = () => {
     getMappings({ page: 1, limit: 10 });
   }, []);
 
-  // Derived statistics
-  const stats = {
-    totalClaims: validationSummary?.totalClaims || 0,
-    totalServices: validationSummary?.totalServices || 0,
-    validClaims: validationSummary?.validClaims || 0,
-    invalidClaims: validationSummary?.invalidClaims || 0,
-    successRate: validationSummary?.successRate || 0,
-    totalAmount: validationSummary?.totalAmount || 0,
-    validatedAmount: validationSummary?.validatedAmount || 0
+  // Calculate statistics from uploaded claims data
+  const calculateStats = () => {
+    if (!uploadResult?.data?.claims || uploadResult.data.claims.length === 0) {
+      return {
+        totalClaims: 0,
+        totalServices: 0,
+        passedServices: 0,
+        failedServices: 0,
+        successRate: 0,
+        totalAmount: 0,
+        validatedAmount: 0,
+        pendingAmount: 0
+      };
+    }
+
+    const claimsData = uploadResult.data.claims;
+    let totalServicesCount = 0;
+    let passedServicesCount = 0;
+    let failedServicesCount = 0;
+    let totalAmountSum = 0;
+    let validatedAmountSum = 0;
+    let pendingAmountSum = 0;
+
+    claimsData.forEach(claim => {
+      // Count services
+      const servicesCount = claim.services?.length || 0;
+      totalServicesCount += servicesCount;
+
+      // Calculate amounts and check validation status from services
+      let claimTotalAmount = 0;
+      let claimValidatedAmount = 0;
+
+      claim.services?.forEach(service => {
+        const serviceTotal = service.totalAmount || 0;
+        const serviceNhia = service.nhiaAmount || 0;
+        
+        claimTotalAmount += serviceTotal;
+        claimValidatedAmount += serviceNhia;
+
+        // Count passed/failed services
+        if (service.validation?.isValid !== false) {
+          passedServicesCount++;
+        } else {
+          failedServicesCount++;
+        }
+      });
+
+      totalAmountSum += claimTotalAmount;
+      validatedAmountSum += claimValidatedAmount;
+      pendingAmountSum += (claimTotalAmount - claimValidatedAmount);
+    });
+
+    const successRate = totalServicesCount > 0 
+      ? Math.round((passedServicesCount / totalServicesCount) * 100)
+      : 0;
+
+    return {
+      totalClaims: claimsData.length,
+      totalServices: totalServicesCount,
+      passedServices: passedServicesCount,
+      failedServices: failedServicesCount,
+      successRate,
+      totalAmount: totalAmountSum,
+      validatedAmount: validatedAmountSum,
+      pendingAmount: pendingAmountSum
+    };
   };
+
+  const stats = calculateStats();
 
   const handleXMLUpload = async (file) => {
     clearAllErrors();
@@ -96,6 +160,126 @@ const NHIAVettingModule = () => {
   const handleViewClaimDetails = (claim) => {
     setSelectedClaim(claim);
     setDetailsDrawerVisible(true);
+  };
+
+  // Export functionality
+  const handleExport = () => {
+    if (!uploadResult?.data?.claims || uploadResult.data.claims.length === 0) {
+      message.warning('No claims to export. Please upload an XML file first.');
+      return;
+    }
+    setExportModalVisible(true);
+  };
+
+  const performExport = (format) => {
+    const claimsData = uploadResult.data.claims;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    let content = '';
+    let mimeType = 'text/plain';
+    let filename = `nhia_claims_export_${timestamp}`;
+
+    if (format === 'csv') {
+      // CSV Export
+      const headers = ['Claim ID', 'Patient Name', 'NHIS Number', 'Diagnosis', 'Service Code', 'Service Description', 'Quantity', 'Unit Price', 'Total Amount', 'NHIA Amount', 'Status'];
+      const rows = claimsData.flatMap(claim => 
+        claim.services?.map(service => [
+          claim.claimId,
+          claim.memberName || '',
+          claim.nhisNumber || '',
+          claim.diagnosis?.originalCode || '',
+          service.serviceCode || '',
+          service.description || '',
+          service.quantity || 0,
+          service.unitPrice || 0,
+          service.totalAmount || 0,
+          service.nhiaAmount || 0,
+          service.validation?.isValid ? 'Valid' : 'Invalid'
+        ]) || []
+      );
+      content = [headers.join(','), ...rows.map(row => row.map(cell => `"${cell}"`).join(','))].join('\n');
+      mimeType = 'text/csv';
+      filename += '.csv';
+    } else if (format === 'json') {
+      // JSON Export
+      const exportData = claimsData.map(claim => ({
+        claimId: claim.claimId,
+        memberName: claim.memberName,
+        nhisNumber: claim.nhisNumber,
+        diagnosis: claim.diagnosis,
+        services: claim.services?.map(service => ({
+          serviceCode: service.serviceCode,
+          description: service.description,
+          quantity: service.quantity,
+          unitPrice: service.unitPrice,
+          totalAmount: service.totalAmount,
+          nhiaAmount: service.nhiaAmount,
+          status: service.validation?.isValid ? 'Valid' : 'Invalid',
+          issues: service.validation?.issues || []
+        })) || [],
+        totalAmount: claim.services?.reduce((sum, s) => sum + (s.totalAmount || 0), 0) || 0
+      }));
+      content = JSON.stringify(exportData, null, 2);
+      mimeType = 'application/json';
+      filename += '.json';
+    } else if (format === 'xml') {
+      // XML Export
+      const xmlClaims = claimsData.map(claim => `
+    <Claim>
+      <ClaimID>${claim.claimId}</ClaimID>
+      <MemberName>${claim.memberName || ''}</MemberName>
+      <NHISNumber>${claim.nhisNumber || ''}</NHISNumber>
+      <Diagnosis>${claim.diagnosis?.originalCode || ''}</Diagnosis>
+      <Services>
+        ${claim.services?.map(service => `
+        <Service>
+          <ServiceCode>${service.serviceCode || ''}</ServiceCode>
+          <Description>${service.description || ''}</Description>
+          <Quantity>${service.quantity || 0}</Quantity>
+          <UnitPrice>${service.unitPrice || 0}</UnitPrice>
+          <TotalAmount>${service.totalAmount || 0}</TotalAmount>
+          <NHIAAmount>${service.nhiaAmount || 0}</NHIAAmount>
+          <Status>${service.validation?.isValid ? 'Valid' : 'Invalid'}</Status>
+        </Service>`).join('') || ''}
+      </Services>
+    </Claim>`).join('');
+      content = `<?xml version="1.0" encoding="UTF-8"?>\n<Claims>${xmlClaims}\n</Claims>`;
+      mimeType = 'application/xml';
+      filename += '.xml';
+    }
+
+    // Create and download file
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    message.success(`Successfully exported ${claimsData.length} claims to ${format.toUpperCase()}`);
+    setExportModalVisible(false);
+  };
+
+  // Edit functionality for failed claims
+  const handleEditClaim = (claim) => {
+    setEditingClaim(claim);
+    setEditModalVisible(true);
+  };
+
+  const handleSaveEditedClaim = (editedClaim) => {
+    // Update the claim in the uploadResult
+    if (uploadResult?.data?.claims) {
+      const updatedClaims = uploadResult.data.claims.map(c => 
+        c.claimId === editingClaim.claimId ? { ...c, ...editedClaim } : c
+      );
+      // Update the Redux state or local state
+      uploadResult.data.claims = updatedClaims;
+    }
+    message.success('Claim updated successfully');
+    setEditModalVisible(false);
+    setEditingClaim(null);
   };
 
   // Convert Redux status to local status for the XMLUploadSection
@@ -253,7 +437,7 @@ const NHIAVettingModule = () => {
         setActiveTab('upload');
         break;
       case 'export':
-        message.info('Export functionality coming soon');
+        handleExport();
         break;
       case 'validate':
         message.info('Re-validate functionality coming soon');
@@ -317,36 +501,35 @@ const NHIAVettingModule = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="kpi-card valid-card">
+          <Card className="kpi-card total-services-card">
             <Statistic
-              title={<span style={{ color: '#8c8c8c' }}>Valid Claims</span>}
-              value={stats.validClaims}
-              prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
-              valueStyle={{ color: '#52c41a' }}
+              title={<span style={{ color: '#8c8c8c' }}>Total Services</span>}
+              value={stats.totalServices}
+              prefix={<FileTextOutlined style={{ color: '#1890ff' }} />}
             />
-            <Text type="secondary" style={{ fontSize: 12 }}>Passed validation</Text>
+            <Text type="secondary" style={{ fontSize: 12 }}>{stats.totalClaims} claims</Text>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card className="kpi-card invalid-card">
+          <Card className="kpi-card passed-card">
             <Statistic
-              title={<span style={{ color: '#8c8c8c' }}>Invalid Claims</span>}
-              value={stats.invalidClaims}
+              title={<span style={{ color: '#8c8c8c' }}>Passed Services</span>}
+              value={stats.passedServices}
+              prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
+              valueStyle={{ color: '#52c41a' }}
+            />
+            <Text type="secondary" style={{ fontSize: 12 }}>{stats.successRate}% pass rate</Text>
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card className="kpi-card failed-card">
+            <Statistic
+              title={<span style={{ color: '#8c8c8c' }}>Failed Services</span>}
+              value={stats.failedServices}
               prefix={<CloseCircleOutlined style={{ color: '#ff4d4f' }} />}
               valueStyle={{ color: '#ff4d4f' }}
             />
             <Text type="secondary" style={{ fontSize: 12 }}>Needs review</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card className="kpi-card value-card">
-            <Statistic
-              title={<span style={{ color: '#8c8c8c' }}>Total Value</span>}
-              value={stats.totalAmount}
-              formatter={(val) => formatCurrency(val)}
-              prefix={<DollarOutlined style={{ color: '#722ed1' }} />}
-            />
-            <Text type="secondary" style={{ fontSize: 12 }}>Validated: {formatCurrency(stats.validatedAmount)}</Text>
           </Card>
         </Col>
       </Row>
@@ -513,9 +696,8 @@ const NHIAVettingModule = () => {
                 </Col>
                 <Col xs={24} md={8}>
                   <Select placeholder="Filter by status" style={{ width: '100%' }} allowClear>
-                    <Option value="valid">Valid</Option>
-                    <Option value="invalid">Invalid</Option>
-                    <Option value="warning">Warning</Option>
+                    <Option value="pass">Valid</Option>
+                    <Option value="fail">Invalid</Option>
                   </Select>
                 </Col>
                 <Col xs={24} md={8}>
@@ -526,8 +708,16 @@ const NHIAVettingModule = () => {
                 </Col>
               </Row>
 
+              {/* Use uploaded claims data if available */}
               <Table
-                dataSource={claims || []}
+                dataSource={(uploadResult?.data?.claims || []).map(claim => ({
+                  ...claim,
+                  patientName: claim.memberName,
+                  status: claim.validationStatus === 'pass' ? 'valid' : 'invalid',
+                  amount: claim.services?.reduce((sum, s) => sum + (s.totalAmount || 0), 0) || 0,
+                  serviceCount: claim.services?.length || 0,
+                  issues: claim.services?.filter(s => !s.validation?.isValid).map(s => s.validation?.issues).flat() || []
+                }))}
                 columns={claimsColumns}
                 rowKey="claimId"
                 pagination={{
@@ -797,6 +987,135 @@ const NHIAVettingModule = () => {
         </Form>
       </Modal>
 
+      {/* Export Modal */}
+      <Modal
+        title="Export Claims Data"
+        open={exportModalVisible}
+        onCancel={() => setExportModalVisible(false)}
+        footer={null}
+      >
+        <div style={{ padding: '16px 0' }}>
+          <Text>Select export format:</Text>
+          <Radio.Group 
+            value={selectedExportFormat} 
+            onChange={(e) => setSelectedExportFormat(e.target.value)}
+            style={{ display: 'block', marginTop: 12 }}
+          >
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Radio value="csv">
+                <Space>
+                  <FileExcelOutlined />
+                  <span>CSV (Comma Separated Values)</span>
+                </Space>
+              </Radio>
+              <Radio value="json">
+                <Space>
+                  <FileTextOutlined />
+                  <span>JSON (JavaScript Object Notation)</span>
+                </Space>
+              </Radio>
+              <Radio value="xml">
+                <Space>
+                  <FileOutlined />
+                  <span>XML (NHIA Format)</span>
+                </Space>
+              </Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+        <div style={{ marginTop: 24, textAlign: 'right' }}>
+          <Space>
+            <Button onClick={() => setExportModalVisible(false)}>Cancel</Button>
+            <Button 
+              type="primary" 
+              icon={<DownloadOutlined />}
+              onClick={() => performExport(selectedExportFormat)}
+            >
+              Export
+            </Button>
+          </Space>
+        </div>
+      </Modal>
+
+      {/* Edit Claim Modal */}
+      <Modal
+        title="Edit Failed Claim"
+        open={editModalVisible}
+        onCancel={() => { setEditModalVisible(false); setEditingClaim(null); }}
+        width={700}
+        footer={null}
+      >
+        {editingClaim && (
+          <Form 
+            layout="vertical"
+            initialValues={editingClaim}
+            onFinish={handleSaveEditedClaim}
+          >
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Claim ID" name="claimId">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Patient Name" name="memberName">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="NHIS Number" name="nhisNumber">
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="Diagnosis Code" name="diagnosisCode">
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item label="Services">
+              {editingClaim.services?.map((service, idx) => (
+                <Card key={idx} size="small" style={{ marginBottom: 8 }}>
+                  <Row gutter={12}>
+                    <Col span={8}>
+                      <Text strong>Code:</Text> {service.serviceCode}
+                    </Col>
+                    <Col span={8}>
+                      <Text strong>Description:</Text> {service.description}
+                    </Col>
+                    <Col span={8}>
+                      <Tag color={service.validation?.isValid ? 'green' : 'red'}>
+                        {service.validation?.isValid ? 'Valid' : 'Invalid'}
+                      </Tag>
+                    </Col>
+                  </Row>
+                  {!service.validation?.isValid && service.validation?.issues && (
+                    <div style={{ marginTop: 8 }}>
+                      <Text type="secondary">Issues: </Text>
+                      {service.validation.issues.map((issue, i) => (
+                        <Tag key={i} color="red">{issue}</Tag>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </Form.Item>
+            <Form.Item>
+              <Space>
+                <Button onClick={() => { setEditModalVisible(false); setEditingClaim(null); }}>
+                  Cancel
+                </Button>
+                <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                  Save Changes
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
+
       <style>{`
         .vetting-erp-module {
           padding: 0;
@@ -890,16 +1209,16 @@ const NHIAVettingModule = () => {
           background: linear-gradient(90deg, #1890ff, #69c0ff);
         }
 
-        .valid-card::before {
+        .total-services-card::before {
+          background: linear-gradient(90deg, #13c2c2, #36cfc9);
+        }
+
+        .passed-card::before {
           background: linear-gradient(90deg, #52c41a, #95de64);
         }
 
-        .invalid-card::before {
+        .failed-card::before {
           background: linear-gradient(90deg, #ff4d4f, #ff7875);
-        }
-
-        .value-card::before {
-          background: linear-gradient(90deg, #722ed1, #b37feb);
         }
 
         .progress-card {

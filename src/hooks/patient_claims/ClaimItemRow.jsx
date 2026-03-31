@@ -11,9 +11,14 @@ const ClaimItemRow = ({ item }) => {
     }).format(amount || 0);
   };
 
-  const totalAmount = item.amount || 0;
-  const nhiaAmount = item.nhia_amount || 0;
-  const patientAmount = totalAmount - nhiaAmount;
+  // Calculate total properly, fallback to unit_price * quantity if amount missing
+  const calculatedTotal = Math.max(
+    (item.amount || 0),
+    ((item.unit_price || 0) * (item.quantity || 1))
+  );
+  const totalAmount = calculatedTotal;
+  const nhiaAmount = Math.min(totalAmount, item.nhia_amount || 0);
+  const patientAmount = Math.max(0, totalAmount - nhiaAmount);
 
   return (
     <Row gutter={[16, 8]} style={{ padding: '8px 0' }}>

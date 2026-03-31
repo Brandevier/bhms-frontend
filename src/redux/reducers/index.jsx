@@ -76,6 +76,7 @@ import chronicConditionReducer from '../slice/chronicConditionSlice'
 import riskAssessmentReducer from '../slice/riskAssessmentSlice'
 import patientAdvancedReducer from '../slice/patientAdvancedSlice'
 import systemConfigReducer from '../slice/systemConfigSlice'
+import patientAIReducer from '../slice/patientAISlice'
 
 // Patient Billing Slice
 import patientBillingReducer from '../slice/patientBillingSlice'
@@ -89,6 +90,7 @@ export {
     chronicConditionReducer,
     riskAssessmentReducer,
     patientAdvancedReducer,
+    patientAIReducer,
     authReducer,
     claimsReducers,
     drugHistoryReducers,

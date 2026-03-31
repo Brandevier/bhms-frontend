@@ -34,18 +34,21 @@ const ClaimCard = ({ claim, onViewDetails }) => {
     }).format(amount || 0);
   };
 
-  // Calculate NHIA and patient amounts for this claim
+  // Calculate totals with market_price display, patient payment indicator
   const claimTotals = claim.items?.reduce((acc, item) => {
-    const itemTotal = item.amount || 0;
-    const nhiaAmount = item.nhia_amount || 0;
-    const patientAmount = itemTotal - nhiaAmount;
+    const itemTotal = item.unit_price * (item.quantity || 1);
+    const marketTotal = acc.marketTotal + itemTotal;
+    const nhiaAmount = Math.min(itemTotal, item.nhia_amount || 0);
+    const patientAmount = Math.max(0, itemTotal - nhiaAmount);
     
     return {
-      total: acc.total + itemTotal,
+      marketTotal: marketTotal,
+      total: acc.total + item.amount,
       nhia: acc.nhia + nhiaAmount,
-      patient: acc.patient + patientAmount
+      patient: acc.patient + patientAmount,
+      paidItems: acc.paidItems + (item.paid_by_patient === true ? 1 : 0)
     };
-  }, { total: 0, nhia: 0, patient: 0 });
+  }, { marketTotal: 0, total: 0, nhia: 0, patient: 0, paidItems: 0 });
 
   return (
     <Card
@@ -84,14 +87,19 @@ const ClaimCard = ({ claim, onViewDetails }) => {
         <Col xs={24} md={8}>
           <Space direction="vertical" size="small">
             <div>
-              <Text strong>Total: </Text>
-              <Text strong>{formatAmount(claimTotals.total)}</Text>
+              <Text strong>Market: </Text>
+              <Text strong>{formatAmount(claimTotals.marketTotal)}</Text>
             </div>
             <div>
               <Text type="success">NHIA: {formatAmount(claimTotals.nhia)}</Text>
             </div>
             <div>
               <Text type="warning">Patient: {formatAmount(claimTotals.patient)}</Text>
+              {claimTotals.paidItems > 0 && (
+                <Tag color="green" size="small" className="ml-2">
+                  {claimTotals.paidItems} Paid
+                </Tag>
+              )}
             </div>
           </Space>
         </Col>

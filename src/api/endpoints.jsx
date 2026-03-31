@@ -61,3 +61,7 @@ export const LEAVE_UPDATE = (leaveId) => `${BASE_URL}/leave/update/${leaveId}`;
 export const LEAVE_CANCEL = (leaveId) => `${BASE_URL}/leave/cancel/${leaveId}`;
 export const LEAVE_REVIEW = (leaveId) => `${BASE_URL}/leave/review/${leaveId}`;
 export const LEAVE_ALL = `${BASE_URL}/leave/all`;
+
+// AI Backend Endpoints
+export const AI_ANALYZE_PATIENT = 'http://localhost:8000/ai/patient_ai/ner';
+export const AI_HEALTH_PREDICT = 'http://localhost:8000/models/health/predict';

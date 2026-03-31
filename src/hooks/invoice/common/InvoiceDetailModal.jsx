@@ -41,36 +41,64 @@ const InvoiceDetailModal = ({ visible, invoice, onCancel }) => {
         width={700}
       >
         {invoice && (
-          <Descriptions bordered column={2} size="small">
-            <Descriptions.Item label="Invoice Number" span={2}>
-              <Text strong>{invoice.invoice_number}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Invoice Date">
-              {invoice.invoice_date ? new Date(invoice.invoice_date).toLocaleDateString() : 'N/A'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Due Date">
-              {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'N/A'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total Amount">
-              <Text strong>₵{parseFloat(invoice.total_amount || 0).toFixed(2)}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Amount Paid">
-              <Text type="success">₵{parseFloat(invoice.amount_paid || 0).toFixed(2)}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Balance Due">
-              <Text type="danger">₵{parseFloat(invoice.balance_due || 0).toFixed(2)}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Status" span={2}>
-              <Tag color={invoice.status === 'paid' ? 'green' : invoice.status === 'partial' ? 'orange' : 'red'}>
-                {invoice.status ? invoice.status.toUpperCase() : 'UNKNOWN'}
-              </Tag>
-            </Descriptions.Item>
-            {invoice.notes && (
-              <Descriptions.Item label="Notes" span={2}>
-                <Text type="secondary">{invoice.notes}</Text>
+          <div>
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="Invoice Number" span={1}>
+                <Text strong>{invoice.invoice_number}</Text>
               </Descriptions.Item>
+              <Descriptions.Item label="Invoice Date">
+                {invoice.invoice_date ? new Date(invoice.invoice_date).toLocaleDateString() : 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Due Date">
+                {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Total Amount">
+                <Text strong>₵{parseFloat(invoice.total_amount || 0).toFixed(2)}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Amount Paid">
+                <Text type="success">₵{parseFloat(invoice.amount_paid || 0).toFixed(2)}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Balance Due">
+                <Text type="danger">₵{parseFloat(invoice.balance_due || 0).toFixed(2)}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Status">
+                <Tag color={invoice.status === 'paid' ? 'green' : invoice.status === 'partial' ? 'orange' : 'red'}>
+                  {invoice.status ? invoice.status.toUpperCase() : 'UNKNOWN'}
+                </Tag>
+              </Descriptions.Item>
+              {invoice.notes && (
+                <Descriptions.Item label="Notes">
+                  <Text type="secondary">{invoice.notes}</Text>
+                </Descriptions.Item>
+              )}
+            </Descriptions>
+
+            {invoice.service_bills && invoice.service_bills.length > 0 && (
+              <div style={{ marginTop: 24 }}>
+                <Title level={5}>Service Breakdown</Title>
+                <Descriptions bordered column={1} size="small" style={{ marginTop: 12 }}>
+                  {invoice.service_bills.map((service, index) => (
+                    <React.Fragment key={service.id || index}>
+                      <Descriptions.Item label="Service">
+                        <Space>
+                          <Text strong>{service.description}</Text>
+                          <Tag color={service.has_paid ? 'green' : 'red'}>
+                            {service.has_paid ? 'Paid' : 'Unpaid'}
+                          </Tag>
+                        </Space>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Amount">
+                        ₵{parseFloat(service.patient_amount || 0).toFixed(2)}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="NHIA Covered">
+                        ₵{parseFloat(service.nhia_amount || 0).toFixed(2)}
+                      </Descriptions.Item>
+                    </React.Fragment>
+                  ))}
+                </Descriptions>
+              </div>
             )}
-          </Descriptions>
+          </div>
         )}
       </Modal>
 

@@ -33,14 +33,20 @@ const ClaimItemsGroupedView = ({ items, onItemUpdate, readOnly = false }) => {
     return groups;
   }, [items]);
 
-  // Get group statistics
+// Get group statistics
+  const getItemAmount = (item) => {
+    const unitPrice = item.unit_price || item.nhia_amount || item.amount || 0;
+    const quantity = item.quantity || 1;
+    return unitPrice * quantity;
+  };
+
   const groupStats = useMemo(() => {
     const stats = {};
     Object.keys(groupedItems).forEach(type => {
       const groupItems = groupedItems[type];
       stats[type] = {
         count: groupItems.length,
-        totalAmount: groupItems.reduce((sum, item) => sum + (item.nhia_amount || 0), 0)
+        totalAmount: groupItems.reduce((sum, item) => sum + getItemAmount(item), 0)
       };
     });
     return stats;
@@ -75,7 +81,7 @@ const ClaimItemsGroupedView = ({ items, onItemUpdate, readOnly = false }) => {
         activeKey={activePanels}
         onChange={handlePanelChange}
         expandIcon={({ isActive }) => <DownOutlined rotate={isActive ? 180 : 0} />}
-        accordion
+        accordion={false}
       >
         {Object.keys(groupedItems).map(type => {
           const GroupComponent = groupComponents[type];

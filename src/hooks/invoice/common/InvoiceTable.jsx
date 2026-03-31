@@ -8,46 +8,45 @@ const { Panel } = Collapse;
 
 const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
   const expandedRowRender = (record) => (
-    <div style={{ padding: '16px 24px', background: '#fafafa', borderRadius: 6 }}>
-      <Row gutter={[16, 8]}>
-        <Col span={8}>
-          <Text strong>Service ID: </Text>
-          <br />
-          <Text code>{record.service_id}</Text>
+    <div className="p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm">
+      <Row gutter={[24, 12]}>
+        <Col span={6}>
+          <Text strong className="text-gray-800 block mb-1">Service ID</Text>
+          <Text className="bg-gray-100 px-3 py-1 rounded-full text-sm font-mono">{record.service_id}</Text>
         </Col>
-        <Col span={8}>
-          <Text strong>Department: </Text>
-          <br />
-          <Text>{record.department?.name}</Text>
-        </Col>
-        <Col span={8}>
-          <Text strong>NHIA Coverage: </Text>
-          <br />
-          <Tag color={record.is_nhia_covered ? 'green' : 'red'}>
-            {record.is_nhia_covered ? 'COVERED' : 'NOT COVERED'}
+        <Col span={6}>
+          <Text strong className="text-gray-800 block mb-1">Department</Text>
+          <Tag className="px-3 py-1 rounded-full bg-blue-100 border-blue-200 text-blue-800 font-medium">
+            {record.department?.name}
           </Tag>
         </Col>
-        
-        <Col span={8}>
-          <Text strong>Unit Price: </Text>
-          <br />
-          <Text>₵{parseFloat(record.unit_price || 0).toFixed(2)}</Text>
+        <Col span={6}>
+          <Text strong className="text-gray-800 block mb-1">NHIA Status</Text>
+          <Tag color={record.is_nhia_covered ? 'success' : 'error'} className="px-4 py-2 font-semibold shadow-sm">
+            {record.is_nhia_covered ? 'FULLY COVERED' : 'PATIENT PAYS'}
+          </Tag>
+        </Col>
+        <Col span={6}>
+          <Text strong className="text-gray-800 block mb-1">Performed</Text>
+          <Text className="text-gray-600 text-sm">{record.created_at ? moment(record.created_at).format('DD MMM YYYY, HH:mm') : 'N/A'}</Text>
         </Col>
         <Col span={8}>
-          <Text strong>NHIA Amount: </Text>
-          <br />
-          <Text>₵{parseFloat(record.nhia_amount || 0).toFixed(2)}</Text>
+          <Text strong className="text-gray-800 block mb-1">Unit Price</Text>
+          <Text className="text-2xl font-bold text-gray-900">₵{parseFloat(record.unit_price || 0).toFixed(2)}</Text>
         </Col>
         <Col span={8}>
-          <Text strong>Patient Amount: </Text>
-          <br />
-          <Text strong>₵{parseFloat(record.patient_amount || 0).toFixed(2)}</Text>
+          <Text strong className="text-green-600 block mb-1 font-semibold">NHIA Amount</Text>
+          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+            <Text className="text-lg font-bold text-green-800">₵{parseFloat(record.nhia_amount || 0).toFixed(2)}</Text>
+          </div>
         </Col>
-        
         <Col span={8}>
-          <Text strong>Created: </Text>
-          <br />
-          <Text>{record.created_at ? moment(record.created_at).format('MMM DD, YYYY HH:mm') : 'N/A'}</Text>
+          <Text strong className="text-orange-600 block mb-1 font-semibold">Patient Share</Text>
+          <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
+            <Text className={parseFloat(record.patient_amount || 0) === 0 ? 'text-lg font-bold text-green-600' : 'text-lg font-bold text-orange-800'}>
+              ₵{parseFloat(record.patient_amount || 0).toFixed(2)}
+            </Text>
+          </div>
         </Col>
       </Row>
     </div>
@@ -82,7 +81,15 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
       width: 100,
     },
     {
-      title: 'Total',
+      title: 'NHIA',
+      dataIndex: 'nhia_amount',
+      key: 'nhia_amount',
+      render: (amount) => `₵${parseFloat(amount || 0).toFixed(2)}`,
+      align: 'right',
+      width: 90,
+    },
+    {
+      title: 'Patient',
       dataIndex: 'patient_amount',
       key: 'patient_amount',
       render: (amount, record) => (
@@ -101,12 +108,17 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
       title: 'Status',
       dataIndex: 'payment_status',
       key: 'payment_status',
-      render: (status) => (
-        <Badge
-          status={status === 'Paid' ? 'success' : 'warning'}
-          text={status}
-        />
-      ),
+      render: (status, record) => {
+        if (record.is_nhia_covered && parseFloat(record.patient_amount || 0) === 0) {
+          return <Badge status="success" text="NHIA Full Coverage" />;
+        }
+        return (
+          <Badge
+            status={status === 'Paid' ? 'success' : 'warning'}
+            text={status}
+          />
+        );
+      },
       width: 100,
     },
     {
@@ -119,16 +131,17 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
             type="primary"
             icon={<CheckCircleOutlined />}
             onClick={() => onMarkAsPaid(record)}
-            disabled={record.payment_status === 'Paid'}
+            disabled={record.payment_status === 'Paid' || (record.is_nhia_covered && parseFloat(record.patient_amount || 0) === 0)}
           >
-            Pay
+            {record.is_nhia_covered && parseFloat(record.patient_amount || 0) === 0 ? 'NHIA Covered' : 'Pay'}
           </Button>
           <Button
             size="small"
             icon={<PrinterOutlined />}
             onClick={() => onViewInvoice(record.invoice)}
+            disabled={record.is_nhia_covered && parseFloat(record.patient_amount || 0) === 0}
           >
-            View
+            {record.is_nhia_covered && parseFloat(record.patient_amount || 0) === 0 ? 'NHIA Full' : 'View'}
           </Button>
         </Space>
       ),
@@ -137,6 +150,7 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
   ];
 
   // Calculate totals
+  const totalNhiaAmount = details.reduce((sum, item) => sum + parseFloat(item.nhia_amount || 0), 0);
   const totalPatientAmount = details.reduce((sum, item) => sum + parseFloat(item.patient_amount || 0), 0);
   const paidAmount = details
     .filter(item => item.payment_status === 'Paid')
@@ -166,16 +180,28 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
       summary={() => (
         <Table.Summary fixed>
           <Table.Summary.Row>
-            <Table.Summary.Cell index={0} colSpan={2}>
-              <Text strong>Total Billed</Text>
+            <Table.Summary.Cell index={0} colSpan={4}>
+              <Text strong>Total NHIA</Text>
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={1} align="right">
+              <Text type="success">₵{totalNhiaAmount.toFixed(2)}</Text>
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={2} colSpan={4} />
+            <Table.Summary.Cell index={3} />
+          </Table.Summary.Row>
+          <Table.Summary.Row>
+            <Table.Summary.Cell index={0} colSpan={4}>
+              <Text strong>Total Patient</Text>
             </Table.Summary.Cell>
             <Table.Summary.Cell index={1} align="right">
               <Text>₵{totalPatientAmount.toFixed(2)}</Text>
             </Table.Summary.Cell>
+            <Table.Summary.Cell index={2} colSpan={4} />
+            <Table.Summary.Cell index={3} />
           </Table.Summary.Row>
           
           <Table.Summary.Row>
-            <Table.Summary.Cell index={0} colSpan={2}>
+            <Table.Summary.Cell index={0} colSpan={4}>
               <Text strong type="success">Amount Paid</Text>
             </Table.Summary.Cell>
             <Table.Summary.Cell index={1} align="right">
@@ -184,7 +210,7 @@ const InvoiceTable = ({ details, onMarkAsPaid, onViewInvoice }) => {
           </Table.Summary.Row>
           
           <Table.Summary.Row>
-            <Table.Summary.Cell index={0} colSpan={2}>
+            <Table.Summary.Cell index={0} colSpan={4}>
               <Text strong>Balance Due</Text>
             </Table.Summary.Cell>
             <Table.Summary.Cell index={1} align="right">

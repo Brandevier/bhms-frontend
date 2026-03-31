@@ -57,8 +57,7 @@ const FilterSection = ({
             <Col span={12}>
               <Form.Item 
                 name="dateRange" 
-                label="Date Range"
-                rules={[{ required: true, message: 'Please select date range' }]}
+                label="Date Range (Optional)"
               >
                 <RangePicker 
                   className="w-full" 
@@ -217,7 +216,6 @@ const FilterSection = ({
           loading={loading}
           icon={<FileTextOutlined />}
           className="bg-blue-600"
-          disabled={!form.getFieldValue('dateRange')}
         >
           Generate Report
         </Button>

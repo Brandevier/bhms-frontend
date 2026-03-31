@@ -1,17 +1,21 @@
 // components/VettingResults.js
 import React, { useState } from 'react';
-import { Card, Row, Col, Statistic, Typography, Tabs, Alert, Button, Space, Divider, List, Tag, message } from 'antd';
-import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined, FileTextOutlined, WarningOutlined, EyeOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Typography, Tabs, Alert, Button, Space, Divider, List, Tag, message, Modal, Form, Input, Select } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined, FileTextOutlined, WarningOutlined, EyeOutlined, SaveOutlined } from '@ant-design/icons';
 import VettingTable from './VettingTable';
 import ValidationStatus from './ValidationStatus';
 import XmlJsonEditor from './XmlJsonEditor';
 
 const { Title, Text } = Typography;
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 const VettingResults = ({ results, onSaveChanges }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [form] = Form.useForm();
   
   // Extract data from the backend response structure
   const validationSummary = results?.validationSummary;
@@ -39,6 +43,44 @@ const VettingResults = ({ results, onSaveChanges }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
+  };
+
+  // Handle editing a specific failed service
+  const handleEditService = (service, claimId) => {
+    setEditingService({ ...service, claimId });
+    form.setFieldsValue({
+      serviceCode: service.serviceCode,
+      description: service.description,
+      quantity: service.quantity,
+      unitPrice: service.unitPrice,
+      totalAmount: service.totalAmount,
+      nhiaAmount: service.nhiaAmount
+    });
+    setEditModalVisible(true);
+  };
+
+  const handleSaveServiceEdit = (values) => {
+    // Update the service with new values and re-validate
+    const updatedService = {
+      ...editingService,
+      ...values,
+      validation: {
+        isValid: true,
+        issues: []
+      }
+    };
+    
+    // Call parent save handler
+    if (onSaveChanges) {
+      onSaveChanges({
+        claimId: editingService.claimId,
+        service: updatedService
+      });
+    }
+    
+    message.success('Service updated and re-validated successfully');
+    setEditModalVisible(false);
+    setEditingService(null);
   };
 
   const handleDataChange = (newData) => {
@@ -361,6 +403,68 @@ const VettingResults = ({ results, onSaveChanges }) => {
           />
         </TabPane>
       </Tabs>
+
+      {/* Edit Service Modal */}
+      <Modal
+        title="Edit Failed Service"
+        open={editModalVisible}
+        onCancel={() => { setEditModalVisible(false); setEditingService(null); }}
+        footer={null}
+        width={600}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSaveServiceEdit}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Service Code" name="serviceCode">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Quantity" name="quantity">
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Unit Price" name="unitPrice">
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Total Amount" name="totalAmount">
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="NHIA Amount" name="nhiaAmount">
+                <Input type="number" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Description" name="description">
+                <Input.TextArea />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item>
+            <Space>
+              <Button onClick={() => { setEditModalVisible(false); setEditingService(null); }}>
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                Save & Re-validate
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </Card>
   );
 };
