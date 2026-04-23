@@ -86,7 +86,7 @@ apiClient.interceptors.response.use(
       if (status === 500) {
         toast.error('Server error, please try again later.');
       } else if (status === 404) {
-        toast.error('Requested resource not found.');
+        toast.info('Requested resource not found.');
       }
     } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
       if (!config.url.includes('/auth')) { // Avoid retrying auth endpoints

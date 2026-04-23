@@ -48,7 +48,7 @@ const ContactUs = () => {
     {
       icon: <EnvironmentOutlined className="text-purple-500" />,
       title: "Visit Us",
-      content: ["123 Healthcare Ave", "Accra, Ghana"],
+      content: ["Northern Region,Plaza", "Tamale, Ghana"],
       color: "bg-purple-50"
     }
   ];
