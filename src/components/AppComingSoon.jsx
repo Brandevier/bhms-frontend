@@ -60,10 +60,10 @@ const AppComingSoon = () => {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors">
+                  {/* <button className="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors">
                     Notify Me on Launch
                     <FiArrowRight className="ml-2" />
-                  </button>
+                  </button> */}
                   <button className="flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors">
                     Learn More
                   </button>
